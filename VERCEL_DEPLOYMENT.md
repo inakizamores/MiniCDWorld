@@ -2,33 +2,23 @@
 
 This guide explains how to deploy the MiniCDWorld application to Vercel using GitHub.
 
+## Architecture Overview
+
+MiniCDWorld uses an in-memory processing approach for handling file uploads and PDF generation:
+
+1. **Frontend**: React application for user interface
+2. **Backend**: Express API deployed as Vercel serverless functions
+3. **File Storage**: In-memory storage for the duration of the user session
+4. **PDF Generation**: On-demand PDF creation with PDFKit
+
+This architecture is optimized for quick deployments without external dependencies like AWS S3.
+
 ## Prerequisites
 
 Before deploying, you need:
 
 1. A GitHub account with your MiniCDWorld repository
 2. A Vercel account (free tier is fine)
-3. An AWS account for S3 storage (or another storage solution)
-
-## Setup AWS S3 Bucket
-
-Since Vercel's serverless functions don't have a persistent file system, we use AWS S3 for file storage:
-
-1. Log in to your AWS Management Console
-2. Create a new S3 bucket with a unique name
-3. Configure CORS for your bucket to allow access from your Vercel domain:
-   ```json
-   [
-     {
-       "AllowedHeaders": ["*"],
-       "AllowedMethods": ["GET", "POST", "PUT"],
-       "AllowedOrigins": ["https://your-vercel-domain.vercel.app"],
-       "ExposeHeaders": []
-     }
-   ]
-   ```
-4. Create an IAM user with programmatic access and attach the `AmazonS3FullAccess` policy (or create a more restrictive policy for production)
-5. Save the Access Key ID and Secret Access Key for the next step
 
 ## Deployment Steps
 
@@ -47,12 +37,6 @@ Since Vercel's serverless functions don't have a persistent file system, we use 
    | Name | Value | Description |
    |------|-------|-------------|
    | NODE_ENV | production | Set environment to production |
-   | STORAGE_TYPE | s3 | Use S3 for file storage |
-   | AWS_ACCESS_KEY_ID | your-access-key | Your AWS access key |
-   | AWS_SECRET_ACCESS_KEY | your-secret-key | Your AWS secret access key |
-   | AWS_REGION | us-east-1 | AWS region where your bucket is located |
-   | AWS_S3_BUCKET | your-bucket-name | Name of your S3 bucket |
-   | CORS_ORIGIN | https://your-vercel-domain.vercel.app | Your Vercel domain |
 
 5. Deploy your application by clicking "Deploy".
 
@@ -69,15 +53,18 @@ After deployment:
 If you encounter issues:
 
 1. Check the Vercel deployment logs for errors.
-2. Verify your AWS credentials and permissions.
-3. Ensure your S3 bucket CORS configuration is correct.
-4. Check that all required environment variables are set in Vercel.
+2. Verify your environment variables are set correctly.
+3. Check if your application is hitting Vercel's serverless function limits:
+   - Memory: 1024MB (set in vercel.json)
+   - Duration: 10 seconds (set in vercel.json)
+   - Payload: 5MB (set in file upload middleware)
 
-## Local Development vs. Production
+## Limitations
 
-The application is designed to work in both environments:
+The in-memory approach has some limitations to be aware of:
 
-- **Local development**: Files are stored locally in `uploads/` and `output/` folders.
-- **Production**: Files are stored in AWS S3 when `STORAGE_TYPE=s3`.
+1. **Session-based storage**: PDFs and uploaded files are only stored for the duration of the session (or until the serverless function is recycled).
+2. **Concurrent requests**: Heavy processing in memory can affect performance with multiple users.
+3. **Function timeout**: Vercel limits serverless functions to a maximum of 10 seconds execution time.
 
-To test the production configuration locally, set `STORAGE_TYPE=s3` in your local `.env` file and provide your AWS credentials. 
+If you need more persistent storage in the future, consider adding a database or storage service like Vercel Blob Storage or AWS S3. 

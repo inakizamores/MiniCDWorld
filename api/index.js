@@ -1,9 +1,7 @@
-// Serverless entry point for Vercel
-const app = require('./server');
+const app = require('../backend/server');
 
-// Export a serverless handler
 module.exports = (req, res) => {
-  // Set CORS headers for serverless function
+  // Handle CORS for API routes
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -22,7 +20,7 @@ module.exports = (req, res) => {
   }
 
   // If the request is for a PDF download, make sure to handle binary response
-  if (req.url && req.url.startsWith('/api/download/')) {
+  if (req.url && req.url.startsWith('/download/')) {
     // Add the appropriate content type for PDF download
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=cd_template.pdf');

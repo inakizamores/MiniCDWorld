@@ -14,8 +14,8 @@
   ],
   "functions": {
     "api": {
-      "runtime": "nodejs16.x",
-      "handler": "backend/vercel-serverless.js"
+      "memory": 1024,
+      "maxDuration": 10
     }
   }
 } 

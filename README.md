@@ -21,7 +21,7 @@ MiniCDWorld is a web application that allows users to create custom CD case temp
 
 ### Backend
 - Node.js with Express
-- Multer for file uploads
+- Multer for file uploads (memory storage)
 - PDFKit for PDF generation
 - Sharp for image processing
 
@@ -47,13 +47,18 @@ The project is organized into two main directories:
    cd minicdworld
    ```
 
-2. Install backend dependencies:
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Install backend dependencies:
    ```
    cd backend
    npm install
    ```
 
-3. Install frontend dependencies:
+4. Install frontend dependencies:
    ```
    cd ../frontend
    npm install
@@ -75,24 +80,22 @@ The project is organized into two main directories:
 
 3. Open your browser and navigate to `http://localhost:3000`
 
-## Environment Variables
+## Deployment
 
-### Backend (.env)
-```
-PORT=5000
-NODE_ENV=development
-CORS_ORIGIN=http://localhost:3000
-MAX_FILE_SIZE=5242880
-UPLOAD_DIR=uploads
-OUTPUT_DIR=output
-```
+This application is designed to be deployed to Vercel using serverless functions. See the [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) file for detailed deployment instructions.
 
-## API Endpoints
+## Key Features Explained
 
-- `POST /api/upload`: Upload images and text data
-- `POST /api/generate`: Generate PDF template
-- `GET /api/status/:templateId`: Check template generation status
-- `GET /api/download/:templateId`: Download generated PDF
+### In-Memory Processing
+
+The application uses in-memory processing for handling file uploads and PDF generation. Files are stored in memory for the duration of the user session, and PDFs are generated on-demand and streamed directly to the user.
+
+### PDF Generation
+
+PDFs are generated using PDFKit with precise measurements for CD cases. The application supports:
+- 1-3 templates per page
+- Custom text for album title, artist name, etc.
+- Image placement for front cover, back cover, CD image, etc.
 
 ## License
 
