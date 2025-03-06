@@ -46,6 +46,19 @@ const CD_CASE = {
   spine: 0.375 * 72
 };
 
+// Root endpoint to provide API information
+app.get('/api', (req, res) => {
+  res.status(200).json({
+    message: 'MiniCDWorld API is running',
+    endpoints: {
+      upload: '/api/upload',
+      generate: '/api/generate',
+      status: '/api/status/:templateId',
+      download: '/api/download/:templateId'
+    }
+  });
+});
+
 // Upload files endpoint
 app.post('/api/upload', upload.fields([
   { name: 'frontCoverOutside', maxCount: 1 },
@@ -310,7 +323,6 @@ async function addCDTemplate(doc, x, y, files, text) {
          .fontSize(8)
          .text(text.additionalText, x + 10, y + 70, { width: CD_CASE.width - 20 });
     }
-    
   } catch (error) {
     console.error('Error adding template components:', error);
     throw error;
@@ -335,7 +347,6 @@ async function placeImageFromBuffer(doc, imageBuffer, x, y, width, height) {
     
     // Add the image to the PDF
     doc.image(resizedImageBuffer, x, y, { width, height });
-    
   } catch (error) {
     console.error('Error processing image buffer:', error);
     // Draw a placeholder instead
@@ -348,12 +359,5 @@ async function placeImageFromBuffer(doc, imageBuffer, x, y, width, height) {
   }
 }
 
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(3001, () => {
-    console.log('Server running on http://localhost:3001');
-  });
-}
-
-// Export for serverless function
+// Export the server as a serverless function
 module.exports = serverless(app); 
