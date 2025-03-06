@@ -19,7 +19,7 @@ router.post('/generate', pdfController.generatePDF);
 // Route to get template status
 router.get('/status/:templateId', pdfController.getTemplateStatus);
 
-// Route to download the PDF
+// Route to download the generated PDF
 router.get('/download/:templateId', pdfController.downloadPDF);
 
 module.exports = router; 

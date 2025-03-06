@@ -1,6 +1,7 @@
 const PDFDocument = require('pdfkit');
 const sharp = require('sharp');
-const storage = require('./storage');
+const s3Storage = require('./s3Storage');
+const { v4: uuidv4 } = require('uuid');
 
 // PDF page dimensions (A4 size)
 const PAGE_WIDTH = 595.28;
@@ -15,10 +16,10 @@ const CD_CASE = {
 
 /**
  * Generate a PDF template with the provided images and text
- * @param {Object} files - Object containing file URLs for each section
+ * @param {Object} files - Object containing file info for each section with S3 keys
  * @param {Object} text - Object containing text for album title, etc.
  * @param {Number} perPage - Number of CD templates per page (1-3)
- * @returns {Buffer} - PDF content as a buffer
+ * @returns {Promise<Object>} - Buffer and filename for the generated PDF
  */
 exports.generatePDFTemplate = async (files, text, perPage = 1) => {
   // Validate perPage value
@@ -33,8 +34,8 @@ exports.generatePDFTemplate = async (files, text, perPage = 1) => {
   });
 
   // Create a buffer to store the PDF
-  const buffers = [];
-  doc.on('data', buffers.push.bind(buffers));
+  const chunks = [];
+  doc.on('data', chunk => chunks.push(chunk));
 
   // Process each requested template per page
   const templatesPerPage = Math.min(perPage, 3);
@@ -59,14 +60,19 @@ exports.generatePDFTemplate = async (files, text, perPage = 1) => {
     await addCDTemplate(doc, xPosition, yPosition, files, text);
   }
 
+  // Generate a unique filename for the PDF
+  const outputFilename = `cd_template_${uuidv4()}.pdf`;
+  
   // Finalize the PDF
   doc.end();
 
-  // Return a Promise that resolves with the PDF buffer
-  return new Promise((resolve) => {
+  // Return a Promise that resolves when the PDF has been fully generated
+  return new Promise((resolve, reject) => {
     doc.on('end', () => {
-      resolve(Buffer.concat(buffers));
+      const pdfBuffer = Buffer.concat(chunks);
+      resolve({ pdfBuffer, pdfFilename: outputFilename });
     });
+    doc.on('error', reject);
   });
 };
 
@@ -75,7 +81,7 @@ exports.generatePDFTemplate = async (files, text, perPage = 1) => {
  * @param {PDFDocument} doc - The PDF document
  * @param {Number} x - X position for the template
  * @param {Number} y - Y position for the template
- * @param {Object} files - Object containing file URLs
+ * @param {Object} files - Object containing file info with S3 keys
  * @param {Object} text - Object containing text data
  */
 async function addCDTemplate(doc, x, y, files, text) {
@@ -86,23 +92,27 @@ async function addCDTemplate(doc, x, y, files, text) {
   // Process and place each image based on the template layout
   try {
     // Front cover outside
-    if (files.frontCoverOutside) {
-      await placeImage(doc, files.frontCoverOutside, x, y, CD_CASE.width / 2, CD_CASE.height / 2);
+    if (files.frontCoverOutside && files.frontCoverOutside.length > 0) {
+      const frontCoverFile = files.frontCoverOutside[0];
+      await placeImageFromS3(doc, frontCoverFile.s3Key, x, y, CD_CASE.width / 2, CD_CASE.height / 2);
     }
     
     // Front cover inside
-    if (files.frontCoverInside) {
-      await placeImage(doc, files.frontCoverInside, x + CD_CASE.width / 2, y, CD_CASE.width / 2, CD_CASE.height / 2);
+    if (files.frontCoverInside && files.frontCoverInside.length > 0) {
+      const insideCoverFile = files.frontCoverInside[0];
+      await placeImageFromS3(doc, insideCoverFile.s3Key, x + CD_CASE.width / 2, y, CD_CASE.width / 2, CD_CASE.height / 2);
     }
     
     // Back cover
-    if (files.backCover) {
-      await placeImage(doc, files.backCover, x, y + CD_CASE.height / 2, CD_CASE.width / 2, CD_CASE.height / 2);
+    if (files.backCover && files.backCover.length > 0) {
+      const backCoverFile = files.backCover[0];
+      await placeImageFromS3(doc, backCoverFile.s3Key, x, y + CD_CASE.height / 2, CD_CASE.width / 2, CD_CASE.height / 2);
     }
     
     // CD image
-    if (files.cdImage) {
-      await placeImage(doc, files.cdImage, x + CD_CASE.width / 2, y + CD_CASE.height / 2, CD_CASE.width / 2, CD_CASE.height / 2);
+    if (files.cdImage && files.cdImage.length > 0) {
+      const cdImageFile = files.cdImage[0];
+      await placeImageFromS3(doc, cdImageFile.s3Key, x + CD_CASE.width / 2, y + CD_CASE.height / 2, CD_CASE.width / 2, CD_CASE.height / 2);
     }
     
     // Add text elements
@@ -137,21 +147,21 @@ async function addCDTemplate(doc, x, y, files, text) {
 }
 
 /**
- * Place an image at the specified position in the document
+ * Place an image from S3 at the specified position in the document
  * @param {PDFDocument} doc - The PDF document
- * @param {String} imageUrl - URL or path to the image file
+ * @param {String} s3Key - S3 object key
  * @param {Number} x - X position
  * @param {Number} y - Y position
  * @param {Number} width - Width to resize the image to
  * @param {Number} height - Height to resize the image to
  */
-async function placeImage(doc, imageUrl, x, y, width, height) {
+async function placeImageFromS3(doc, s3Key, x, y, width, height) {
   try {
-    // Get the image from storage
-    const imageBuffer = await storage.getFile(imageUrl);
+    // Get the image file from S3
+    const s3Object = await s3Storage.getFile(s3Key);
     
     // Resize and optimize the image using sharp
-    const resizedImageBuffer = await sharp(imageBuffer)
+    const resizedImageBuffer = await sharp(s3Object.Body)
       .resize({ width: Math.round(width), height: Math.round(height), fit: 'cover' })
       .toBuffer();
     
@@ -159,7 +169,7 @@ async function placeImage(doc, imageUrl, x, y, width, height) {
     doc.image(resizedImageBuffer, x, y, { width, height });
     
   } catch (error) {
-    console.error(`Error processing image ${imageUrl}:`, error);
+    console.error(`Error processing image from S3 (${s3Key}):`, error);
     // Draw a placeholder instead
     doc.rect(x, y, width, height)
        .fillAndStroke('#f0f0f0', '#cccccc');

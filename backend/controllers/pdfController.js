@@ -1,7 +1,8 @@
 const path = require('path');
+const fs = require('fs');
 const PDFDocument = require('pdfkit');
 const { generatePDFTemplate } = require('../utils/pdfGenerator');
-const storage = require('../utils/storage');
+const s3Storage = require('../utils/s3Storage');
 const { v4: uuidv4 } = require('uuid');
 
 // For serverless environment, use an object for in-memory cache
@@ -23,30 +24,36 @@ exports.uploadFiles = async (req, res) => {
 
     // Generate a unique ID for this template
     const templateId = uuidv4();
-    const uploadedFiles = {};
-
-    // Process and store each file
+    
+    // Upload files to S3 and store their S3 paths
+    const s3Files = {};
     for (const fieldName in req.files) {
-      const files = req.files[fieldName];
+      const fileArray = req.files[fieldName];
+      s3Files[fieldName] = [];
       
-      if (files.length > 0) {
-        const file = files[0];
+      for (const file of fileArray) {
+        // Upload file to S3
+        const s3Key = `uploads/${templateId}/${fieldName}/${path.basename(file.path)}`;
+        const s3Url = await s3Storage.uploadFile(file.path, s3Key);
         
-        // Upload file to storage (S3 or local based on environment)
-        const fileUrl = await storage.uploadFile(
-          file.buffer, // Using multer's memory storage for serverless
-          file.originalname,
-          'uploads'
-        );
+        // Add S3 information to the files object
+        s3Files[fieldName].push({
+          originalname: file.originalname,
+          mimetype: file.mimetype,
+          size: file.size,
+          path: file.path,
+          s3Key: s3Key,
+          s3Url: s3Url
+        });
         
-        // Store file URL
-        uploadedFiles[fieldName] = fileUrl;
+        // Delete local file after upload
+        fs.unlinkSync(file.path);
       }
     }
     
-    // Store file URLs and form data in the cache
+    // Store file paths and form data in the cache
     templateCache[templateId] = {
-      files: uploadedFiles,
+      files: s3Files,
       text: req.body,
       status: 'uploaded',
       createdAt: new Date()
@@ -90,23 +97,22 @@ exports.generatePDF = async (req, res) => {
     const templateData = templateCache[templateId];
     
     // Generate PDF using the utility function
-    const pdfStream = await generatePDFTemplate(templateData.files, templateData.text, parseInt(perPage));
+    const { pdfBuffer, pdfFilename } = await generatePDFTemplate(templateData.files, templateData.text, parseInt(perPage));
     
-    // Upload PDF to storage
-    const pdfUrl = await storage.uploadFile(
-      pdfStream,
-      `cd_template_${templateId}.pdf`,
-      'output'
-    );
+    // Upload PDF to S3
+    const s3Key = `output/${templateId}/${pdfFilename}`;
+    const s3Url = await s3Storage.uploadBuffer(pdfBuffer, s3Key, 'application/pdf');
     
     // Update template with PDF info
-    templateCache[templateId].pdfUrl = pdfUrl;
+    templateCache[templateId].pdfKey = s3Key;
+    templateCache[templateId].pdfUrl = s3Url;
     templateCache[templateId].status = 'completed';
 
-    // Return success with PDF URL
+    // Return the PDF URL
     return res.status(200).json({
       success: true,
       message: 'PDF generated successfully',
+      templateId: templateId,
       pdfUrl: `/api/download/${templateId}`
     });
   } catch (error) {
@@ -147,36 +153,28 @@ exports.getTemplateStatus = (req, res) => {
 };
 
 /**
- * Download the generated PDF
+ * Download generated PDF
  */
 exports.downloadPDF = async (req, res) => {
   try {
     const { templateId } = req.params;
     
-    // Check if template exists and is completed
-    if (!templateCache[templateId] || templateCache[templateId].status !== 'completed') {
+    if (!templateCache[templateId] || !templateCache[templateId].pdfKey) {
       return res.status(404).json({
         success: false,
-        message: 'PDF not found or not completed'
+        message: 'PDF not found'
       });
     }
     
-    // Get the PDF URL
-    const pdfUrl = templateCache[templateId].pdfUrl;
+    // Get the S3 signed URL
+    const signedUrl = s3Storage.getSignedUrl(templateCache[templateId].pdfKey, 300); // 5 minutes expiry
     
-    // Get the PDF content
-    const pdfBuffer = await storage.getFile(pdfUrl);
-    
-    // Set headers for PDF download
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=cd_template_${templateId}.pdf`);
-    
-    // Send the PDF
-    return res.send(pdfBuffer);
+    // Redirect to the signed URL
+    return res.redirect(signedUrl);
   } catch (error) {
     console.error('Error downloading PDF:', error);
     return res.status(500).json({
-      success: false,
+      success: false, 
       message: 'Error downloading PDF',
       error: error.message
     });
