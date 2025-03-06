@@ -83,5 +83,13 @@ function ResultPage({ templateId, generationStatus }) {
         )}
       </div>
       
-      <div style={{ marginTop: '2rem'
-} 
+      <div style={{ marginTop: '2rem' }}>
+        <Link to="/editor" className="btn btn-secondary">
+          Create Another Template
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default ResultPage; 
