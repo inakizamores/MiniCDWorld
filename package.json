@@ -1,0 +1,19 @@
+{
+  "name": "minicdworld",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "start": "cd backend && npm start",
+    "build": "cd frontend && npm install && npm run build",
+    "dev:frontend": "cd frontend && npm start",
+    "dev:backend": "cd backend && npm run dev",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 
