@@ -1,12 +1,12 @@
 // This file specifically handles the /api/upload endpoint
 const express = require('express');
 const serverless = require('serverless-http');
-const multer = require('multer');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
-const { put } = require('@vercel/blob');
+const { put, createClient } = require('@vercel/blob');
 
 const app = express();
+const blobClient = createClient();
 
 // Enable CORS for all routes
 app.use((req, res, next) => {
@@ -27,129 +27,167 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// Configure memory storage for uploads
-const storage = multer.memoryStorage();
-
-// File filter to accept only image files
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
-
-  if (extname && mimetype) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only image files are allowed (jpeg, jpg, png, gif)'));
-  }
-};
-
-// Configure upload settings with smaller size limit
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 2 * 1024 * 1024 // Reduced to 2MB file size limit
-  },
-  fileFilter: fileFilter
-});
-
 // In-memory storage for template metadata (shared between serverless invocations via module scope)
 const templateCache = {};
 
-// Upload files endpoint - optimized to prevent timeouts
-app.post('/api/upload', upload.fields([
-  { name: 'frontCoverOutside', maxCount: 1 },
-  { name: 'frontCoverInside', maxCount: 1 },
-  { name: 'backCover', maxCount: 1 },
-  { name: 'cdImage', maxCount: 1 },
-  { name: 'additionalImage1', maxCount: 1 },
-  { name: 'additionalImage2', maxCount: 1 }
-]), async (req, res) => {
+// Endpoint to get pre-signed URLs for direct uploads
+app.post('/api/upload/prepare', async (req, res) => {
   try {
-    console.log('Upload endpoint called');
-    console.log('Request files:', Object.keys(req.files || {}));
+    console.log('Prepare upload endpoint called');
     
-    // Check if files were uploaded
-    if (!req.files) {
+    // Get the file info from the request
+    const { files } = req.body;
+    
+    if (!files || !Array.isArray(files) || files.length === 0) {
       return res.status(400).json({
         success: false,
-        message: 'No files were uploaded'
+        message: 'No file info provided'
       });
     }
-
+    
     // Generate a unique ID for this template
     const templateId = uuidv4();
     
-    // Return the templateId immediately to prevent timeout
-    // while processing continues in the background
-    res.status(200).json({
+    // Generate pre-signed URLs for each file
+    const uploadUrls = {};
+    const filePromises = [];
+    
+    for (const file of files) {
+      const { name, type } = file;
+      if (!name || !type) continue;
+      
+      const fieldName = file.fieldName || 'file';
+      const blobName = `${templateId}/${fieldName}-${Date.now()}${path.extname(name)}`;
+      
+      // Create a pre-signed URL for direct upload
+      const promise = blobClient.getUploadUrl(blobName, {
+        contentType: type,
+        access: 'public',
+      }).then(urlData => {
+        uploadUrls[fieldName] = {
+          uploadUrl: urlData.url,
+          pathname: urlData.pathname,
+          blobName: blobName
+        };
+      });
+      
+      filePromises.push(promise);
+    }
+    
+    // Wait for all URL generations to complete
+    await Promise.all(filePromises);
+    
+    // Initialize the template entry in the cache
+    templateCache[templateId] = {
+      status: 'preparing',
+      createdAt: Date.now(),
+      blobUrls: {},
+      blobPaths: {},
+      completedUploads: 0,
+      totalUploads: files.length
+    };
+    
+    // Return the pre-signed URLs to the client
+    return res.status(200).json({
       success: true,
-      message: 'Upload processing started',
-      templateId: templateId
+      message: 'Upload URLs generated',
+      templateId: templateId,
+      uploadUrls: uploadUrls
     });
     
-    // Continue processing uploads in the background
-    // This is an optimization for serverless environments
-    (async () => {
-      try {
-        // Upload each file to Vercel Blob storage
-        const blobPromises = [];
-        const blobUrls = {};
-        
-        for (const fieldName in req.files) {
-          const file = req.files[fieldName][0];
-          // Resize the image before uploading to reduce processing time
-          if (file.size > 500 * 1024) {
-            // If we had sharp imported here, we could resize, but for simplicity we'll just upload directly
-          }
-          
-          // Upload to Vercel Blob with a unique path
-          const blobName = `${templateId}/${fieldName}-${Date.now()}.${file.originalname.split('.').pop()}`;
-          const blob = put(blobName, file.buffer, {
-            contentType: file.mimetype,
-            access: 'public', // Make it publicly accessible
-          });
-          
-          blobPromises.push(
-            blob.then(result => {
-              blobUrls[fieldName] = result.url;
-            })
-          );
-        }
-        
-        // Wait for all blob uploads to complete
-        await Promise.all(blobPromises);
-        
-        // Store template metadata in the cache
-        templateCache[templateId] = {
-          blobUrls: blobUrls,
-          text: req.body,
-          status: 'uploaded',
-          createdAt: Date.now()
-        };
-        
-        console.log(`Background upload processing completed for templateId: ${templateId}`);
-      } catch (error) {
-        console.error('Error in background upload processing:', error);
-        // We can't respond to the client here since we already sent the response
-        // But we can update the template status for status checks
-        if (templateCache[templateId]) {
-          templateCache[templateId].status = 'error';
-          templateCache[templateId].error = error.message;
-        }
-      }
-    })();
-    
   } catch (error) {
-    console.error('Error starting upload process:', error);
+    console.error('Error preparing upload:', error);
     return res.status(500).json({
       success: false,
-      message: 'Error processing upload',
+      message: 'Error preparing upload',
       error: error.message
     });
   }
 });
 
-// Status check endpoint specifically for this upload handler
+// Endpoint to notify of completed direct upload
+app.post('/api/upload/complete', async (req, res) => {
+  try {
+    const { templateId, fieldName, blobName, url } = req.body;
+    
+    if (!templateId || !fieldName || !blobName || !url) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required information'
+      });
+    }
+    
+    if (!templateCache[templateId]) {
+      return res.status(404).json({
+        success: false,
+        message: 'Template not found'
+      });
+    }
+    
+    // Update the template cache with the completed upload
+    templateCache[templateId].blobUrls[fieldName] = url;
+    templateCache[templateId].blobPaths[fieldName] = blobName;
+    templateCache[templateId].completedUploads += 1;
+    
+    // If all uploads are complete, update the status
+    if (templateCache[templateId].completedUploads >= templateCache[templateId].totalUploads) {
+      templateCache[templateId].status = 'uploaded';
+    }
+    
+    return res.status(200).json({
+      success: true,
+      message: 'Upload completion recorded',
+      status: templateCache[templateId].status
+    });
+    
+  } catch (error) {
+    console.error('Error recording upload completion:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error recording upload completion',
+      error: error.message
+    });
+  }
+});
+
+// Endpoint to store form data
+app.post('/api/upload/form', async (req, res) => {
+  try {
+    const { templateId, formData } = req.body;
+    
+    if (!templateId || !formData) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing template ID or form data'
+      });
+    }
+    
+    if (!templateCache[templateId]) {
+      return res.status(404).json({
+        success: false,
+        message: 'Template not found'
+      });
+    }
+    
+    // Store the form data in the template cache
+    templateCache[templateId].text = formData;
+    
+    return res.status(200).json({
+      success: true,
+      message: 'Form data stored successfully'
+    });
+    
+  } catch (error) {
+    console.error('Error storing form data:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error storing form data',
+      error: error.message
+    });
+  }
+});
+
+// Status check endpoint
 app.get('/api/upload/status/:templateId', (req, res) => {
   const { templateId } = req.params;
   
@@ -163,18 +201,34 @@ app.get('/api/upload/status/:templateId', (req, res) => {
   return res.status(200).json({
     success: true,
     status: templateCache[templateId].status,
-    urls: templateCache[templateId].blobUrls,
+    completedUploads: templateCache[templateId].completedUploads,
+    totalUploads: templateCache[templateId].totalUploads,
+    blobUrls: templateCache[templateId].blobUrls,
     error: templateCache[templateId].error || null
   });
 });
 
-// Also create a simplified route for testing
-app.post('/upload', (req, res) => {
-  console.log('Basic upload route hit');
-  return res.status(200).json({
-    success: true,
-    message: 'Upload API test endpoint is running'
-  });
+// Legacy route to handle simple uploads for fallback compatibility
+app.post('/api/upload', async (req, res) => {
+  console.log('Legacy upload endpoint called');
+  try {
+    // Generate a unique ID
+    const templateId = uuidv4();
+    
+    // Return immediately with the ID
+    return res.status(200).json({
+      success: true,
+      message: 'Upload handling started - using legacy endpoint',
+      templateId: templateId
+    });
+  } catch (error) {
+    console.error('Error in legacy upload endpoint:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error processing upload',
+      error: error.message
+    });
+  }
 });
 
 // This route is to test if the service is running

@@ -15,6 +15,21 @@
   },
   "routes": [
     {
+      "src": "/api/upload/prepare",
+      "methods": ["POST", "OPTIONS"],
+      "dest": "/api/upload.js"
+    },
+    {
+      "src": "/api/upload/complete",
+      "methods": ["POST", "OPTIONS"],
+      "dest": "/api/upload.js"
+    },
+    {
+      "src": "/api/upload/form",
+      "methods": ["POST", "OPTIONS"],
+      "dest": "/api/upload.js"
+    },
+    {
       "src": "/api/upload/status/(.*)",
       "methods": ["GET", "OPTIONS"],
       "dest": "/api/upload.js"

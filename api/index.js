@@ -27,9 +27,8 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// Shared in-memory storage for template metadata (NOTE: in production, use a real database)
-// This will be shared between the upload.js file and other endpoints
-// WARNING: This is just for demonstration, in production use a proper database!
+// Shared in-memory storage for template metadata
+// In a real production app, you would use a database instead
 const templateCache = global.templateCache || {};
 global.templateCache = templateCache;
 
@@ -74,8 +73,11 @@ app.post('/api/generate', async (req, res) => {
     // Get the template data
     const templateData = templateCache[templateId];
     
+    // Use blobUrls from templateCache for direct upload flow
+    const imageUrls = templateData.blobUrls || {};
+    
     // Generate PDF
-    const pdfBuffer = await generatePDFTemplate(templateData.blobUrls, templateData.text, parseInt(perPage));
+    const pdfBuffer = await generatePDFTemplate(imageUrls, templateData.text, parseInt(perPage));
     
     // Upload PDF to Vercel Blob
     const pdfBlobName = `${templateId}/cd_template.pdf`;

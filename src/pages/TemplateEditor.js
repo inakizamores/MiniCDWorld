@@ -68,74 +68,85 @@ function TemplateEditor({ setTemplateId, setGenerationStatus }) {
       return;
     }
     
-    // Create form data for upload
-    const uploadData = new FormData();
-    
-    // Add images
-    for (const key in images) {
-      if (images[key]) {
-        uploadData.append(key, images[key]);
-      }
-    }
-    
-    // Add text fields
-    for (const key in formData) {
-      uploadData.append(key, formData[key]);
-    }
-    
     try {
       setIsUploading(true);
-      setGenerationStatus('uploading');
+      setGenerationStatus('preparing');
       
-      // Step 1: Upload files
-      console.log('Starting file upload...');
-      const uploadResponse = await axios.post('/api/upload', uploadData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        timeout: 60000 // 60 second timeout
-      });
+      // Step 1: Prepare upload by getting pre-signed URLs
+      console.log('Preparing upload...');
       
-      const { templateId } = uploadResponse.data;
-      console.log('Received template ID:', templateId);
-      
-      // Set the template ID right away
-      setTemplateId(templateId);
-      
-      // Step 2: Poll for upload completion
-      setGenerationStatus('processing');
-      console.log('Polling for upload status...');
-      
-      let uploadComplete = false;
-      let retryCount = 0;
-      const maxRetries = 30; // Maximum number of status check retries
-      
-      while (!uploadComplete && retryCount < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds between polls
-        
-        try {
-          const statusResponse = await axios.get(`/api/upload/status/${templateId}`);
-          console.log('Status check:', statusResponse.data);
-          
-          if (statusResponse.data.status === 'uploaded') {
-            uploadComplete = true;
-          } else if (statusResponse.data.status === 'error') {
-            throw new Error(statusResponse.data.error || 'Error uploading files');
-          }
-          
-          retryCount++;
-        } catch (statusError) {
-          console.error('Error checking upload status:', statusError);
-          retryCount++;
-          // Continue polling even if there's an error checking status
+      // Create file info array for pre-signed URL request
+      const fileInfoArray = [];
+      for (const [fieldName, file] of Object.entries(images)) {
+        if (file) {
+          fileInfoArray.push({
+            name: file.name,
+            type: file.type,
+            fieldName
+          });
         }
       }
       
-      if (!uploadComplete) {
-        throw new Error('Upload process timed out. Please try again.');
+      // Get pre-signed URLs for direct upload
+      const prepareResponse = await axios.post('/api/upload/prepare', {
+        files: fileInfoArray
+      }, { timeout: 10000 }); // Short timeout for this request
+      
+      const { templateId, uploadUrls } = prepareResponse.data;
+      console.log('Received template ID and upload URLs', templateId);
+      
+      // Set the template ID right away
+      setTemplateId(templateId);
+      setGenerationStatus('uploading');
+      
+      // Step 2: Upload files directly to Vercel Blob using pre-signed URLs
+      console.log('Starting direct uploads...');
+      const uploadPromises = [];
+      
+      for (const [fieldName, file] of Object.entries(images)) {
+        if (file && uploadUrls[fieldName]) {
+          const urlInfo = uploadUrls[fieldName];
+          
+          // Upload directly to Vercel Blob
+          const uploadPromise = fetch(urlInfo.uploadUrl, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': file.type,
+            },
+            body: file
+          }).then(async (response) => {
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(`Direct upload failed: ${errorText}`);
+            }
+            
+            // Notify backend of completed upload
+            return axios.post('/api/upload/complete', {
+              templateId,
+              fieldName,
+              blobName: urlInfo.blobName,
+              url: response.url || urlInfo.uploadUrl.split('?')[0] // Get the URL without query params
+            });
+          });
+          
+          uploadPromises.push(uploadPromise);
+        }
       }
       
-      // Step 3: Generate PDF
+      // Upload files in parallel
+      console.log('Uploading files in parallel...');
+      await Promise.all(uploadPromises);
+      
+      // Step 3: Submit form data
+      console.log('Submitting form data...');
+      await axios.post('/api/upload/form', {
+        templateId,
+        formData
+      });
+      
+      setGenerationStatus('processing');
+      
+      // Step 4: Generate PDF
       console.log('Starting PDF generation...');
       setGenerationStatus('generating');
       const generateResponse = await axios.post('/api/generate', {
