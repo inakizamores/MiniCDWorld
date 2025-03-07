@@ -90,59 +90,88 @@ function TemplateEditor({ setTemplateId, setGenerationStatus }) {
       // Get pre-signed URLs for direct upload
       const prepareResponse = await axios.post('/api/upload/prepare', {
         files: fileInfoArray
-      }, { timeout: 10000 }); // Short timeout for this request
+      }, { timeout: 30000 }); // Increased timeout for this request
       
-      const { templateId, uploadUrls } = prepareResponse.data;
-      console.log('Received template ID and upload URLs', templateId);
+      const { templateId, uploadUrls, fallbackMode } = prepareResponse.data;
+      console.log('Received template ID', templateId, fallbackMode ? '(in fallback mode)' : 'with upload URLs');
       
       // Set the template ID right away
       setTemplateId(templateId);
       setGenerationStatus('uploading');
       
-      // Step 2: Upload files directly to Vercel Blob using pre-signed URLs
-      console.log('Starting direct uploads...');
-      const uploadPromises = [];
-      
-      for (const [fieldName, file] of Object.entries(images)) {
-        if (file && uploadUrls[fieldName]) {
-          const urlInfo = uploadUrls[fieldName];
-          
-          // Upload directly to Vercel Blob
-          const uploadPromise = fetch(urlInfo.uploadUrl, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': file.type,
-            },
-            body: file
-          }).then(async (response) => {
-            if (!response.ok) {
-              const errorText = await response.text();
-              throw new Error(`Direct upload failed: ${errorText}`);
-            }
-            
-            // Notify backend of completed upload
-            return axios.post('/api/upload/complete', {
-              templateId,
-              fieldName,
-              blobName: urlInfo.blobName,
-              url: response.url || urlInfo.uploadUrl.split('?')[0] // Get the URL without query params
-            });
-          });
-          
-          uploadPromises.push(uploadPromise);
+      if (fallbackMode) {
+        // Use legacy upload method if in fallback mode
+        console.log('Using legacy upload method due to fallback mode');
+        
+        // Create a form data object for the legacy upload
+        const formDataObj = new FormData();
+        
+        // Add files to the form data
+        for (const [fieldName, file] of Object.entries(images)) {
+          if (file) {
+            formDataObj.append(fieldName, file);
+          }
         }
+        
+        // Add form data fields
+        for (const [key, value] of Object.entries(formData)) {
+          formDataObj.append(key, value);
+        }
+        
+        // Submit the form data to the legacy upload endpoint
+        await axios.post('/api/upload', formDataObj, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          timeout: 60000 // 60 second timeout for the legacy upload
+        });
+        
+      } else {
+        // Step 2: Upload files directly to Vercel Blob using pre-signed URLs
+        console.log('Starting direct uploads...');
+        const uploadPromises = [];
+        
+        for (const [fieldName, file] of Object.entries(images)) {
+          if (file && uploadUrls[fieldName]) {
+            const urlInfo = uploadUrls[fieldName];
+            
+            // Upload directly to Vercel Blob
+            const uploadPromise = fetch(urlInfo.uploadUrl, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': file.type,
+              },
+              body: file
+            }).then(async (response) => {
+              if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Direct upload failed: ${errorText}`);
+              }
+              
+              // Notify backend of completed upload
+              return axios.post('/api/upload/complete', {
+                templateId,
+                fieldName,
+                blobName: urlInfo.blobName,
+                url: response.url || urlInfo.uploadUrl.split('?')[0] // Get the URL without query params
+              });
+            });
+            
+            uploadPromises.push(uploadPromise);
+          }
+        }
+        
+        // Upload files in parallel
+        console.log('Uploading files in parallel...');
+        await Promise.all(uploadPromises);
+        
+        // Step 3: Submit form data
+        console.log('Submitting form data...');
+        await axios.post('/api/upload/form', {
+          templateId,
+          formData
+        });
       }
-      
-      // Upload files in parallel
-      console.log('Uploading files in parallel...');
-      await Promise.all(uploadPromises);
-      
-      // Step 3: Submit form data
-      console.log('Submitting form data...');
-      await axios.post('/api/upload/form', {
-        templateId,
-        formData
-      });
       
       setGenerationStatus('processing');
       

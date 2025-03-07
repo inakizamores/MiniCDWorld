@@ -3,10 +3,18 @@ const express = require('express');
 const serverless = require('serverless-http');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
-const { put, createClient } = require('@vercel/blob');
+// Wrapped in try-catch to provide better error messages if module is missing
+let blobClient;
+try {
+  const { createClient } = require('@vercel/blob');
+  blobClient = createClient();
+  console.log('Vercel Blob client created successfully');
+} catch (error) {
+  console.error('Error initializing Vercel Blob client:', error);
+  // Continue without blobClient - we'll handle this in the endpoint
+}
 
 const app = express();
-const blobClient = createClient();
 
 // Enable CORS for all routes
 app.use((req, res, next) => {
@@ -33,7 +41,28 @@ const templateCache = {};
 // Endpoint to get pre-signed URLs for direct uploads
 app.post('/api/upload/prepare', async (req, res) => {
   try {
-    console.log('Prepare upload endpoint called');
+    console.log('Prepare upload endpoint called with body:', JSON.stringify(req.body));
+    
+    // Check if Vercel Blob client is available
+    if (!blobClient) {
+      console.error('Vercel Blob client not available - check BLOB_READ_WRITE_TOKEN environment variable');
+      // Fall back to simple upload without Blob storage
+      const templateId = uuidv4();
+      
+      // Initialize the template entry in the cache
+      templateCache[templateId] = {
+        status: 'preparing',
+        createdAt: Date.now(),
+        usingLegacyUpload: true
+      };
+      
+      return res.status(200).json({
+        success: true,
+        message: 'Vercel Blob not configured, falling back to legacy upload',
+        templateId: templateId,
+        fallbackMode: true
+      });
+    }
     
     // Get the file info from the request
     const { files } = req.body;
@@ -59,16 +88,22 @@ app.post('/api/upload/prepare', async (req, res) => {
       const fieldName = file.fieldName || 'file';
       const blobName = `${templateId}/${fieldName}-${Date.now()}${path.extname(name)}`;
       
+      console.log(`Generating pre-signed URL for ${fieldName} with type ${type}`);
+      
       // Create a pre-signed URL for direct upload
       const promise = blobClient.getUploadUrl(blobName, {
         contentType: type,
         access: 'public',
       }).then(urlData => {
+        console.log(`Generated upload URL for ${fieldName}: ${urlData.url.substring(0, 50)}...`);
         uploadUrls[fieldName] = {
           uploadUrl: urlData.url,
           pathname: urlData.pathname,
           blobName: blobName
         };
+      }).catch(error => {
+        console.error(`Error generating upload URL for ${fieldName}:`, error);
+        throw error; // Re-throw to be caught in Promise.all
       });
       
       filePromises.push(promise);
@@ -99,8 +134,9 @@ app.post('/api/upload/prepare', async (req, res) => {
     console.error('Error preparing upload:', error);
     return res.status(500).json({
       success: false,
-      message: 'Error preparing upload',
-      error: error.message
+      message: `Error preparing upload: ${error.message}`,
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
@@ -212,15 +248,42 @@ app.get('/api/upload/status/:templateId', (req, res) => {
 app.post('/api/upload', async (req, res) => {
   console.log('Legacy upload endpoint called');
   try {
-    // Generate a unique ID
-    const templateId = uuidv4();
+    // Check content type to determine how to handle the request
+    const contentType = req.headers['content-type'] || '';
     
-    // Return immediately with the ID
-    return res.status(200).json({
-      success: true,
-      message: 'Upload handling started - using legacy endpoint',
-      templateId: templateId
-    });
+    if (contentType.includes('multipart/form-data')) {
+      // This would require multer to handle the file upload
+      // But since this is a fallback for when Vercel Blob is not available
+      // We'll simply acknowledge the upload and let the generation process
+      // Use placeholder images or handle the error appropriately
+      
+      // Generate a unique ID
+      const templateId = req.body.templateId || uuidv4();
+      
+      // Store template information in cache
+      templateCache[templateId] = {
+        status: 'uploaded',
+        createdAt: Date.now(),
+        usingLegacyUpload: true,
+        text: req.body
+      };
+      
+      return res.status(200).json({
+        success: true,
+        message: 'Legacy upload handled in fallback mode',
+        templateId: templateId
+      });
+    } else {
+      // Generate a unique ID
+      const templateId = req.body.templateId || uuidv4();
+      
+      // Return immediately with the ID
+      return res.status(200).json({
+        success: true,
+        message: 'Upload handling started - using legacy endpoint',
+        templateId: templateId
+      });
+    }
   } catch (error) {
     console.error('Error in legacy upload endpoint:', error);
     return res.status(500).json({

@@ -73,6 +73,21 @@ app.post('/api/generate', async (req, res) => {
     // Get the template data
     const templateData = templateCache[templateId];
     
+    // Check if using legacy/fallback upload
+    if (templateData.usingLegacyUpload) {
+      console.log(`Template ${templateId} is using legacy upload, cannot generate PDF`);
+      
+      // Update status and return an error
+      templateCache[templateId].status = 'error';
+      templateCache[templateId].error = 'PDF generation not available in fallback mode';
+      
+      return res.status(400).json({
+        success: false,
+        message: 'PDF generation is not available in fallback mode.',
+        error: 'Vercel Blob storage not configured properly'
+      });
+    }
+    
     // Use blobUrls from templateCache for direct upload flow
     const imageUrls = templateData.blobUrls || {};
     
@@ -80,15 +95,29 @@ app.post('/api/generate', async (req, res) => {
     const pdfBuffer = await generatePDFTemplate(imageUrls, templateData.text, parseInt(perPage));
     
     // Upload PDF to Vercel Blob
-    const pdfBlobName = `${templateId}/cd_template.pdf`;
-    const pdfBlob = await put(pdfBlobName, pdfBuffer, {
-      contentType: 'application/pdf',
-      access: 'public'
-    });
-    
-    // Store the PDF URL in the cache
-    templateCache[templateId].pdfUrl = pdfBlob.url;
-    templateCache[templateId].status = 'completed';
+    try {
+      const pdfBlobName = `${templateId}/cd_template.pdf`;
+      const pdfBlob = await put(pdfBlobName, pdfBuffer, {
+        contentType: 'application/pdf',
+        access: 'public'
+      });
+      
+      // Store the PDF URL in the cache
+      templateCache[templateId].pdfUrl = pdfBlob.url;
+      templateCache[templateId].status = 'completed';
+    } catch (uploadError) {
+      console.error('Error uploading PDF to Vercel Blob:', uploadError);
+      
+      // Update status to indicate PDF is ready but not uploaded
+      templateCache[templateId].status = 'generated_locally';
+      templateCache[templateId].error = 'PDF generated but not uploaded to Blob storage';
+      
+      return res.status(500).json({
+        success: false,
+        message: 'PDF was generated but could not be stored due to Blob storage issues',
+        error: uploadError.message
+      });
+    }
 
     // Return success response
     return res.status(200).json({
@@ -100,9 +129,9 @@ app.post('/api/generate', async (req, res) => {
     console.error('Error generating PDF:', error);
     
     // Update template status to error
-    if (req.body.templateId && templateCache[req.body.templateId]) {
-      templateCache[req.body.templateId].status = 'error';
-      templateCache[req.body.templateId].error = error.message;
+    if (templateId && templateCache[templateId]) {
+      templateCache[templateId].status = 'error';
+      templateCache[templateId].error = error.message;
     }
     
     return res.status(500).json({
