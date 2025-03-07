@@ -5,6 +5,7 @@ const path = require('path');
 const PDFDocument = require('pdfkit');
 const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
+const { put, list, del, getByUrl } = require('@vercel/blob');
 
 const app = express();
 
@@ -25,10 +26,10 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// In-memory storage for template data (for the session)
+// Persistent storage for template metadata
 const templateCache = {};
 
-// Configure memory storage for uploads
+// Configure memory storage for uploads (temporary until moved to Blob)
 const storage = multer.memoryStorage();
 
 // File filter to accept only image files
@@ -95,21 +96,44 @@ app.post('/api/upload', upload.fields([
 
     // Generate a unique ID for this template
     const templateId = uuidv4();
-
-    // Store file buffers and form data in the cache
+    
+    // Upload each file to Vercel Blob storage
+    const blobPromises = [];
+    const blobUrls = {};
+    
+    for (const fieldName in req.files) {
+      const file = req.files[fieldName][0];
+      // Upload to Vercel Blob with a unique path
+      const blobName = `${templateId}/${fieldName}-${Date.now()}.${file.originalname.split('.').pop()}`;
+      const blob = put(blobName, file.buffer, {
+        contentType: file.mimetype,
+        access: 'public', // Make it publicly accessible
+      });
+      
+      blobPromises.push(
+        blob.then(result => {
+          blobUrls[fieldName] = result.url;
+        })
+      );
+    }
+    
+    // Wait for all blob uploads to complete
+    await Promise.all(blobPromises);
+    
+    // Store template metadata in the cache
     templateCache[templateId] = {
-      files: req.files,
+      blobUrls: blobUrls,
       text: req.body,
       status: 'uploaded',
       createdAt: Date.now()
     };
-
-    // Automatically clean up this template after 30 minutes
+    
+    // Automatically clean up metadata after 24 hours
     setTimeout(() => {
       if (templateCache[templateId]) {
         delete templateCache[templateId];
       }
-    }, 30 * 60 * 1000);
+    }, 24 * 60 * 60 * 1000);
 
     // Return success response with templateId
     return res.status(200).json({
@@ -147,10 +171,17 @@ app.post('/api/generate', async (req, res) => {
     const templateData = templateCache[templateId];
     
     // Generate PDF
-    const pdfBuffer = await generatePDFTemplate(templateData.files, templateData.text, parseInt(perPage));
+    const pdfBuffer = await generatePDFTemplate(templateData.blobUrls, templateData.text, parseInt(perPage));
     
-    // Store the PDF buffer in the cache
-    templateCache[templateId].pdfBuffer = pdfBuffer;
+    // Upload PDF to Vercel Blob
+    const pdfBlobName = `${templateId}/cd_template.pdf`;
+    const pdfBlob = await put(pdfBlobName, pdfBuffer, {
+      contentType: 'application/pdf',
+      access: 'public'
+    });
+    
+    // Store the PDF URL in the cache
+    templateCache[templateId].pdfUrl = pdfBlob.url;
     templateCache[templateId].status = 'completed';
 
     // Return success response
@@ -199,19 +230,15 @@ app.get('/api/download/:templateId', async (req, res) => {
   try {
     const { templateId } = req.params;
     
-    if (!templateCache[templateId] || !templateCache[templateId].pdfBuffer) {
+    if (!templateCache[templateId] || !templateCache[templateId].pdfUrl) {
       return res.status(404).json({
         success: false,
         message: 'PDF not found or not generated yet'
       });
     }
     
-    // Set response headers for PDF download
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=cd_template_${templateId}.pdf`);
-    
-    // Send the PDF buffer
-    res.send(templateCache[templateId].pdfBuffer);
+    // Redirect to the Blob URL for download
+    return res.redirect(templateCache[templateId].pdfUrl);
     
   } catch (error) {
     console.error('Error downloading PDF:', error);
@@ -225,12 +252,12 @@ app.get('/api/download/:templateId', async (req, res) => {
 
 /**
  * Generate a PDF template with the provided images and text
- * @param {Object} files - Object containing file buffers from multer
+ * @param {Object} imageUrls - Object containing Blob URLs for the uploaded images
  * @param {Object} text - Object containing text for album title, etc.
  * @param {Number} perPage - Number of CD templates per page (1-3)
  * @returns {Promise<Buffer>} - PDF content as a buffer
  */
-async function generatePDFTemplate(files, text, perPage = 1) {
+async function generatePDFTemplate(imageUrls, text, perPage = 1) {
   // Validate perPage value
   if (perPage < 1 || perPage > 3) {
     throw new Error('Number of CDs per page must be between 1 and 3');
@@ -266,7 +293,7 @@ async function generatePDFTemplate(files, text, perPage = 1) {
     const yPosition = yOffset + spacing + (i * (templateHeight + spacing));
     
     // Add template components
-    await addCDTemplate(doc, xPosition, yPosition, files, text);
+    await addCDTemplate(doc, xPosition, yPosition, imageUrls, text);
   }
 
   // Finalize the PDF
@@ -285,10 +312,10 @@ async function generatePDFTemplate(files, text, perPage = 1) {
  * @param {PDFDocument} doc - The PDF document
  * @param {Number} x - X position for the template
  * @param {Number} y - Y position for the template
- * @param {Object} files - Object containing file buffers
+ * @param {Object} imageUrls - Object containing Blob URLs for the images
  * @param {Object} text - Object containing text data
  */
-async function addCDTemplate(doc, x, y, files, text) {
+async function addCDTemplate(doc, x, y, imageUrls, text) {
   // Draw guidelines for the CD case
   doc.rect(x, y, CD_CASE.width, CD_CASE.height)
      .stroke('#cccccc');
@@ -296,23 +323,23 @@ async function addCDTemplate(doc, x, y, files, text) {
   // Process and place each image based on the template layout
   try {
     // Front cover outside
-    if (files.frontCoverOutside && files.frontCoverOutside.length > 0) {
-      await placeImageFromBuffer(doc, files.frontCoverOutside[0].buffer, x, y, CD_CASE.width / 2, CD_CASE.height / 2);
+    if (imageUrls.frontCoverOutside) {
+      await placeImageFromUrl(doc, imageUrls.frontCoverOutside, x, y, CD_CASE.width / 2, CD_CASE.height / 2);
     }
     
     // Front cover inside
-    if (files.frontCoverInside && files.frontCoverInside.length > 0) {
-      await placeImageFromBuffer(doc, files.frontCoverInside[0].buffer, x + CD_CASE.width / 2, y, CD_CASE.width / 2, CD_CASE.height / 2);
+    if (imageUrls.frontCoverInside) {
+      await placeImageFromUrl(doc, imageUrls.frontCoverInside, x + CD_CASE.width / 2, y, CD_CASE.width / 2, CD_CASE.height / 2);
     }
     
     // Back cover
-    if (files.backCover && files.backCover.length > 0) {
-      await placeImageFromBuffer(doc, files.backCover[0].buffer, x, y + CD_CASE.height / 2, CD_CASE.width / 2, CD_CASE.height / 2);
+    if (imageUrls.backCover) {
+      await placeImageFromUrl(doc, imageUrls.backCover, x, y + CD_CASE.height / 2, CD_CASE.width / 2, CD_CASE.height / 2);
     }
     
     // CD image
-    if (files.cdImage && files.cdImage.length > 0) {
-      await placeImageFromBuffer(doc, files.cdImage[0].buffer, x + CD_CASE.width / 2, y + CD_CASE.height / 2, CD_CASE.width / 2, CD_CASE.height / 2);
+    if (imageUrls.cdImage) {
+      await placeImageFromUrl(doc, imageUrls.cdImage, x + CD_CASE.width / 2, y + CD_CASE.height / 2, CD_CASE.width / 2, CD_CASE.height / 2);
     }
     
     // Add text elements
@@ -346,16 +373,25 @@ async function addCDTemplate(doc, x, y, files, text) {
 }
 
 /**
- * Place an image from buffer at the specified position in the document
+ * Place an image from URL at the specified position in the document
  * @param {PDFDocument} doc - The PDF document
- * @param {Buffer} imageBuffer - Image data as buffer
+ * @param {String} imageUrl - URL of the image in Vercel Blob storage
  * @param {Number} x - X position
  * @param {Number} y - Y position
  * @param {Number} width - Width to resize the image to
  * @param {Number} height - Height to resize the image to
  */
-async function placeImageFromBuffer(doc, imageBuffer, x, y, width, height) {
+async function placeImageFromUrl(doc, imageUrl, x, y, width, height) {
   try {
+    // Fetch the image from Blob storage
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.statusText}`);
+    }
+    
+    const buffer = await response.arrayBuffer();
+    const imageBuffer = Buffer.from(buffer);
+    
     // Resize and optimize the image using sharp
     const resizedImageBuffer = await sharp(imageBuffer)
       .resize({ width: Math.round(width), height: Math.round(height), fit: 'cover' })
@@ -364,7 +400,7 @@ async function placeImageFromBuffer(doc, imageBuffer, x, y, width, height) {
     // Add the image to the PDF
     doc.image(resizedImageBuffer, x, y, { width, height });
   } catch (error) {
-    console.error('Error processing image buffer:', error);
+    console.error('Error processing image URL:', error);
     // Draw a placeholder instead
     doc.rect(x, y, width, height)
        .fillAndStroke('#f0f0f0', '#cccccc');

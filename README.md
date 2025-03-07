@@ -24,6 +24,8 @@ MiniCDWorld is a web application that allows users to create custom CD case temp
 - Multer for file uploads (memory storage)
 - PDFKit for PDF generation
 - Sharp for image processing
+- Vercel Blob for file storage
+- Serverless functions for API endpoints
 
 ## Project Structure
 
@@ -52,13 +54,17 @@ The project is organized into two main directories:
    npm install
    ```
 
-3. Install backend dependencies:
+3. Set up environment variables:
+   - Copy `.env.local.example` to `.env.local`
+   - Add your Vercel Blob token to `.env.local`
+
+4. Install backend dependencies:
    ```
    cd backend
    npm install
    ```
 
-4. Install frontend dependencies:
+5. Install frontend dependencies:
    ```
    cd ../frontend
    npm install
@@ -85,6 +91,27 @@ The project is organized into two main directories:
 This application is designed to be deployed to Vercel using serverless functions. See the [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) file for detailed deployment instructions.
 
 ## Key Features Explained
+
+### Vercel Blob Storage
+
+The application uses Vercel Blob for storing uploaded images and generated PDFs. This provides several advantages:
+- Scalable storage solution for files
+- Improved performance and reliability
+- Better handling of larger files
+- Persistent storage across serverless function executions
+
+To use Vercel Blob:
+1. Create a Vercel account and set up a project
+2. Navigate to Storage → Blob in your Vercel dashboard
+3. Create a new Blob store
+4. Copy the BLOB_READ_WRITE_TOKEN to your environment variables
+
+### Serverless Architecture
+
+The application is built with a serverless architecture in mind:
+- API endpoints are implemented as serverless functions
+- Files are stored in Vercel Blob, not on the filesystem
+- State management is handled through Vercel Blob and client-side state
 
 ### In-Memory Processing
 
