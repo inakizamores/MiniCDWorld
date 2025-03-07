@@ -318,8 +318,20 @@ async function addCDTemplate(doc, x, y, imageUrls, text) {
  */
 async function placeImageFromUrl(doc, imageUrl, x, y, width, height) {
   try {
+    console.log(`Processing image: ${imageUrl.substring(0, 50)}...`);
+    
+    // Set fetch timeout to prevent hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
     // Fetch the image from Blob storage
-    const response = await fetch(imageUrl);
+    const response = await fetch(imageUrl, { 
+      signal: controller.signal,
+      timeout: 10000 
+    });
+    
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
       throw new Error(`Failed to fetch image: ${response.statusText}`);
     }
@@ -327,13 +339,25 @@ async function placeImageFromUrl(doc, imageUrl, x, y, width, height) {
     const buffer = await response.arrayBuffer();
     const imageBuffer = Buffer.from(buffer);
     
-    // Resize and optimize the image using sharp
+    console.log(`Image downloaded, size: ${buffer.byteLength} bytes. Resizing...`);
+    
+    // Resize and optimize the image using sharp with a smaller target size
+    // Use a more efficient compression and resize settings
     const resizedImageBuffer = await sharp(imageBuffer)
-      .resize({ width: Math.round(width), height: Math.round(height), fit: 'cover' })
+      .resize({ 
+        width: Math.round(width), 
+        height: Math.round(height), 
+        fit: 'cover',
+        withoutEnlargement: true // Don't enlarge small images
+      })
+      .jpeg({ quality: 80, progressive: true }) // Use JPEG with reasonable quality
       .toBuffer();
+    
+    console.log(`Image resized, new size: ${resizedImageBuffer.byteLength} bytes`);
     
     // Add the image to the PDF
     doc.image(resizedImageBuffer, x, y, { width, height });
+    console.log(`Image added to PDF at position (${x}, ${y})`);
   } catch (error) {
     console.error('Error processing image URL:', error);
     // Draw a placeholder instead

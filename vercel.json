@@ -5,11 +5,11 @@
   "framework": "create-react-app",
   "functions": {
     "api/index.js": {
-      "memory": 1024,
-      "maxDuration": 10
+      "memory": 2048,
+      "maxDuration": 60
     },
     "api/upload.js": {
-      "memory": 1024,
+      "memory": 2048,
       "maxDuration": 60
     }
   },

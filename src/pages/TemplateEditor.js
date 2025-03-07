@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Dropzone from 'react-dropzone';
+import imageCompression from 'browser-image-compression';
 
 function TemplateEditor({ setTemplateId, setGenerationStatus }) {
   const navigate = useNavigate();
@@ -34,22 +35,45 @@ function TemplateEditor({ setTemplateId, setGenerationStatus }) {
     });
   };
   
-  const handleImageDrop = (acceptedFiles, fieldName) => {
+  const handleImageDrop = async (acceptedFiles, fieldName) => {
     if (acceptedFiles && acceptedFiles.length > 0) {
-      const file = acceptedFiles[0];
-      
-      // Create preview URL
-      const previewUrl = URL.createObjectURL(file);
-      setPreviews({
-        ...previews,
-        [fieldName]: previewUrl
-      });
-      
-      // Store file
-      setImages({
-        ...images,
-        [fieldName]: file
-      });
+      try {
+        const file = acceptedFiles[0];
+        
+        // Create preview URL
+        const previewUrl = URL.createObjectURL(file);
+        setPreviews({
+          ...previews,
+          [fieldName]: previewUrl
+        });
+        
+        // Compress image before storing it
+        console.log(`Compressing image ${file.name} (${Math.round(file.size / 1024)} KB)...`);
+        
+        const options = {
+          maxSizeMB: 1,              // Max file size in MB
+          maxWidthOrHeight: 1024,    // Max width/height
+          useWebWorker: true,        // Use web worker for compression
+          fileType: file.type
+        };
+        
+        const compressedFile = await imageCompression(file, options);
+        console.log(`Compressed to ${Math.round(compressedFile.size / 1024)} KB`);
+        
+        // Store compressed file
+        setImages({
+          ...images,
+          [fieldName]: compressedFile
+        });
+      } catch (error) {
+        console.error(`Error processing image: ${error.message}`);
+        // Still store the original if compression fails
+        const file = acceptedFiles[0];
+        setImages({
+          ...images,
+          [fieldName]: file
+        });
+      }
     }
   };
   
@@ -72,6 +96,13 @@ function TemplateEditor({ setTemplateId, setGenerationStatus }) {
       setIsUploading(true);
       setGenerationStatus('preparing');
       
+      // Log image sizes for debugging
+      for (const [fieldName, file] of Object.entries(images)) {
+        if (file) {
+          console.log(`${fieldName}: ${file.name}, ${Math.round(file.size / 1024)} KB`);
+        }
+      }
+      
       // Step 1: Prepare upload by getting pre-signed URLs
       console.log('Preparing upload...');
       
@@ -82,112 +113,134 @@ function TemplateEditor({ setTemplateId, setGenerationStatus }) {
           fileInfoArray.push({
             name: file.name,
             type: file.type,
-            fieldName
+            fieldName,
+            size: file.size
           });
         }
       }
       
       // Get pre-signed URLs for direct upload
-      const prepareResponse = await axios.post('/api/upload/prepare', {
-        files: fileInfoArray
-      }, { timeout: 30000 }); // Increased timeout for this request
-      
-      const { templateId, uploadUrls, fallbackMode } = prepareResponse.data;
-      console.log('Received template ID', templateId, fallbackMode ? '(in fallback mode)' : 'with upload URLs');
-      
-      // Set the template ID right away
-      setTemplateId(templateId);
-      setGenerationStatus('uploading');
-      
-      if (fallbackMode) {
-        // Use legacy upload method if in fallback mode
-        console.log('Using legacy upload method due to fallback mode');
-        
-        // Create a form data object for the legacy upload
-        const formDataObj = new FormData();
-        
-        // Add files to the form data
-        for (const [fieldName, file] of Object.entries(images)) {
-          if (file) {
-            formDataObj.append(fieldName, file);
-          }
-        }
-        
-        // Add form data fields
-        for (const [key, value] of Object.entries(formData)) {
-          formDataObj.append(key, value);
-        }
-        
-        // Submit the form data to the legacy upload endpoint
-        await axios.post('/api/upload', formDataObj, {
+      try {
+        const prepareResponse = await axios.post('/api/upload/prepare', {
+          files: fileInfoArray
+        }, { 
+          timeout: 60000, // Increased timeout for this request
           headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          timeout: 60000 // 60 second timeout for the legacy upload
+            'Content-Type': 'application/json'
+          }
         });
         
-      } else {
-        // Step 2: Upload files directly to Vercel Blob using pre-signed URLs
-        console.log('Starting direct uploads...');
-        const uploadPromises = [];
+        const { templateId, uploadUrls, fallbackMode } = prepareResponse.data;
+        console.log('Received template ID', templateId, fallbackMode ? '(in fallback mode)' : 'with upload URLs');
         
-        for (const [fieldName, file] of Object.entries(images)) {
-          if (file && uploadUrls[fieldName]) {
-            const urlInfo = uploadUrls[fieldName];
-            
-            // Upload directly to Vercel Blob
-            const uploadPromise = fetch(urlInfo.uploadUrl, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': file.type,
-              },
-              body: file
-            }).then(async (response) => {
-              if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Direct upload failed: ${errorText}`);
-              }
-              
-              // Notify backend of completed upload
-              return axios.post('/api/upload/complete', {
-                templateId,
-                fieldName,
-                blobName: urlInfo.blobName,
-                url: response.url || urlInfo.uploadUrl.split('?')[0] // Get the URL without query params
-              });
-            });
-            
-            uploadPromises.push(uploadPromise);
+        // Set the template ID right away
+        setTemplateId(templateId);
+        setGenerationStatus('uploading');
+        
+        if (fallbackMode) {
+          // Use legacy upload method if in fallback mode
+          console.log('Using legacy upload method due to fallback mode');
+          
+          // Create a form data object for the legacy upload
+          const formDataObj = new FormData();
+          
+          // Add files to the form data
+          for (const [fieldName, file] of Object.entries(images)) {
+            if (file) {
+              formDataObj.append(fieldName, file);
+            }
           }
+          
+          // Add form data fields
+          for (const [key, value] of Object.entries(formData)) {
+            formDataObj.append(key, value);
+          }
+          
+          // Submit the form data to the legacy upload endpoint
+          await axios.post('/api/upload', formDataObj, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            },
+            timeout: 60000 // 60 second timeout for the legacy upload
+          });
+          
+        } else {
+          // Step 2: Upload files directly to Vercel Blob using pre-signed URLs
+          console.log('Starting direct uploads...');
+          const uploadPromises = [];
+          
+          for (const [fieldName, file] of Object.entries(images)) {
+            if (file && uploadUrls[fieldName]) {
+              const urlInfo = uploadUrls[fieldName];
+              
+              console.log(`Starting upload for ${fieldName}, size: ${Math.round(file.size / 1024)} KB`);
+              
+              // Upload directly to Vercel Blob
+              const uploadPromise = fetch(urlInfo.uploadUrl, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': file.type,
+                },
+                body: file
+              }).then(async (response) => {
+                if (!response.ok) {
+                  const errorText = await response.text();
+                  throw new Error(`Direct upload failed: ${errorText}`);
+                }
+                
+                console.log(`Completed upload for ${fieldName}`);
+                
+                // Notify backend of completed upload
+                return axios.post('/api/upload/complete', {
+                  templateId,
+                  fieldName,
+                  blobName: urlInfo.blobName,
+                  url: response.url || urlInfo.uploadUrl.split('?')[0] // Get the URL without query params
+                });
+              });
+              
+              uploadPromises.push(uploadPromise);
+            }
+          }
+          
+          // Upload files in parallel
+          console.log('Uploading files in parallel...');
+          await Promise.all(uploadPromises);
+          
+          // Step 3: Submit form data
+          console.log('Submitting form data...');
+          await axios.post('/api/upload/form', {
+            templateId,
+            formData
+          });
         }
         
-        // Upload files in parallel
-        console.log('Uploading files in parallel...');
-        await Promise.all(uploadPromises);
+        setGenerationStatus('processing');
         
-        // Step 3: Submit form data
-        console.log('Submitting form data...');
-        await axios.post('/api/upload/form', {
-          templateId,
-          formData
-        });
+        // Step 4: Generate PDF
+        console.log('Starting PDF generation...');
+        setGenerationStatus('generating');
+        
+        try {
+          const generateResponse = await axios.post('/api/generate', {
+            templateId,
+            perPage: formData.perPage
+          }, { timeout: 60000 }); // Increased timeout for PDF generation
+          
+          setGenerationStatus('completed');
+          
+          // Navigate to the result page
+          navigate('/result');
+        } catch (generateError) {
+          console.error('Error during PDF generation:', generateError);
+          setUploadError(`Error generating PDF: ${generateError.message}. ${generateError.response?.data?.message || ''}`);
+          setGenerationStatus('error');
+        }
+      } catch (prepareError) {
+        console.error('Error during prepare step:', prepareError);
+        setUploadError(`Error preparing upload: ${prepareError.message}. ${prepareError.response?.data?.message || ''}`);
+        setGenerationStatus('error');
       }
-      
-      setGenerationStatus('processing');
-      
-      // Step 4: Generate PDF
-      console.log('Starting PDF generation...');
-      setGenerationStatus('generating');
-      const generateResponse = await axios.post('/api/generate', {
-        templateId,
-        perPage: formData.perPage
-      });
-      
-      setGenerationStatus('completed');
-      
-      // Navigate to the result page
-      navigate('/result');
-      
     } catch (error) {
       console.error('Error processing template:', error);
       setUploadError(error.response?.data?.message || error.message || 'An error occurred while processing your request.');
