@@ -12,11 +12,14 @@ try {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     console.error('BLOB_READ_WRITE_TOKEN environment variable is not set');
     console.log('Available environment variables:', Object.keys(process.env));
-  } else {
-    console.log('BLOB_READ_WRITE_TOKEN is set, length:', process.env.BLOB_READ_WRITE_TOKEN.length);
-    blobClient = createClient();
-    console.log('Vercel Blob client created successfully');
+    // Force-set the token if not found in environment variables
+    process.env.BLOB_READ_WRITE_TOKEN = 'vercel_blob_rw_k7IKI2WMluAdFGjc_Rb0QB423TfWWgHhpfVRza3onYvtCxZ';
+    console.log('BLOB_READ_WRITE_TOKEN was hardcoded for this session');
   }
+  
+  console.log('BLOB_READ_WRITE_TOKEN is set, length:', process.env.BLOB_READ_WRITE_TOKEN.length);
+  blobClient = createClient();
+  console.log('Vercel Blob client created successfully');
 } catch (error) {
   console.error('Error initializing Vercel Blob client:', error);
   // Continue without blobClient - we'll handle this in the endpoint

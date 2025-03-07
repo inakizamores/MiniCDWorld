@@ -4,6 +4,17 @@ const path = require('path');
 const PDFDocument = require('pdfkit');
 const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
+
+// Ensure BLOB_READ_WRITE_TOKEN is set
+if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  console.error('BLOB_READ_WRITE_TOKEN environment variable is not set in index.js');
+  // Force-set the token if not found in environment variables
+  process.env.BLOB_READ_WRITE_TOKEN = 'vercel_blob_rw_k7IKI2WMluAdFGjc_Rb0QB423TfWWgHhpfVRza3onYvtCxZ';
+  console.log('BLOB_READ_WRITE_TOKEN was hardcoded for this session in index.js');
+} else {
+  console.log('BLOB_READ_WRITE_TOKEN is set in index.js, length:', process.env.BLOB_READ_WRITE_TOKEN.length);
+}
+
 const { put, get, del } = require('@vercel/blob');
 
 const app = express();
