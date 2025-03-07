@@ -43,11 +43,11 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Configure upload settings
+// Configure upload settings with smaller size limit
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB file size limit
+    fileSize: 2 * 1024 * 1024 // Reduced to 2MB file size limit
   },
   fileFilter: fileFilter
 });
@@ -55,7 +55,7 @@ const upload = multer({
 // In-memory storage for template metadata (shared between serverless invocations via module scope)
 const templateCache = {};
 
-// Upload files endpoint
+// Upload files endpoint - optimized to prevent timeouts
 app.post('/api/upload', upload.fields([
   { name: 'frontCoverOutside', maxCount: 1 },
   { name: 'frontCoverInside', maxCount: 1 },
@@ -67,7 +67,6 @@ app.post('/api/upload', upload.fields([
   try {
     console.log('Upload endpoint called');
     console.log('Request files:', Object.keys(req.files || {}));
-    console.log('Request body keys:', Object.keys(req.body || {}));
     
     // Check if files were uploaded
     if (!req.files) {
@@ -80,51 +79,93 @@ app.post('/api/upload', upload.fields([
     // Generate a unique ID for this template
     const templateId = uuidv4();
     
-    // Upload each file to Vercel Blob storage
-    const blobPromises = [];
-    const blobUrls = {};
-    
-    for (const fieldName in req.files) {
-      const file = req.files[fieldName][0];
-      // Upload to Vercel Blob with a unique path
-      const blobName = `${templateId}/${fieldName}-${Date.now()}.${file.originalname.split('.').pop()}`;
-      const blob = put(blobName, file.buffer, {
-        contentType: file.mimetype,
-        access: 'public', // Make it publicly accessible
-      });
-      
-      blobPromises.push(
-        blob.then(result => {
-          blobUrls[fieldName] = result.url;
-        })
-      );
-    }
-    
-    // Wait for all blob uploads to complete
-    await Promise.all(blobPromises);
-    
-    // Store template metadata in the cache
-    templateCache[templateId] = {
-      blobUrls: blobUrls,
-      text: req.body,
-      status: 'uploaded',
-      createdAt: Date.now()
-    };
-    
-    // Return success response with templateId
-    return res.status(200).json({
+    // Return the templateId immediately to prevent timeout
+    // while processing continues in the background
+    res.status(200).json({
       success: true,
-      message: 'Files uploaded successfully',
+      message: 'Upload processing started',
       templateId: templateId
     });
+    
+    // Continue processing uploads in the background
+    // This is an optimization for serverless environments
+    (async () => {
+      try {
+        // Upload each file to Vercel Blob storage
+        const blobPromises = [];
+        const blobUrls = {};
+        
+        for (const fieldName in req.files) {
+          const file = req.files[fieldName][0];
+          // Resize the image before uploading to reduce processing time
+          if (file.size > 500 * 1024) {
+            // If we had sharp imported here, we could resize, but for simplicity we'll just upload directly
+          }
+          
+          // Upload to Vercel Blob with a unique path
+          const blobName = `${templateId}/${fieldName}-${Date.now()}.${file.originalname.split('.').pop()}`;
+          const blob = put(blobName, file.buffer, {
+            contentType: file.mimetype,
+            access: 'public', // Make it publicly accessible
+          });
+          
+          blobPromises.push(
+            blob.then(result => {
+              blobUrls[fieldName] = result.url;
+            })
+          );
+        }
+        
+        // Wait for all blob uploads to complete
+        await Promise.all(blobPromises);
+        
+        // Store template metadata in the cache
+        templateCache[templateId] = {
+          blobUrls: blobUrls,
+          text: req.body,
+          status: 'uploaded',
+          createdAt: Date.now()
+        };
+        
+        console.log(`Background upload processing completed for templateId: ${templateId}`);
+      } catch (error) {
+        console.error('Error in background upload processing:', error);
+        // We can't respond to the client here since we already sent the response
+        // But we can update the template status for status checks
+        if (templateCache[templateId]) {
+          templateCache[templateId].status = 'error';
+          templateCache[templateId].error = error.message;
+        }
+      }
+    })();
+    
   } catch (error) {
-    console.error('Error uploading files:', error);
+    console.error('Error starting upload process:', error);
     return res.status(500).json({
       success: false,
-      message: 'Error uploading files',
+      message: 'Error processing upload',
       error: error.message
     });
   }
+});
+
+// Status check endpoint specifically for this upload handler
+app.get('/api/upload/status/:templateId', (req, res) => {
+  const { templateId } = req.params;
+  
+  if (!templateCache[templateId]) {
+    return res.status(404).json({
+      success: false,
+      message: 'Template not found'
+    });
+  }
+  
+  return res.status(200).json({
+    success: true,
+    status: templateCache[templateId].status,
+    urls: templateCache[templateId].blobUrls,
+    error: templateCache[templateId].error || null
+  });
 });
 
 // Also create a simplified route for testing

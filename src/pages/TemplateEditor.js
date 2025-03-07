@@ -85,24 +85,64 @@ function TemplateEditor({ setTemplateId, setGenerationStatus }) {
     
     try {
       setIsUploading(true);
+      setGenerationStatus('uploading');
       
       // Step 1: Upload files
+      console.log('Starting file upload...');
       const uploadResponse = await axios.post('/api/upload', uploadData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        timeout: 60000 // 60 second timeout
       });
       
       const { templateId } = uploadResponse.data;
+      console.log('Received template ID:', templateId);
       
-      // Step 2: Generate PDF
+      // Set the template ID right away
+      setTemplateId(templateId);
+      
+      // Step 2: Poll for upload completion
+      setGenerationStatus('processing');
+      console.log('Polling for upload status...');
+      
+      let uploadComplete = false;
+      let retryCount = 0;
+      const maxRetries = 30; // Maximum number of status check retries
+      
+      while (!uploadComplete && retryCount < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds between polls
+        
+        try {
+          const statusResponse = await axios.get(`/api/upload/status/${templateId}`);
+          console.log('Status check:', statusResponse.data);
+          
+          if (statusResponse.data.status === 'uploaded') {
+            uploadComplete = true;
+          } else if (statusResponse.data.status === 'error') {
+            throw new Error(statusResponse.data.error || 'Error uploading files');
+          }
+          
+          retryCount++;
+        } catch (statusError) {
+          console.error('Error checking upload status:', statusError);
+          retryCount++;
+          // Continue polling even if there's an error checking status
+        }
+      }
+      
+      if (!uploadComplete) {
+        throw new Error('Upload process timed out. Please try again.');
+      }
+      
+      // Step 3: Generate PDF
+      console.log('Starting PDF generation...');
+      setGenerationStatus('generating');
       const generateResponse = await axios.post('/api/generate', {
         templateId,
         perPage: formData.perPage
       });
       
-      // Set the template ID for the result page
-      setTemplateId(templateId);
       setGenerationStatus('completed');
       
       // Navigate to the result page
@@ -110,7 +150,7 @@ function TemplateEditor({ setTemplateId, setGenerationStatus }) {
       
     } catch (error) {
       console.error('Error processing template:', error);
-      setUploadError(error.response?.data?.message || 'An error occurred while processing your request.');
+      setUploadError(error.response?.data?.message || error.message || 'An error occurred while processing your request.');
       setGenerationStatus('error');
     } finally {
       setIsUploading(false);

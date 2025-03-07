@@ -5,13 +5,20 @@
   "framework": "create-react-app",
   "functions": {
     "api/index.js": {
-      "memory": 1024
+      "memory": 1024,
+      "maxDuration": 10
     },
     "api/upload.js": {
-      "memory": 1024
+      "memory": 1024,
+      "maxDuration": 60
     }
   },
   "routes": [
+    {
+      "src": "/api/upload/status/(.*)",
+      "methods": ["GET", "OPTIONS"],
+      "dest": "/api/upload.js"
+    },
     {
       "src": "/api/upload",
       "methods": ["POST", "OPTIONS"],
