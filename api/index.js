@@ -10,8 +10,6 @@ const app = express();
 
 // Enable CORS for all routes
 app.use((req, res, next) => {
-  console.log(`[Main API] Received ${req.method} request to ${req.url}`);
-  
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -20,7 +18,7 @@ app.use((req, res, next) => {
   
   // Handle preflight OPTIONS requests immediately
   if (req.method === 'OPTIONS') {
-    console.log('[Main API] Handling OPTIONS request');
+    console.log('Handling OPTIONS request');
     return res.status(200).end();
   }
   
@@ -29,7 +27,9 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// Initialize or access shared template cache
+// Shared in-memory storage for template metadata (NOTE: in production, use a real database)
+// This will be shared between the upload.js file and other endpoints
+// WARNING: This is just for demonstration, in production use a proper database!
 const templateCache = global.templateCache || {};
 global.templateCache = templateCache;
 
@@ -55,30 +55,19 @@ app.get('/api', (req, res) => {
   });
 });
 
-// Redirect any upload requests that come here
-app.post('/api/upload', (req, res) => {
-  console.log('[Main API] Received upload request, redirecting to dedicated endpoint');
-  res.setHeader('Location', '/api/upload');
-  res.status(307).send('Redirecting to dedicated upload endpoint');
-});
-
 // Generate PDF endpoint
 app.post('/api/generate', async (req, res) => {
   try {
-    console.log('[Main API] Processing generate request');
     const { templateId, perPage = 1 } = req.body;
 
     // Check if template exists
     if (!templateCache[templateId]) {
-      console.log(`[Main API] Template not found: ${templateId}`);
       return res.status(404).json({
         success: false,
         message: 'Template not found'
       });
     }
 
-    console.log(`[Main API] Generating PDF for template: ${templateId}`);
-    
     // Update template status
     templateCache[templateId].status = 'generating';
 
@@ -90,8 +79,6 @@ app.post('/api/generate', async (req, res) => {
     
     // Upload PDF to Vercel Blob
     const pdfBlobName = `${templateId}/cd_template.pdf`;
-    console.log(`[Main API] Uploading PDF to Blob storage: ${pdfBlobName}`);
-    
     const pdfBlob = await put(pdfBlobName, pdfBuffer, {
       contentType: 'application/pdf',
       access: 'public'
@@ -101,8 +88,6 @@ app.post('/api/generate', async (req, res) => {
     templateCache[templateId].pdfUrl = pdfBlob.url;
     templateCache[templateId].status = 'completed';
 
-    console.log(`[Main API] PDF generated and uploaded: ${pdfBlob.url}`);
-
     // Return success response
     return res.status(200).json({
       success: true,
@@ -110,7 +95,7 @@ app.post('/api/generate', async (req, res) => {
       pdfUrl: `/api/download/${templateId}`
     });
   } catch (error) {
-    console.error('[Main API] Error generating PDF:', error);
+    console.error('Error generating PDF:', error);
     
     // Update template status to error
     if (req.body.templateId && templateCache[req.body.templateId]) {
@@ -131,14 +116,12 @@ app.get('/api/status/:templateId', (req, res) => {
   const { templateId } = req.params;
   
   if (!templateCache[templateId]) {
-    console.log(`[Main API] Status check for non-existent template: ${templateId}`);
     return res.status(404).json({
       success: false,
       message: 'Template not found'
     });
   }
   
-  console.log(`[Main API] Status check for template ${templateId}: ${templateCache[templateId].status}`);
   return res.status(200).json({
     success: true,
     status: templateCache[templateId].status,
@@ -152,31 +135,23 @@ app.get('/api/download/:templateId', async (req, res) => {
     const { templateId } = req.params;
     
     if (!templateCache[templateId] || !templateCache[templateId].pdfUrl) {
-      console.log(`[Main API] Download attempt for non-existent PDF: ${templateId}`);
       return res.status(404).json({
         success: false,
         message: 'PDF not found or not generated yet'
       });
     }
     
-    console.log(`[Main API] Redirecting to PDF download: ${templateCache[templateId].pdfUrl}`);
     // Redirect to the Blob URL for download
     return res.redirect(templateCache[templateId].pdfUrl);
     
   } catch (error) {
-    console.error('[Main API] Error downloading PDF:', error);
+    console.error('Error downloading PDF:', error);
     return res.status(500).json({
       success: false,
       message: 'Error downloading PDF',
       error: error.message
     });
   }
-});
-
-// Catch-all route
-app.all('*', (req, res) => {
-  console.log(`[Main API] Received unhandled ${req.method} request to ${req.url}`);
-  res.status(200).json({ message: 'API received request', path: req.path });
 });
 
 /**
@@ -296,7 +271,7 @@ async function addCDTemplate(doc, x, y, imageUrls, text) {
          .text(text.additionalText, x + 10, y + 70, { width: CD_CASE.width - 20 });
     }
   } catch (error) {
-    console.error('[Main API] Error adding template components:', error);
+    console.error('Error adding template components:', error);
     throw error;
   }
 }
@@ -329,7 +304,7 @@ async function placeImageFromUrl(doc, imageUrl, x, y, width, height) {
     // Add the image to the PDF
     doc.image(resizedImageBuffer, x, y, { width, height });
   } catch (error) {
-    console.error('[Main API] Error processing image URL:', error);
+    console.error('Error processing image URL:', error);
     // Draw a placeholder instead
     doc.rect(x, y, width, height)
        .fillAndStroke('#f0f0f0', '#cccccc');
