@@ -209,48 +209,64 @@ async function generatePDFTemplate(imageUrls, text, perPage = 1) {
     throw new Error('Number of CDs per page must be between 1 and 3');
   }
 
+  console.log('Starting PDF generation with', Object.keys(imageUrls).length, 'images');
+  
   // Create a new PDF document
   const doc = new PDFDocument({
     size: 'A4',
-    margins: { top: 36, left: 36, right: 36, bottom: 36 }
+    margins: { top: 36, left: 36, right: 36, bottom: 36 },
+    bufferPages: true
   });
 
   // Create a buffer to store the PDF
   const chunks = [];
   doc.on('data', (chunk) => chunks.push(chunk));
 
-  // Process each requested template per page
-  const templatesPerPage = Math.min(perPage, 3);
+  try {
+    // Process each requested template per page
+    const templatesPerPage = Math.min(perPage, 3);
 
-  // Calculate spacing and position for templates
-  const availableWidth = PAGE_WIDTH - 72; // 72 points margin (36 on each side)
-  const availableHeight = PAGE_HEIGHT - 72; // 72 points margin (36 on each side)
-  
-  let yOffset = 36; // Start from top margin
-  
-  // Add each template to the page
-  for (let i = 0; i < templatesPerPage; i++) {
-    // Position the template centered horizontally
-    const xPosition = (PAGE_WIDTH - CD_CASE.width) / 2;
+    // Calculate spacing and position for templates
+    const availableWidth = PAGE_WIDTH - 72; // 72 points margin (36 on each side)
+    const availableHeight = PAGE_HEIGHT - 72; // 72 points margin (36 on each side)
     
-    // Calculate vertical position based on template number
-    const templateHeight = CD_CASE.height;
-    const spacing = (availableHeight - (templateHeight * templatesPerPage)) / (templatesPerPage + 1);
-    const yPosition = yOffset + spacing + (i * (templateHeight + spacing));
+    // Add page instructions
+    doc.font('Helvetica')
+       .fontSize(10)
+       .text('CD Template - Cut along the outlines', 36, 18, { align: 'center' });
     
-    // Add template components
-    await addCDTemplate(doc, xPosition, yPosition, imageUrls, text);
-  }
+    for (let i = 0; i < templatesPerPage; i++) {
+      // Position the template centered horizontally
+      const xPosition = (PAGE_WIDTH - CD_CASE.width) / 2;
+      
+      // Calculate vertical position based on template number
+      const templateHeight = CD_CASE.height;
+      const spacing = (availableHeight - (templateHeight * templatesPerPage)) / (templatesPerPage + 1);
+      const yPosition = 36 + spacing + (i * (templateHeight + spacing));
+      
+      console.log(`Adding template ${i+1} at position (${xPosition}, ${yPosition})`);
+      
+      // Add template components
+      await addCDTemplate(doc, xPosition, yPosition, imageUrls, text);
+    }
 
-  // Finalize the PDF
-  doc.end();
+    // Finalize the PDF
+    doc.end();
 
-  // Return a Promise that resolves with the PDF buffer
-  return new Promise((resolve) => {
-    doc.on('end', () => {
-      resolve(Buffer.concat(chunks));
+    // Return a Promise that resolves with the PDF buffer
+    return new Promise((resolve) => {
+      doc.on('end', () => {
+        const pdfBuffer = Buffer.concat(chunks);
+        console.log(`PDF generation completed, size: ${pdfBuffer.length} bytes`);
+        resolve(pdfBuffer);
+      });
     });
-  });
+  } catch (error) {
+    // Handle errors during PDF generation
+    console.error('Error in PDF generation:', error);
+    doc.end(); // Make sure to end the document even on error
+    throw error;
+  }
 }
 
 /**
@@ -262,59 +278,149 @@ async function generatePDFTemplate(imageUrls, text, perPage = 1) {
  * @param {Object} text - Object containing text data
  */
 async function addCDTemplate(doc, x, y, imageUrls, text) {
-  // Draw guidelines for the CD case
-  doc.rect(x, y, CD_CASE.width, CD_CASE.height)
-     .stroke('#cccccc');
-  
-  // Process and place each image based on the template layout
   try {
-    // Front cover outside
+    // Draw guidelines for the CD case
+    doc.rect(x, y, CD_CASE.width, CD_CASE.height)
+       .lineWidth(0.5)
+       .dash(3, { space: 2 })
+       .stroke('#333333');
+    
+    // Reset dash pattern
+    doc.undash();
+    
+    // Draw dividing lines for quadrants
+    doc.moveTo(x + CD_CASE.width / 2, y)
+       .lineTo(x + CD_CASE.width / 2, y + CD_CASE.height)
+       .moveTo(x, y + CD_CASE.height / 2)
+       .lineTo(x + CD_CASE.width, y + CD_CASE.height / 2)
+       .lineWidth(0.25)
+       .dash(1, { space: 1 })
+       .stroke('#999999');
+    
+    // Reset dash pattern again
+    doc.undash();
+    
+    // Process and place each image based on the template layout
+    const quadrantWidth = CD_CASE.width / 2;
+    const quadrantHeight = CD_CASE.height / 2;
+    
+    // Draw labels for each quadrant
+    doc.font('Helvetica')
+       .fontSize(6)
+       .fillColor('#999999');
+    
+    doc.text('Front Cover Outside', x + 2, y + 2, { width: quadrantWidth - 4 });
+    doc.text('Front Cover Inside', x + quadrantWidth + 2, y + 2, { width: quadrantWidth - 4 });
+    doc.text('Back Cover', x + 2, y + quadrantHeight + 2, { width: quadrantWidth - 4 });
+    doc.text('CD Label', x + quadrantWidth + 2, y + quadrantHeight + 2, { width: quadrantWidth - 4 });
+    
+    // Place each image with error handling
+    const placementPromises = [];
+    
+    // Front cover outside (top-left)
     if (imageUrls.frontCoverOutside) {
-      await placeImageFromUrl(doc, imageUrls.frontCoverOutside, x, y, CD_CASE.width / 2, CD_CASE.height / 2);
+      placementPromises.push(
+        placeImageFromUrl(doc, imageUrls.frontCoverOutside, x + 2, y + 10, quadrantWidth - 4, quadrantHeight - 12)
+      );
     }
     
-    // Front cover inside
+    // Front cover inside (top-right)
     if (imageUrls.frontCoverInside) {
-      await placeImageFromUrl(doc, imageUrls.frontCoverInside, x + CD_CASE.width / 2, y, CD_CASE.width / 2, CD_CASE.height / 2);
+      placementPromises.push(
+        placeImageFromUrl(doc, imageUrls.frontCoverInside, x + quadrantWidth + 2, y + 10, quadrantWidth - 4, quadrantHeight - 12)
+      );
     }
     
-    // Back cover
+    // Back cover (bottom-left)
     if (imageUrls.backCover) {
-      await placeImageFromUrl(doc, imageUrls.backCover, x, y + CD_CASE.height / 2, CD_CASE.width / 2, CD_CASE.height / 2);
+      placementPromises.push(
+        placeImageFromUrl(doc, imageUrls.backCover, x + 2, y + quadrantHeight + 10, quadrantWidth - 4, quadrantHeight - 12)
+      );
     }
     
-    // CD image
+    // CD image (bottom-right)
     if (imageUrls.cdImage) {
-      await placeImageFromUrl(doc, imageUrls.cdImage, x + CD_CASE.width / 2, y + CD_CASE.height / 2, CD_CASE.width / 2, CD_CASE.height / 2);
+      placementPromises.push(
+        placeImageFromUrl(doc, imageUrls.cdImage, x + quadrantWidth + 2, y + quadrantHeight + 10, quadrantWidth - 4, quadrantHeight - 12)
+      );
     }
     
-    // Add text elements
-    if (text.albumTitle) {
+    // Wait for all image placements to complete
+    await Promise.all(placementPromises);
+    
+    // Add text elements in a more prominent way
+    if (text && text.albumTitle) {
+      // Save current graphics state
+      doc.save();
+      
+      // Transparent overlay for text background
+      doc.rect(x + 10, y + CD_CASE.height - 80, CD_CASE.width - 20, 70)
+         .fillOpacity(0.7)
+         .fill('#ffffff');
+      
+      // Reset opacity for text
+      doc.fillOpacity(1);
+      
+      // Album title
       doc.font('Helvetica-Bold')
          .fontSize(12)
-         .text(text.albumTitle, x + 10, y + 10, { width: CD_CASE.width - 20 });
-    }
-    
-    if (text.artistName) {
-      doc.font('Helvetica')
-         .fontSize(10)
-         .text(text.artistName, x + 10, y + 30, { width: CD_CASE.width - 20 });
-    }
-    
-    if (text.designerInfo) {
-      doc.font('Helvetica')
-         .fontSize(8)
-         .text(`Design: ${text.designerInfo}`, x + 10, y + 50, { width: CD_CASE.width - 20 });
-    }
-    
-    if (text.additionalText) {
-      doc.font('Helvetica')
-         .fontSize(8)
-         .text(text.additionalText, x + 10, y + 70, { width: CD_CASE.width - 20 });
+         .fillColor('#000000')
+         .text(text.albumTitle || '', x + 15, y + CD_CASE.height - 75, { 
+           width: CD_CASE.width - 30,
+           align: 'center'
+         });
+      
+      // Artist name
+      if (text.artistName) {
+        doc.font('Helvetica')
+           .fontSize(10)
+           .fillColor('#333333')
+           .text(text.artistName, x + 15, y + CD_CASE.height - 55, { 
+             width: CD_CASE.width - 30,
+             align: 'center'
+           });
+      }
+      
+      // Designer info
+      if (text.designerInfo) {
+        doc.font('Helvetica')
+           .fontSize(8)
+           .fillColor('#666666')
+           .text(`Design: ${text.designerInfo}`, x + 15, y + CD_CASE.height - 35, { 
+             width: CD_CASE.width - 30,
+             align: 'center'
+           });
+      }
+      
+      // Additional text
+      if (text.additionalText) {
+        doc.font('Helvetica')
+           .fontSize(8)
+           .fillColor('#666666')
+           .text(text.additionalText, x + 15, y + CD_CASE.height - 20, { 
+             width: CD_CASE.width - 30,
+             align: 'center'
+           });
+      }
+      
+      // Restore graphics state
+      doc.restore();
     }
   } catch (error) {
     console.error('Error adding template components:', error);
-    throw error;
+    // Don't throw the error, just log it and continue
+    // This prevents one template issue from breaking the entire PDF
+    
+    // Add error indication to the template
+    doc.rect(x, y, CD_CASE.width, CD_CASE.height)
+       .fillAndStroke('#ffeeee', '#ff6666');
+    doc.font('Helvetica-Bold')
+       .fontSize(12)
+       .fillColor('#cc0000')
+       .text('Error creating template', x + 20, y + CD_CASE.height / 2 - 10, {
+         width: CD_CASE.width - 40,
+         align: 'center'
+       });
   }
 }
 
@@ -328,57 +434,110 @@ async function addCDTemplate(doc, x, y, imageUrls, text) {
  * @param {Number} height - Height to resize the image to
  */
 async function placeImageFromUrl(doc, imageUrl, x, y, width, height) {
+  if (!imageUrl) {
+    // Draw a placeholder for missing image
+    drawPlaceholder(doc, x, y, width, height, 'No Image');
+    return;
+  }
+  
   try {
-    console.log(`Processing image: ${imageUrl.substring(0, 50)}...`);
+    console.log(`Processing image: ${imageUrl ? imageUrl.substring(0, 50) + '...' : 'undefined'}`);
     
     // Set fetch timeout to prevent hanging
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
     
     // Fetch the image from Blob storage
     const response = await fetch(imageUrl, { 
       signal: controller.signal,
-      timeout: 10000 
+      headers: { 'Cache-Control': 'no-cache' } // Prevent caching issues
     });
     
     clearTimeout(timeoutId);
     
     if (!response.ok) {
-      throw new Error(`Failed to fetch image: ${response.statusText}`);
+      throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
     }
     
-    const buffer = await response.arrayBuffer();
-    const imageBuffer = Buffer.from(buffer);
+    const arrayBuffer = await response.arrayBuffer();
     
-    console.log(`Image downloaded, size: ${buffer.byteLength} bytes. Resizing...`);
+    if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+      throw new Error('Received empty image data');
+    }
     
-    // Resize and optimize the image using sharp with a smaller target size
-    // Use a more efficient compression and resize settings
-    const resizedImageBuffer = await sharp(imageBuffer)
-      .resize({ 
-        width: Math.round(width), 
-        height: Math.round(height), 
-        fit: 'cover',
-        withoutEnlargement: true // Don't enlarge small images
-      })
-      .jpeg({ quality: 80, progressive: true }) // Use JPEG with reasonable quality
-      .toBuffer();
+    const imageBuffer = Buffer.from(arrayBuffer);
     
-    console.log(`Image resized, new size: ${resizedImageBuffer.byteLength} bytes`);
-    
-    // Add the image to the PDF
-    doc.image(resizedImageBuffer, x, y, { width, height });
-    console.log(`Image added to PDF at position (${x}, ${y})`);
+    console.log(`Image downloaded, size: ${imageBuffer.length} bytes.`);
+
+    try {
+      // Process with sharp for better reliability
+      const resizedImageBuffer = await sharp(imageBuffer)
+        .resize({ 
+          width: Math.round(width), 
+          height: Math.round(height), 
+          fit: 'contain',
+          background: { r: 255, g: 255, b: 255, alpha: 0 }
+        })
+        .toFormat('jpeg')
+        .toBuffer();
+      
+      // Add the image to the PDF
+      doc.image(resizedImageBuffer, x, y, { 
+        width: width, 
+        height: height,
+        align: 'center',
+        valign: 'center'
+      });
+      
+      console.log(`Image added to PDF at position (${x}, ${y})`);
+    } catch (sharpError) {
+      console.error('Error processing image with sharp:', sharpError);
+      
+      // Fallback: try using PDFKit directly if sharp fails
+      try {
+        doc.image(imageBuffer, x, y, { width, height });
+        console.log('Image added using PDFKit fallback');
+      } catch (pdfkitError) {
+        console.error('PDFKit fallback also failed:', pdfkitError);
+        throw pdfkitError;
+      }
+    }
   } catch (error) {
     console.error('Error processing image URL:', error);
-    // Draw a placeholder instead
-    doc.rect(x, y, width, height)
-       .fillAndStroke('#f0f0f0', '#cccccc');
-    doc.font('Helvetica')
-       .fontSize(8)
-       .fillColor('#999999')
-       .text('Image Error', x + width/2 - 20, y + height/2 - 5);
+    
+    // Draw a placeholder for the failed image
+    drawPlaceholder(doc, x, y, width, height, 'Image Error');
   }
+}
+
+/**
+ * Draw a placeholder rectangle for missing or error images
+ * @param {PDFDocument} doc - The PDF document
+ * @param {Number} x - X position
+ * @param {Number} y - Y position
+ * @param {Number} width - Width of placeholder
+ * @param {Number} height - Height of placeholder
+ * @param {String} message - Message to display in placeholder
+ */
+function drawPlaceholder(doc, x, y, width, height, message) {
+  // Save current graphics state
+  doc.save();
+  
+  // Draw placeholder rectangle
+  doc.rect(x, y, width, height)
+     .fillAndStroke('#f0f0f0', '#cccccc');
+  
+  // Add placeholder text
+  doc.font('Helvetica')
+     .fontSize(10)
+     .fillColor('#999999')
+     .text(message, x, y + height/2 - 5, {
+       width: width,
+       align: 'center'
+     });
+  
+  // Restore graphics state
+  doc.restore();
 }
 
 // Export the server as a serverless function
