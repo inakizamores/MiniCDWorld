@@ -1,23 +1,24 @@
 const express = require('express');
 const serverless = require('serverless-http');
-const multer = require('multer');
 const path = require('path');
 const PDFDocument = require('pdfkit');
 const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
-const { put, list, del, getByUrl } = require('@vercel/blob');
+const { put, get, del } = require('@vercel/blob');
 
 const app = express();
 
 // Enable CORS for all routes
 app.use((req, res, next) => {
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Accept,Authorization');
   res.setHeader('Access-Control-Allow-Credentials', true);
   
-  // Handle preflight requests
+  // Handle preflight OPTIONS requests immediately
   if (req.method === 'OPTIONS') {
+    console.log('Handling OPTIONS request');
     return res.status(200).end();
   }
   
@@ -26,33 +27,11 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// Persistent storage for template metadata
-const templateCache = {};
-
-// Configure memory storage for uploads (temporary until moved to Blob)
-const storage = multer.memoryStorage();
-
-// File filter to accept only image files
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
-
-  if (extname && mimetype) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only image files are allowed (jpeg, jpg, png, gif)'));
-  }
-};
-
-// Configure upload settings
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB file size limit
-  },
-  fileFilter: fileFilter
-});
+// Shared in-memory storage for template metadata (NOTE: in production, use a real database)
+// This will be shared between the upload.js file and other endpoints
+// WARNING: This is just for demonstration, in production use a proper database!
+const templateCache = global.templateCache || {};
+global.templateCache = templateCache;
 
 // PDF constants
 const PAGE_WIDTH = 595.28;
@@ -74,81 +53,6 @@ app.get('/api', (req, res) => {
       download: '/api/download/:templateId'
     }
   });
-});
-
-// Upload files endpoint
-app.post('/api/upload', upload.fields([
-  { name: 'frontCoverOutside', maxCount: 1 },
-  { name: 'frontCoverInside', maxCount: 1 },
-  { name: 'backCover', maxCount: 1 },
-  { name: 'cdImage', maxCount: 1 },
-  { name: 'additionalImage1', maxCount: 1 },
-  { name: 'additionalImage2', maxCount: 1 }
-]), async (req, res) => {
-  try {
-    // Check if files were uploaded
-    if (!req.files) {
-      return res.status(400).json({
-        success: false,
-        message: 'No files were uploaded'
-      });
-    }
-
-    // Generate a unique ID for this template
-    const templateId = uuidv4();
-    
-    // Upload each file to Vercel Blob storage
-    const blobPromises = [];
-    const blobUrls = {};
-    
-    for (const fieldName in req.files) {
-      const file = req.files[fieldName][0];
-      // Upload to Vercel Blob with a unique path
-      const blobName = `${templateId}/${fieldName}-${Date.now()}.${file.originalname.split('.').pop()}`;
-      const blob = put(blobName, file.buffer, {
-        contentType: file.mimetype,
-        access: 'public', // Make it publicly accessible
-      });
-      
-      blobPromises.push(
-        blob.then(result => {
-          blobUrls[fieldName] = result.url;
-        })
-      );
-    }
-    
-    // Wait for all blob uploads to complete
-    await Promise.all(blobPromises);
-    
-    // Store template metadata in the cache
-    templateCache[templateId] = {
-      blobUrls: blobUrls,
-      text: req.body,
-      status: 'uploaded',
-      createdAt: Date.now()
-    };
-    
-    // Automatically clean up metadata after 24 hours
-    setTimeout(() => {
-      if (templateCache[templateId]) {
-        delete templateCache[templateId];
-      }
-    }, 24 * 60 * 60 * 1000);
-
-    // Return success response with templateId
-    return res.status(200).json({
-      success: true,
-      message: 'Files uploaded successfully',
-      templateId: templateId
-    });
-  } catch (error) {
-    console.error('Error uploading files:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Error uploading files',
-      error: error.message
-    });
-  }
 });
 
 // Generate PDF endpoint
