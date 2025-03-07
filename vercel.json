@@ -6,16 +6,20 @@
   "functions": {
     "api/index.js": {
       "memory": 1024
+    },
+    "api/upload.js": {
+      "memory": 1024
     }
   },
   "rewrites": [
+    { "source": "/api/upload", "destination": "/api/upload.js" },
     { "source": "/api/(.*)", "destination": "/api/index.js" }
   ],
   "routes": [
     {
       "src": "/api/upload",
       "methods": ["POST", "OPTIONS"],
-      "dest": "/api/index.js"
+      "dest": "/api/upload.js"
     },
     {
       "src": "/api/generate",

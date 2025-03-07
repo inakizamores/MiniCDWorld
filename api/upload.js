@@ -10,6 +10,8 @@ const app = express();
 
 // Enable CORS for all routes
 app.use((req, res, next) => {
+  console.log(`[Upload API] Received ${req.method} request to ${req.url}`);
+  
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -18,7 +20,7 @@ app.use((req, res, next) => {
   
   // Handle preflight OPTIONS requests immediately
   if (req.method === 'OPTIONS') {
-    console.log('Handling OPTIONS request for upload endpoint');
+    console.log('[Upload API] Handling OPTIONS request');
     return res.status(200).end();
   }
   
@@ -54,9 +56,10 @@ const upload = multer({
 
 // In-memory storage for template metadata (shared between serverless invocations via module scope)
 const templateCache = {};
+global.templateCache = templateCache;
 
-// Upload files endpoint
-app.post('/api/upload', upload.fields([
+// Custom route for the root path (which will match /api/upload)
+app.post('/', upload.fields([
   { name: 'frontCoverOutside', maxCount: 1 },
   { name: 'frontCoverInside', maxCount: 1 },
   { name: 'backCover', maxCount: 1 },
@@ -65,15 +68,18 @@ app.post('/api/upload', upload.fields([
   { name: 'additionalImage2', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    console.log('Upload endpoint called');
+    console.log('[Upload API] Processing upload request');
     
     // Check if files were uploaded
     if (!req.files) {
+      console.log('[Upload API] No files in request');
       return res.status(400).json({
         success: false,
         message: 'No files were uploaded'
       });
     }
+
+    console.log(`[Upload API] Received ${Object.keys(req.files).length} file types`);
 
     // Generate a unique ID for this template
     const templateId = uuidv4();
@@ -86,6 +92,8 @@ app.post('/api/upload', upload.fields([
       const file = req.files[fieldName][0];
       // Upload to Vercel Blob with a unique path
       const blobName = `${templateId}/${fieldName}-${Date.now()}.${file.originalname.split('.').pop()}`;
+      console.log(`[Upload API] Uploading ${fieldName} to Blob storage: ${blobName}`);
+      
       const blob = put(blobName, file.buffer, {
         contentType: file.mimetype,
         access: 'public', // Make it publicly accessible
@@ -100,6 +108,7 @@ app.post('/api/upload', upload.fields([
     
     // Wait for all blob uploads to complete
     await Promise.all(blobPromises);
+    console.log('[Upload API] All files uploaded to Blob storage');
     
     // Store template metadata in the cache
     templateCache[templateId] = {
@@ -109,6 +118,8 @@ app.post('/api/upload', upload.fields([
       createdAt: Date.now()
     };
     
+    console.log(`[Upload API] Template metadata stored with ID: ${templateId}`);
+    
     // Return success response with templateId
     return res.status(200).json({
       success: true,
@@ -116,7 +127,7 @@ app.post('/api/upload', upload.fields([
       templateId: templateId
     });
   } catch (error) {
-    console.error('Error uploading files:', error);
+    console.error('[Upload API] Error uploading files:', error);
     return res.status(500).json({
       success: false,
       message: 'Error uploading files',
@@ -126,8 +137,14 @@ app.post('/api/upload', upload.fields([
 });
 
 // This route is to test if the service is running
-app.get('/api/upload', (req, res) => {
+app.get('/', (req, res) => {
   res.status(200).json({ message: 'Upload API is running' });
+});
+
+// Fallback for any other request method
+app.all('*', (req, res) => {
+  console.log(`[Upload API] Received unhandled ${req.method} request`);
+  res.status(200).json({ message: 'Upload API received request' });
 });
 
 // Export the server as a serverless function
