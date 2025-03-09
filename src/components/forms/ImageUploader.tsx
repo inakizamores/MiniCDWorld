@@ -1,5 +1,5 @@
 import React from 'react'
-import { FaCloudUploadAlt, FaSpinner, FaTimesCircle } from 'react-icons/fa'
+import { FaCloudUploadAlt, FaSpinner, FaTimesCircle, FaAsterisk } from 'react-icons/fa'
 import useImageUpload from '@hooks/useImageUpload'
 
 interface ImageUploaderProps {
@@ -9,6 +9,7 @@ interface ImageUploaderProps {
   onImageSelected: (file: File) => void;
   previewImage?: string | null;
   onRemove?: () => void;
+  required?: boolean;
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -17,7 +18,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   dimensions,
   onImageSelected,
   previewImage,
-  onRemove
+  onRemove,
+  required = false
 }) => {
   const { getRootProps, getInputProps, isDragActive, error, isLoading } = useImageUpload({
     onImageSelected
@@ -30,6 +32,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     <div className="card h-full image-uploader">
       <h3 className="text-lg font-bold mb-2 flex items-center">
         {title}
+        {required && (
+          <span className="ml-1 text-red-500">
+            <FaAsterisk className="text-xs" />
+          </span>
+        )}
         <span className="ml-2 text-xs font-normal text-secondary-500 px-2 py-1 bg-secondary-100 rounded-full">
           {dimensions}
         </span>
@@ -39,7 +46,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 min-h-[200px] ${
-            isDragActive ? 'border-primary-500 bg-primary-50 scale-[1.02]' : 'border-secondary-300 hover:border-primary-400 hover:bg-primary-50/30'
+            isDragActive ? 'border-primary-500 bg-primary-50 scale-[1.02]' : 
+            required && !previewImage ? 'border-red-300 hover:border-primary-400 hover:bg-primary-50/30' : 
+            'border-secondary-300 hover:border-primary-400 hover:bg-primary-50/30'
           }`}
         >
           <input {...getInputProps()} />
@@ -49,8 +58,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               <FaSpinner className="text-3xl text-primary-500 animate-spin" />
             </div>
           ) : (
-            <div className="bg-primary-100 rounded-full w-14 h-14 flex items-center justify-center mb-4">
-              <FaCloudUploadAlt className="text-3xl text-primary-500" />
+            <div className={`${required && !previewImage ? 'bg-red-100' : 'bg-primary-100'} rounded-full w-14 h-14 flex items-center justify-center mb-4`}>
+              <FaCloudUploadAlt className={`text-3xl ${required && !previewImage ? 'text-red-500' : 'text-primary-500'}`} />
             </div>
           )}
           
@@ -59,6 +68,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           </p>
           <p className="text-center text-secondary-500 text-sm">or click to browse files</p>
           <p className="text-center text-sm text-secondary-500 mt-2 max-w-xs mx-auto">{description}</p>
+          
+          {required && !previewImage && (
+            <p className="mt-3 text-sm text-red-600 font-medium">Required</p>
+          )}
           
           {error && (
             <div className="mt-3 text-sm text-red-600 bg-red-50 px-3 py-2 rounded border border-red-100 w-full">

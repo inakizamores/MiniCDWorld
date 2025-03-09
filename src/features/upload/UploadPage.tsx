@@ -37,7 +37,10 @@ const UploadPage: React.FC = () => {
       images.frenteAfuera?.croppedImage &&
       images.frenteDentro?.croppedImage &&
       images.disco?.croppedImage &&
-      images.traseraAfuera.main?.croppedImage
+      images.traseraAfuera.main?.croppedImage &&
+      images.traseraAfuera.side?.croppedImage &&
+      images.traseraDentro.main?.croppedImage &&
+      images.traseraDentro.side?.croppedImage
     ) {
       dispatch(nextStep())
       navigate('/preview')
@@ -48,7 +51,10 @@ const UploadPage: React.FC = () => {
     images.frenteAfuera?.croppedImage &&
     images.frenteDentro?.croppedImage &&
     images.disco?.croppedImage &&
-    images.traseraAfuera.main?.croppedImage
+    images.traseraAfuera.main?.croppedImage &&
+    images.traseraAfuera.side?.croppedImage &&
+    images.traseraDentro.main?.croppedImage &&
+    images.traseraDentro.side?.croppedImage
   
   // Section component for better organization
   const Section = ({ title, children }: { title: string, children: React.ReactNode }) => (
@@ -68,7 +74,7 @@ const UploadPage: React.FC = () => {
         <h1 className="text-3xl font-bold mb-4">Upload CD Artwork</h1>
         <p className="text-secondary-600 max-w-2xl mx-auto">
           Upload and crop your images for each part of the CD template.
-          Images will be automatically resized to match the required dimensions.
+          <span className="text-red-600 font-semibold"> All images are required.</span>
         </p>
       </div>
       
@@ -81,6 +87,7 @@ const UploadPage: React.FC = () => {
           aspectRatio={ASPECT_RATIOS.FRENTE}
           currentImage={images.frenteAfuera}
           onImageSave={(image) => dispatch(setFrenteAfuera(image))}
+          required={true}
         />
         
         <ImageUploadSection
@@ -90,6 +97,7 @@ const UploadPage: React.FC = () => {
           aspectRatio={ASPECT_RATIOS.FRENTE}
           currentImage={images.frenteDentro}
           onImageSave={(image) => dispatch(setFrenteDentro(image))}
+          required={true}
         />
       </Section>
       
@@ -102,15 +110,17 @@ const UploadPage: React.FC = () => {
           aspectRatio={ASPECT_RATIOS.TRASERA_MAIN}
           currentImage={images.traseraAfuera.main}
           onImageSave={(image) => dispatch(setTraseraAfueraMain(image))}
+          required={true}
         />
         
         <ImageUploadSection
           title="Back Cover (Outside Side)"
-          description="The side part of the back cover (optional)."
+          description="The side part of the back cover."
           dimensions={`${DIMENSIONS.TRASERA_AFUERA.side.width}mm × ${DIMENSIONS.TRASERA_AFUERA.side.height}mm`}
           aspectRatio={ASPECT_RATIOS.TRASERA_SIDE}
           currentImage={images.traseraAfuera.side}
           onImageSave={(image) => dispatch(setTraseraAfueraSide(image))}
+          required={true}
         />
       </Section>
       
@@ -118,20 +128,22 @@ const UploadPage: React.FC = () => {
       <Section title="Inside Components">
         <ImageUploadSection
           title="Back Cover (Inside Main)"
-          description="The main part of the inside back cover (optional)."
+          description="The main part of the inside back cover."
           dimensions={`${DIMENSIONS.TRASERA_DENTRO.main.width}mm × ${DIMENSIONS.TRASERA_DENTRO.main.height}mm`}
           aspectRatio={ASPECT_RATIOS.TRASERA_MAIN}
           currentImage={images.traseraDentro.main}
           onImageSave={(image) => dispatch(setTraseraDentroMain(image))}
+          required={true}
         />
         
         <ImageUploadSection
           title="Back Cover (Inside Side)"
-          description="The side part of the inside back cover (optional)."
+          description="The side part of the inside back cover."
           dimensions={`${DIMENSIONS.TRASERA_DENTRO.side.width}mm × ${DIMENSIONS.TRASERA_DENTRO.side.height}mm`}
           aspectRatio={ASPECT_RATIOS.TRASERA_SIDE}
           currentImage={images.traseraDentro.side}
           onImageSave={(image) => dispatch(setTraseraDentroSide(image))}
+          required={true}
         />
       </Section>
       
@@ -144,6 +156,7 @@ const UploadPage: React.FC = () => {
           aspectRatio={ASPECT_RATIOS.DISCO}
           currentImage={images.disco}
           onImageSave={(image) => dispatch(setDisco(image))}
+          required={true}
         />
       </Section>
       
@@ -160,7 +173,7 @@ const UploadPage: React.FC = () => {
           onClick={handleContinue}
           disabled={!hasRequiredImages}
         >
-          {!hasRequiredImages ? 'Upload Required Images' : 'Continue to Preview'}
+          {!hasRequiredImages ? 'Upload All Required Images' : 'Continue to Preview'}
         </button>
       </div>
     </div>
