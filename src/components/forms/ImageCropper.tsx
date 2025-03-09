@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Cropper from 'react-cropper'
 import 'cropperjs/dist/cropper.css'
 import { FaCheck, FaTimes, FaSync } from 'react-icons/fa'
@@ -26,6 +26,19 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
 }) => {
   const cropperRef = useRef<CropperElement>(null)
   const [isCropping, setIsCropping] = useState(false)
+  
+  // Add effect to prevent body scrolling while cropper is open
+  useEffect(() => {
+    // Save original overflow setting
+    const originalOverflow = document.body.style.overflow;
+    // Prevent scrolling
+    document.body.style.overflow = 'hidden';
+    
+    // Restore original overflow on component unmount
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
 
   const getCropData = () => {
     if (!cropperRef.current || !cropperRef.current.cropper) {
@@ -60,7 +73,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-secondary-900/80">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80">
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold">Crop Image</h3>
