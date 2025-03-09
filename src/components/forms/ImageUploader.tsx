@@ -25,9 +25,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   // Check if this is a narrow image based on dimensions (like 4mm × 38mm)
   const isNarrowImage = dimensions.includes('4mm × 38mm')
+  const isDisc = dimensions.includes('diameter')
 
   return (
-    <div className="card h-full image-uploader">
+    <div className="card h-full image-uploader flex flex-col">
       <h3 className="text-lg font-bold mb-2 flex items-center">
         {title}
         <span className="ml-2 text-xs font-normal text-secondary-500 px-2 py-1 bg-secondary-100 rounded-full">
@@ -38,7 +39,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       {!previewImage ? (
         <div
           {...getRootProps()}
-          className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 min-h-[200px] ${
+          className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 flex-grow min-h-[200px] ${
             isDragActive ? 'border-primary-500 bg-primary-50 scale-[1.02]' : 'border-secondary-300 hover:border-primary-400 hover:bg-primary-50/30'
           }`}
         >
@@ -67,26 +68,39 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           )}
         </div>
       ) : (
-        <div className="relative image-preview">
-          {isNarrowImage ? (
-            // For narrow images - limit height and center horizontally
-            <div className="flex justify-center">
+        <div className="relative image-preview flex-grow flex flex-col justify-center">
+          <div className={`overflow-hidden rounded-lg flex justify-center items-center h-auto ${
+            isDisc ? 'p-4' : ''
+          }`}>
+            {isDisc ? (
+              // Special handling for disc images - circular display
+              <div className="relative max-w-full" style={{ maxHeight: '250px' }}>
+                <div className="rounded-full overflow-hidden" style={{ aspectRatio: '1/1' }}>
+                  <img
+                    src={previewImage}
+                    alt={`Preview for ${title}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full bg-black" 
+                  style={{ width: '15%', height: '15%' }}>
+                </div>
+              </div>
+            ) : (
+              // For all other images - preserve aspect ratio with max height
               <img
                 src={previewImage}
                 alt={`Preview for ${title}`}
-                className="rounded-lg object-contain"
-                style={{ maxHeight: '200px', width: 'auto' }}
+                className={`rounded-lg object-contain max-w-full ${
+                  isNarrowImage ? 'max-h-[180px] w-auto' : 'max-h-[220px]'
+                }`}
+                style={{ 
+                  width: isNarrowImage ? 'auto' : '100%',
+                  objectFit: 'contain'
+                }}
               />
-            </div>
-          ) : (
-            // For normal images - standard display
-            <img
-              src={previewImage}
-              alt={`Preview for ${title}`}
-              className="w-full h-auto rounded-lg object-cover"
-              style={{ maxHeight: '300px' }}
-            />
-          )}
+            )}
+          </div>
           
           {onRemove && (
             <button
@@ -99,8 +113,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             </button>
           )}
           
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 rounded-b-lg">
-            <p className="text-white text-sm font-medium truncate">{title}</p>
+          <div className="mt-2 px-2 py-1 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded text-sm font-medium text-center">
+            {title}
           </div>
         </div>
       )}
