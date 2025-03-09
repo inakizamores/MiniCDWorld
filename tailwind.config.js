@@ -37,6 +37,38 @@ export default {
       fontFamily: {
         'sans': ['Inter', 'sans-serif'],
       },
+      animation: {
+        'fade-in': 'fadeIn 1s ease-in-out',
+        'fade-in-up': 'fadeInUp 0.8s ease-out',
+        'pulse-slow': 'pulse 4s infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+      boxShadow: {
+        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.06)',
+        'card': '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+      },
+      borderRadius: {
+        'xl': '1rem',
+        '2xl': '1.5rem',
+      },
+    },
+    container: {
+      center: true,
+      padding: {
+        DEFAULT: '1rem',
+        sm: '2rem',
+        lg: '4rem',
+        xl: '5rem',
+      },
     },
   },
   plugins: [],
