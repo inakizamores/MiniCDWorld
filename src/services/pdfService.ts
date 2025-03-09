@@ -41,24 +41,13 @@ class PDFService {
     radius: number,
     filled: boolean = false
   ) {
-    const pts = []
-    const steps = 100 // More steps means smoother circle
-    
-    for (let theta = 0; theta < 2 * Math.PI; theta += (2 * Math.PI) / steps) {
-      const xPos = x + radius * Math.cos(theta)
-      const yPos = y + radius * Math.sin(theta)
-      pts.push(xPos, yPos)
-    }
-    
-    // Add the first point again to close the path
-    pts.push(pts[0], pts[1])
-    
+    // Use built-in jsPDF circle method instead of polygon
     if (filled) {
       doc.setFillColor(0, 0, 0)
-      doc.polygon(pts, 'F')
+      doc.circle(x, y, radius, 'F')
     } else {
       doc.setDrawColor(0, 0, 0)
-      doc.polygon(pts, 'S')
+      doc.circle(x, y, radius, 'S')
     }
   }
 
