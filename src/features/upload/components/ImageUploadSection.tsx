@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import ImageUploader from '@components/forms/ImageUploader'
 import ImageCropper from '@components/forms/ImageCropper'
 import { ImageSection } from '@features/template/templateSlice'
+import { ASPECT_RATIOS } from '@constants/dimensions'
 
 interface ImageUploadSectionProps {
   title: string;
@@ -22,6 +23,9 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isCropping, setIsCropping] = useState<boolean>(false)
+  
+  // Detect if this is the CD disc component
+  const isDiscComponent = aspectRatio === ASPECT_RATIOS.DISCO && title.toLowerCase().includes('disc');
   
   const handleImageSelected = (file: File) => {
     setSelectedFile(file)
@@ -77,6 +81,7 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
           aspectRatio={aspectRatio}
           onCropComplete={handleCropComplete}
           onCancel={handleCancelCrop}
+          isDiscCropper={isDiscComponent}
         />
       )}
     </div>

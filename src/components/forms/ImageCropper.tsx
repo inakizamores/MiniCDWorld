@@ -3,12 +3,23 @@ import ReactDOM from 'react-dom'
 import Cropper from 'react-cropper'
 import 'cropperjs/dist/cropper.css'
 import { FaCheck, FaTimes, FaSync } from 'react-icons/fa'
+import { DIMENSIONS } from '@constants/dimensions'
 
 // Add type definition for the Cropper instance
 interface CropperElement extends HTMLImageElement {
   cropper: {
     getCroppedCanvas: (options?: any) => HTMLCanvasElement;
     reset: () => void;
+    getContainerData: () => {
+      width: number;
+      height: number;
+    };
+    getCropBoxData: () => {
+      left: number;
+      top: number;
+      width: number;
+      height: number;
+    };
   }
 }
 
@@ -17,16 +28,19 @@ interface ImageCropperProps {
   aspectRatio: number;
   onCropComplete: (croppedImage: string) => void;
   onCancel: () => void;
+  isDiscCropper?: boolean;
 }
 
 const ImageCropper: React.FC<ImageCropperProps> = ({
   imageUrl,
   aspectRatio,
   onCropComplete,
-  onCancel
+  onCancel,
+  isDiscCropper = false
 }) => {
   const cropperRef = useRef<CropperElement>(null)
   const [isCropping, setIsCropping] = useState(false)
+  const [cropperReady, setCropperReady] = useState(false)
   
   // Add effect to prevent body scrolling while cropper is open
   useEffect(() => {
@@ -99,6 +113,66 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
       cropperRef.current.cropper.reset()
     }
   }
+  
+  // Disc guides component to show circular outline and center hole
+  const DiscGuides = () => {
+    if (!cropperRef.current || !cropperRef.current.cropper || !cropperReady) {
+      return null;
+    }
+    
+    try {
+      const cropBoxData = cropperRef.current.cropper.getCropBoxData();
+      const { width, height } = cropBoxData;
+      
+      // Only show guides if crop box has dimensions
+      if (!width || !height) return null;
+      
+      const circleSize = Math.min(width, height);
+      const circleRadius = circleSize / 2;
+      const centerX = circleRadius;
+      const centerY = circleRadius;
+      
+      // Calculate the center hole size proportionally to the main circle
+      const holeSizeRatio = DIMENSIONS.DISCO.holeSize / DIMENSIONS.DISCO.diameter;
+      const holeRadius = circleRadius * holeSizeRatio;
+      
+      return (
+        <div 
+          className="absolute z-10 pointer-events-none" 
+          style={{
+            left: cropBoxData.left,
+            top: cropBoxData.top,
+            width: circleSize,
+            height: circleSize,
+          }}
+        >
+          {/* Circular outline guide */}
+          <div 
+            className="absolute w-full h-full rounded-full border-2 border-primary-500 border-dashed opacity-80"
+          />
+          
+          {/* Center hole guide */}
+          <div 
+            className="absolute rounded-full border-2 border-primary-500 border-dashed opacity-80"
+            style={{
+              left: centerX - holeRadius,
+              top: centerY - holeRadius,
+              width: holeRadius * 2,
+              height: holeRadius * 2,
+            }}
+          />
+          
+          {/* Helpful text */}
+          <div className="absolute -top-8 left-0 w-full text-center text-xs text-primary-700 bg-white/80 py-1 px-2 rounded-md">
+            Align your image with the circular guides
+          </div>
+        </div>
+      );
+    } catch (error) {
+      console.error("Error rendering disc guides:", error);
+      return null;
+    }
+  };
 
   // Create crop modal content
   const cropperModal = (
@@ -106,7 +180,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold">Crop Image</h3>
+          <h3 className="text-xl font-bold">{isDiscCropper ? "Crop CD Disc Image" : "Crop Image"}</h3>
           <button 
             onClick={onCancel}
             className="text-secondary-500 hover:text-secondary-700"
@@ -116,7 +190,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           </button>
         </div>
         
-        <div className="flex-grow overflow-hidden" style={{ maxHeight: '60vh' }}>
+        <div className="flex-grow overflow-hidden relative" style={{ maxHeight: '60vh' }}>
           <Cropper
             src={imageUrl}
             style={{ height: '100%', width: '100%', maxHeight: '60vh' }}
@@ -131,7 +205,18 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
             background={false}
             autoCropArea={1}
             checkCrossOrigin={false}
+            ready={() => setCropperReady(true)}
           />
+          
+          {isDiscCropper && <DiscGuides />}
+          
+          {isDiscCropper && (
+            <div className="absolute bottom-4 left-0 right-0 text-center">
+              <div className="bg-primary-50 inline-block py-2 px-4 rounded-md text-xs text-primary-800 border border-primary-200">
+                <span className="font-bold">Note:</span> The CD will be circular with a center hole, even though the crop area is square
+              </div>
+            </div>
+          )}
         </div>
         
         <div className="flex justify-between mt-4 pt-4 border-t border-secondary-200">
