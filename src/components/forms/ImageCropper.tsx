@@ -41,6 +41,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   const cropperRef = useRef<CropperElement>(null)
   const [isCropping, setIsCropping] = useState(false)
   const [cropperReady, setCropperReady] = useState(false)
+  const [cropBoxData, setCropBoxData] = useState<{left: number; top: number; width: number; height: number} | null>(null)
   
   // Add effect to prevent body scrolling while cropper is open
   useEffect(() => {
@@ -81,6 +82,14 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
       });
     };
   }, []);
+  
+  // Update crop box data when cropper changes
+  const handleCropperChange = () => {
+    if (cropperRef.current && cropperRef.current.cropper && isDiscCropper) {
+      const data = cropperRef.current.cropper.getCropBoxData();
+      setCropBoxData(data);
+    }
+  };
 
   const getCropData = () => {
     if (!cropperRef.current || !cropperRef.current.cropper) {
@@ -116,19 +125,20 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   
   // Disc guides component to show circular outline and center hole
   const DiscGuides = () => {
-    if (!cropperRef.current || !cropperRef.current.cropper || !cropperReady) {
+    if (!cropBoxData || !cropperReady) {
       return null;
     }
     
     try {
-      const cropBoxData = cropperRef.current.cropper.getCropBoxData();
-      const { width, height } = cropBoxData;
+      const { width, height, left, top } = cropBoxData;
       
       // Only show guides if crop box has dimensions
       if (!width || !height) return null;
       
       const circleSize = Math.min(width, height);
       const circleRadius = circleSize / 2;
+      
+      // Center the guides within the crop box
       const centerX = circleRadius;
       const centerY = circleRadius;
       
@@ -140,8 +150,8 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
         <div 
           className="absolute z-10 pointer-events-none" 
           style={{
-            left: cropBoxData.left,
-            top: cropBoxData.top,
+            left: left,
+            top: top,
             width: circleSize,
             height: circleSize,
           }}
@@ -205,7 +215,11 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
             background={false}
             autoCropArea={1}
             checkCrossOrigin={false}
-            ready={() => setCropperReady(true)}
+            ready={() => {
+              setCropperReady(true);
+              handleCropperChange(); // Initial update of crop box data
+            }}
+            crop={handleCropperChange} // Update guides when cropping changes
           />
           
           {isDiscCropper && <DiscGuides />}
