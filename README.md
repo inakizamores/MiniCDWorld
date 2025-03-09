@@ -1,138 +1,56 @@
 # CD Template Generator
 
-A modern web application for creating printable CD templates with custom artwork. Upload images, add album information, and generate professional print-ready PDF templates for CD covers, labels, and packaging.
+A web application to generate printable CD templates with precise measurements. Upload your artwork, enter album information, and download a perfectly formatted PDF ready for printing.
 
 ## Features
 
-- **Custom Artwork Upload**: Upload images for all 7 parts of your CD package with precise specifications
-- **Image Cropping**: Interactive cropping interface for each image with correct aspect ratios
-- **Accurate Measurements**: Templates use precise industry-standard measurements for CD packaging
-- **Multiple Templates per Page**: Choose to print 1-3 CD templates per page
-- **High-Quality PDFs**: Generate print-ready PDF templates with proper bleed areas and cut marks
-- **Modern UI**: User-friendly interface built with React and Tailwind CSS
+- Upload and crop images for different CD components (front, back, disc)
+- Automatic image processing to match required dimensions
+- Title and album information integration
+- High-quality PDF generation with precise measurements
+- Multiple CDs per page option (1-3 per US Letter page)
+- Responsive design works on desktop and tablet devices
 
-## Tech Stack
+## Technical Stack
 
-- **Framework**: Next.js (React)
-- **Styling**: Tailwind CSS
-- **State Management**: Zustand with persistent storage
-- **PDF Generation**: React-PDF
-- **Image Storage**: Vercel Blob
-- **Image Cropping**: React Image Crop
+- React with TypeScript
+- Vite for fast development and builds
+- TailwindCSS for styling
+- jsPDF for PDF generation
+- React-Cropper for image manipulation
 
-## Getting Started
+## Setup Instructions
 
-### Prerequisites
-
-- Node.js 14.x or higher
-- npm or yarn
-- Vercel account (for deployment and Blob storage)
-
-### Local Development
-
-1. Clone the repository:
-   ```
-   git clone https://github.com/your-username/cd-template-generator.git
-   cd cd-template-generator
-   ```
-
+1. Clone the repository
 2. Install dependencies:
    ```
    npm install
-   # or
-   yarn install
    ```
-
-3. Set up environment variables:
-   - Copy `.env.local.example` to `.env.local`
-   - Create a Vercel Blob store and add your token to `.env.local`
-
-4. Start the development server:
+3. Start development server:
    ```
    npm run dev
-   # or
-   yarn dev
    ```
-
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Deployment on Vercel
-
-Follow these steps to deploy your CD Template Generator to Vercel:
-
-### 1. Create a Vercel Blob Store
-
-1. Login to your [Vercel Dashboard](https://vercel.com/dashboard)
-2. Navigate to Storage -> Create a new Blob store
-3. Copy the provided `BLOB_READ_WRITE_TOKEN`
-
-### 2. Deploy with Vercel Dashboard (Recommended)
-
-1. Fork or push your code to a GitHub repository
-2. Import the project into Vercel:
-   - Go to the [Vercel Dashboard](https://vercel.com/dashboard)
-   - Click "New Project" or "Add New..." -> "Project"
-   - Import your GitHub repository
-   - Configure environment variables:
-     - Add `BLOB_READ_WRITE_TOKEN` with your token value
-     - Add `NEXT_PUBLIC_APP_URL` with your production URL (once deployed)
-   - Click "Deploy"
-
-### 3. Deploy with Vercel CLI
-
-```bash
-# Install Vercel CLI if you haven't already
-npm install -g vercel
-
-# Login to Vercel
-vercel login
-
-# Deploy the project (follow the interactive prompts)
-vercel
-```
-
-### 4. Update Environment Variables (After First Deployment)
-
-After your first deployment, you'll need to update the `NEXT_PUBLIC_APP_URL` environment variable with your actual deployment URL:
-
-1. Go to your project settings in the Vercel Dashboard
-2. Navigate to "Environment Variables"
-3. Add or update `NEXT_PUBLIC_APP_URL` with your deployment URL (e.g., `https://your-project.vercel.app`)
-4. Click "Save" and redeploy if necessary
-
-### 5. Verify Deployment
-
-- Once deployed, verify that all features work correctly:
-  - Image uploads and cropping
-  - PDF generation
-  - Form submissions
+4. Build for production:
+   ```
+   npm run build
+   ```
 
 ## CD Template Specifications
 
-Our template includes 7 distinct components:
+The application generates templates with the following components:
 
-1. **FRENTE_AFUERA** (Front Exterior): 41mm × 41mm
-2. **FRENTE_DENTRO** (Front Interior): 41mm × 41mm
-3. **DISCO** (CD Label): 40mm diameter with 6mm center hole
-4. **TRASERA_AFUERA Left**: 50mm × 38mm
-5. **TRASERA_AFUERA Right**: 4mm × 38mm
-6. **TRASERA_DENTRO Left**: 4mm × 38mm
-7. **TRASERA_DENTRO Right**: 50mm × 38mm
+- **FRENTE_AFUERA** (Front Outside): 41mm × 41mm
+- **FRENTE_DENTRO** (Front Inside): 41mm × 41mm
+- **DISCO** (Disc): 40mm diameter with 6mm center hole
+- **TRASERA_AFUERA** (Back Outside): Combined 54mm × 38mm (split into 50mm and 4mm sections)
+- **TRASERA_ADENTRO** (Back Inside): Combined 54mm × 38mm (split into 4mm and 50mm sections)
 
-All components follow specific measurements to ensure precise printing results.
-
-## Usage Instructions
-
-1. **Start Creating**: Click "Start Creating" on the homepage
-2. **Add Album Info**: Enter album title, artist name, and release year
-3. **Upload Images**: Upload your artwork for each part of the CD package
-4. **Set Layout Options**: Choose how many templates to print per page
-5. **Generate & Download**: Generate a preview and download your PDF template
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+All measurements are precise for printing on US Letter paper.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+[MIT License](LICENSE)
+
+## Author
+
+Your Name 
