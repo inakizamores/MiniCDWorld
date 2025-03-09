@@ -33,18 +33,16 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
   
   return (
     <nav aria-label="Progress" className="w-full my-8 overflow-hidden">
-      {/* Single continuous progress line that sits behind all steps */}
-      <div className="relative mb-5 mx-5">
-        <div className="absolute h-0.5 bg-secondary-300 left-0 right-0 top-5" />
+      <ol className="flex items-center justify-between px-5 relative">
+        {/* Single continuous progress line that sits behind all steps */}
+        <div className="absolute h-1 bg-secondary-300 left-[5%] right-[5%] top-1/2 -translate-y-1/2" />
         <div 
-          className="absolute h-0.5 bg-gradient-to-r from-primary-600 to-primary-400 left-0 top-5 transition-all duration-500 ease-in-out"
+          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 left-[5%] top-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out"
           style={{ 
-            width: `${(Math.max(0, currentStep - 1) / (steps.length - 1)) * 100}%`,
+            width: `${(Math.max(0, currentStep - 1) / (steps.length - 1)) * 90}%`,
           }}
         />
-      </div>
-      
-      <ol className="flex items-center justify-between px-5">
+        
         {steps.map((step, index) => {
           const stepNumber = index + 1
           const isActive = stepNumber === currentStep
@@ -59,10 +57,10 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
           }
           
           return (
-            <li key={step.name} className="relative flex flex-col items-center">
+            <li key={step.name} className="relative flex flex-col items-center z-10">
               <div className={`flex flex-col items-center ${animationClass}`}>
                 {/* Circle indicator */}
-                <div className="relative z-10">
+                <div className="relative">
                   {isCompleted ? (
                     <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary-600 to-primary-500 shadow-md transition-all duration-300">
                       <FaCheck className="h-5 w-5 text-white" aria-hidden="true" />
