@@ -5,10 +5,6 @@
   "outputDirectory": ".next",
   "regions": ["auto"],
   "env": {
-    "NEXT_PUBLIC_APP_URL": {
-      "type": "string",
-      "description": "The URL of the deployed application"
-    },
     "BLOB_READ_WRITE_TOKEN": {
       "type": "secret",
       "description": "Token for Vercel Blob storage"
