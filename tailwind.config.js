@@ -54,8 +54,9 @@ export default {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         bounceIn: {
-          '0%': { opacity: '0', transform: 'scale(0.8)' },
-          '50%': { opacity: '1', transform: 'scale(1.1)' },
+          '0%': { opacity: '0', transform: 'scale(0.7)' },
+          '40%': { opacity: '0.8', transform: 'scale(1.06)' },
+          '70%': { opacity: '1', transform: 'scale(0.96)' },
           '100%': { opacity: '1', transform: 'scale(1)' },
         },
         slideIn: {

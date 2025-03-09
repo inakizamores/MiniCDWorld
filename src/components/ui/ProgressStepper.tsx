@@ -32,7 +32,7 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
   }, [currentStep, prevStep])
   
   return (
-    <nav aria-label="Progress" className="w-full my-8 overflow-hidden">
+    <nav aria-label="Progress" className="w-full my-8">
       <ol className="flex items-center justify-between px-5 relative">
         {/* Single continuous progress line that sits behind all steps */}
         <div className="absolute h-1 bg-secondary-300 left-[5%] right-[5%] top-5" />
@@ -58,30 +58,33 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
           
           return (
             <li key={step.name} className="relative flex flex-col items-center z-10">
-              <div className={`flex flex-col items-center ${animationClass}`}>
-                {/* Circle indicator */}
-                <div className="relative">
-                  {isCompleted ? (
-                    <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary-600 to-primary-500 shadow-md transition-all duration-300">
-                      <FaCheck className="h-5 w-5 text-white" aria-hidden="true" />
+              {/* Add padding space and ensure overflow visible for animations */}
+              <div className="p-2 overflow-visible">
+                <div className={`flex flex-col items-center ${animationClass} overflow-visible`}>
+                  {/* Circle indicator */}
+                  <div className="relative overflow-visible">
+                    {isCompleted ? (
+                      <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary-600 to-primary-500 shadow-md transition-all duration-300">
+                        <FaCheck className="h-5 w-5 text-white" aria-hidden="true" />
+                      </span>
+                    ) : isActive ? (
+                      <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-primary-600 bg-white shadow-[0_0_0_4px_rgba(2,132,199,0.1)] transition-all duration-300">
+                        <span className="text-primary-600 font-bold">{stepNumber}</span>
+                      </span>
+                    ) : (
+                      <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-secondary-300 bg-white transition-all duration-300">
+                        <span className="text-secondary-500">{stepNumber}</span>
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Text - shown only on medium screens and up */}
+                  <div className="mt-3 hidden md:block text-center max-w-[120px]">
+                    <span className={`font-medium block ${isActive || isCompleted ? 'text-primary-600' : 'text-secondary-500'}`}>
+                      {step.name}
                     </span>
-                  ) : isActive ? (
-                    <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-primary-600 bg-white shadow-[0_0_0_4px_rgba(2,132,199,0.1)] transition-all duration-300">
-                      <span className="text-primary-600 font-bold">{stepNumber}</span>
-                    </span>
-                  ) : (
-                    <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-secondary-300 bg-white transition-all duration-300">
-                      <span className="text-secondary-500">{stepNumber}</span>
-                    </span>
-                  )}
-                </div>
-                
-                {/* Text - shown only on medium screens and up */}
-                <div className="mt-3 hidden md:block text-center max-w-[120px]">
-                  <span className={`font-medium block ${isActive || isCompleted ? 'text-primary-600' : 'text-secondary-500'}`}>
-                    {step.name}
-                  </span>
-                  <p className="text-xs text-secondary-500 mt-1">{step.description}</p>
+                    <p className="text-xs text-secondary-500 mt-1">{step.description}</p>
+                  </div>
                 </div>
               </div>
             </li>
