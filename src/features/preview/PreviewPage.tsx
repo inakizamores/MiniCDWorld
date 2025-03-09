@@ -277,11 +277,11 @@ const PreviewPage: React.FC = () => {
               </h2>
               
               <div className="bg-secondary-100 border border-secondary-300 rounded-lg p-4 overflow-auto">
-                <div className="relative bg-white shadow-lg rounded border border-secondary-200 max-w-2xl mx-auto transform transition-transform hover:scale-[1.01]">
+                <div className="relative bg-white shadow-lg rounded border border-secondary-200 max-w-lg mx-auto transform transition-transform hover:scale-[1.01]" style={{ width: '400px' }}>
                   {/* Header */}
                   <div className="border-b border-secondary-200 p-3 flex justify-between items-center">
-                    <div className="text-xs font-bold">MiniCDWorld US Letter Printable Template</div>
-                    <div className="text-xs text-right">
+                    <div className="text-xs font-bold truncate max-w-[180px]">MiniCDWorld US Letter Printable Template</div>
+                    <div className="text-xs text-right truncate max-w-[180px]">
                       <span>{albumTitle || 'Album Title'} - {artistName || 'Artist Name'}</span>
                     </div>
                   </div>
@@ -294,7 +294,7 @@ const PreviewPage: React.FC = () => {
                   
                   {/* Footer */}
                   <div className="border-t border-secondary-200 p-3">
-                    <div className="text-xs text-secondary-500">
+                    <div className="text-xs text-secondary-500 truncate">
                       Created with the tool made by Inaki Zamores and findable on: https://mini-cd-world.vercel.app/
                     </div>
                   </div>
