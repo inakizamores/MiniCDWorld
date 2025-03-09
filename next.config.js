@@ -7,7 +7,7 @@ const nextConfig = {
   },
   // Configure environment variables
   env: {
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'https://your-vercel-app-url.vercel.app',
     MAX_UPLOAD_SIZE: process.env.MAX_UPLOAD_SIZE || 5 * 1024 * 1024, // 5MB default
   },
   // Production optimizations
