@@ -41,27 +41,28 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
   
   // Adjusted progress calculations that account for the non-linear spacing on larger screens
   const getProgressWidth = (screenSize: 'xs' | 'sm' | 'md' | 'lg') => {
-    // Basic progress calculation (0 to 1)
-    const baseProgress = Math.max(0, currentStep - 1) / (steps.length - 1)
+    // If we're at step 1, there's no progress
+    if (currentStep <= 1) return '0%';
     
-    // For larger viewports, specifically adjust the first segment (between steps 1 and 2)
-    if (screenSize === 'lg' && currentStep === 2) {
-      // Return a smaller percentage for this specific case
-      return (maxWidth[screenSize] * 0.32) + '%'; // ~29% of the total width
+    // If we're at step 2 (between steps 1 and 2)
+    if (currentStep === 2) {
+      // Different percentages for different screen sizes
+      if (screenSize === 'lg') return '25%'; // Much smaller for large screens
+      if (screenSize === 'md') return '28%'; 
+      if (screenSize === 'sm') return '30%';
+      return '33%'; // Default for xs
     }
     
-    // For medium viewports, also adjust the first segment
-    if (screenSize === 'md' && currentStep === 2) {
-      return (maxWidth[screenSize] * 0.33) + '%'; // ~28% of the total width
+    // If we're at step 3 (between steps 2 and 3)
+    if (currentStep === 3) {
+      if (screenSize === 'lg') return '60%';
+      if (screenSize === 'md') return '60%';
+      if (screenSize === 'sm') return '58%';
+      return '55%'; // Default for xs
     }
     
-    // For small viewports, slight adjustment
-    if (screenSize === 'sm' && currentStep === 2) {
-      return (maxWidth[screenSize] * 0.34) + '%'; // ~29% of the total width
-    }
-    
-    // Normal calculation for other cases
-    return (baseProgress * maxWidth[screenSize]) + '%';
+    // If we're at step 4 (fully complete)
+    return '100%';
   }
   
   return (
@@ -70,9 +71,9 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
         {/* Background line */}
         <div className="absolute h-1 bg-secondary-300 left-[12%] right-[12%] sm:left-[8%] sm:right-[8%] md:left-[7%] md:right-[7%] lg:left-[5%] lg:right-[5%] top-[1.625rem]" />
         
-        {/* Colored progress line */}
+        {/* Colored progress line - mobile */}
         <div 
-          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 top-[1.625rem] transition-all duration-500 ease-in-out"
+          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 top-[1.625rem] transition-all duration-500 ease-in-out sm:hidden"
           style={{
             left: 'calc(12%)',
             width: getProgressWidth('xs'),
