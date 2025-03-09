@@ -28,7 +28,7 @@ main {
 
 /* Footer spacing */
 main > div > div:last-child {
-  margin-bottom: 6rem !important; /* Ensure consistent spacing before footer */
+  margin-bottom: 8rem !important; /* Ensure consistent spacing before footer */
 }
 
 h1, h2, h3, h4, h5, h6 {
