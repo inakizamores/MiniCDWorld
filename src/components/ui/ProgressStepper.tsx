@@ -19,12 +19,15 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
           const stepNumber = index + 1
           const isActive = stepNumber === currentStep
           const isCompleted = stepNumber < currentStep
+          const isFirstStep = index === 0
           
           return (
             <li key={step.name} className={`relative ${index !== steps.length - 1 ? 'flex-1' : ''}`}>
               {/* Connector line between steps with gradient for completed steps */}
               {index !== steps.length - 1 && (
-                <div className="absolute top-5 left-0 -ml-px mt-0.5 h-0.5 w-full z-0">
+                <div className={`absolute top-5 h-0.5 z-0 ${
+                  isFirstStep ? 'left-1/2 w-1/2' : 'left-0 w-full'
+                }`}>
                   <div
                     className={`h-0.5 ${
                       isCompleted 
