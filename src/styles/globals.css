@@ -26,6 +26,11 @@ main {
   @apply relative z-0; /* Ensure main content stays below header */
 }
 
+/* Footer spacing */
+main > div > div:last-child {
+  margin-bottom: 6rem !important; /* Ensure consistent spacing before footer */
+}
+
 h1, h2, h3, h4, h5, h6 {
   @apply font-bold text-secondary-900;
 }

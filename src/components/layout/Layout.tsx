@@ -23,7 +23,7 @@ const Layout = () => {
         <div className="container mx-auto px-4 py-4">
           <ProgressStepper steps={steps} currentStep={step} />
           
-          <div className="mt-6">
+          <div className="mt-6 mb-24">
             <Outlet />
           </div>
         </div>
