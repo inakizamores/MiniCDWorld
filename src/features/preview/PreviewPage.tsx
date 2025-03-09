@@ -73,7 +73,7 @@ const PreviewPage: React.FC = () => {
             Number of CDs per page
           </label>
           <div className="flex flex-wrap gap-4">
-            {[1, 2, 3].map((num) => (
+            {[1, 2].map((num) => (
               <label key={num} className="flex items-center cursor-pointer bg-white border border-secondary-200 rounded-lg p-3 transition-all hover:bg-primary-50 hover:border-primary-300">
                 <input
                   type="radio"

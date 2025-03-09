@@ -60,7 +60,7 @@ export const templateSlice = createSlice({
       state.artistName = action.payload
     },
     setCdsPerPage: (state, action: PayloadAction<number>) => {
-      state.cdsPerPage = action.payload
+      state.cdsPerPage = action.payload > 2 ? 2 : action.payload
     },
     setFrenteAfuera: (state, action: PayloadAction<ImageSection>) => {
       state.images.frenteAfuera = action.payload

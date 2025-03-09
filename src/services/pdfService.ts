@@ -92,44 +92,218 @@ class PDFService {
     doc.setLineDashPattern([], 0) // Reset line style
   }
 
-  private async generateSingleCD(
+  private drawRect(
+    doc: jsPDF,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    dashed: boolean = false
+  ) {
+    if (dashed) {
+      doc.setDrawColor(0, 0, 0)
+      doc.setLineDashPattern([1, 1], 0)
+    } else {
+      doc.setDrawColor(200, 200, 200) // Light gray
+      doc.setLineWidth(0.2)
+    }
+    
+    doc.rect(x, y, width, height, 'S')
+    
+    if (dashed) {
+      doc.setLineDashPattern([], 0) // Reset line style
+    }
+    doc.setLineWidth(0.1) // Reset line width
+  }
+  
+  private drawHeader(
+    doc: jsPDF,
+    x: number,
+    y: number,
+    width: number,
+    albumTitle: string,
+    artistName: string
+  ) {
+    const headerHeight = 10
+    
+    // Draw header section
+    doc.setDrawColor(255, 255, 255) // White (invisible border)
+    doc.setLineWidth(0.1)
+    doc.rect(x, y, width, headerHeight, 'S')
+    
+    // Left side text: MiniCDWorld US Letter Printable Template
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(10)
+    doc.setTextColor(0, 0, 0)
+    doc.text('MiniCDWorld US Letter Printable Template', x + 5, y + headerHeight/2 + 1)
+    
+    // Right side text: Album Title - Artist Name
+    const rightText = `${albumTitle || 'Untitled Album'} - ${artistName || 'Unknown Artist'}`
+    doc.setFontSize(10)
+    doc.text(rightText, x + width - 5, y + headerHeight/2 + 1, { align: 'right' })
+    
+    return headerHeight
+  }
+  
+  private drawFooter(
+    doc: jsPDF,
+    x: number,
+    y: number,
+    width: number
+  ) {
+    const footerHeight = 8
+    
+    // Draw footer section
+    doc.setDrawColor(255, 255, 255) // White (invisible border)
+    doc.setLineWidth(0.1)
+    doc.rect(x, y, width, footerHeight, 'S')
+    
+    // Footer text
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(8)
+    doc.setTextColor(100, 100, 100) // Dark gray
+    doc.text('Created with the tool made by Inaki Zamores and findable on: https://mini-cd-world.vercel.app/', 
+      x + width - 5, y + footerHeight/2 + 1, { align: 'right' })
+    
+    return footerHeight
+  }
+  
+  private drawCDBlock(
     doc: jsPDF,
     templateData: TemplateState,
-    startX: number,
-    startY: number
+    x: number,
+    y: number,
+    blockWidth: number,
+    blockHeight: number,
+    blockIndex: number
   ) {
-    const { images, albumTitle, artistName } = templateData
-    
-    // Calculate margins and spacing
+    const { images } = templateData
     const margin = DIMENSIONS.COMPONENT_SPACING
     
-    // 1. Draw Front Covers (side by side)
+    // Draw block outline
+    this.drawRect(doc, x, y, blockWidth, blockHeight)
+    
+    // Set section title style
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(7)
+    doc.setTextColor(100, 100, 100)
+    
+    // Section spacing
+    const sectionPadding = 7
+    
+    // Calculate center x position for components
+    const componentCenterX = x + blockWidth / 2
+    
+    // Calculate y positions for different sections
+    let currentY = y + sectionPadding
+    
+    // --- FRONT COVER COMPONENTS SECTION ---
+    doc.text('Front Cover Components', x + sectionPadding, currentY)
+    currentY += 5
+    
+    // Center the front covers
+    const frontCoverX = componentCenterX - (DIMENSIONS.FRENTE_AFUERA.width + DIMENSIONS.FRENTE_DENTRO.width) / 2
+    
+    // Draw crop outlines for front covers
     if (images.frenteAfuera?.croppedImage) {
+      this.drawRect(doc, frontCoverX, currentY, DIMENSIONS.FRENTE_AFUERA.width, DIMENSIONS.FRENTE_AFUERA.height, true)
       this.drawImage(
         doc,
         images.frenteAfuera.croppedImage,
-        startX,
-        startY,
+        frontCoverX,
+        currentY,
         DIMENSIONS.FRENTE_AFUERA.width,
         DIMENSIONS.FRENTE_AFUERA.height
       )
     }
     
     if (images.frenteDentro?.croppedImage) {
+      this.drawRect(doc, frontCoverX + DIMENSIONS.FRENTE_AFUERA.width, currentY, DIMENSIONS.FRENTE_DENTRO.width, DIMENSIONS.FRENTE_DENTRO.height, true)
       this.drawImage(
         doc,
         images.frenteDentro.croppedImage,
-        startX + DIMENSIONS.FRENTE_AFUERA.width,
-        startY,
+        frontCoverX + DIMENSIONS.FRENTE_AFUERA.width,
+        currentY,
         DIMENSIONS.FRENTE_DENTRO.width,
         DIMENSIONS.FRENTE_DENTRO.height
       )
     }
     
-    // 2. Draw CD Disc (with circular mask and hole)
+    // Move to next section
+    currentY += DIMENSIONS.FRENTE_AFUERA.height + sectionPadding * 1.5
+    
+    // --- BACK COVER COMPONENTS SECTION ---
+    doc.text('Back Cover Components', x + sectionPadding, currentY)
+    currentY += 5
+    
+    // Center the back covers
+    const backCoverFullWidth = DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width + 
+                             DIMENSIONS.TRASERA_DENTRO.side.width + DIMENSIONS.TRASERA_DENTRO.main.width
+    const backCoverX = componentCenterX - backCoverFullWidth / 2
+    
+    // Back Outside (Main + Side) with crop outlines
+    if (images.traseraAfuera.main?.croppedImage) {
+      this.drawRect(doc, backCoverX, currentY, DIMENSIONS.TRASERA_AFUERA.main.width, DIMENSIONS.TRASERA_AFUERA.main.height, true)
+      this.drawImage(
+        doc,
+        images.traseraAfuera.main.croppedImage,
+        backCoverX,
+        currentY,
+        DIMENSIONS.TRASERA_AFUERA.main.width,
+        DIMENSIONS.TRASERA_AFUERA.main.height
+      )
+    }
+    
+    if (images.traseraAfuera.side?.croppedImage) {
+      this.drawRect(doc, backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width, currentY, DIMENSIONS.TRASERA_AFUERA.side.width, DIMENSIONS.TRASERA_AFUERA.side.height, true)
+      this.drawImage(
+        doc,
+        images.traseraAfuera.side.croppedImage,
+        backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width,
+        currentY,
+        DIMENSIONS.TRASERA_AFUERA.side.width,
+        DIMENSIONS.TRASERA_AFUERA.side.height
+      )
+    }
+    
+    // Back Inside (Side + Main) with crop outlines
+    if (images.traseraDentro.side?.croppedImage) {
+      this.drawRect(doc, backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width, currentY, 
+        DIMENSIONS.TRASERA_DENTRO.side.width, DIMENSIONS.TRASERA_DENTRO.side.height, true)
+      this.drawImage(
+        doc,
+        images.traseraDentro.side.croppedImage,
+        backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width,
+        currentY,
+        DIMENSIONS.TRASERA_DENTRO.side.width,
+        DIMENSIONS.TRASERA_DENTRO.side.height
+      )
+    }
+    
+    if (images.traseraDentro.main?.croppedImage) {
+      this.drawRect(doc, backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width + DIMENSIONS.TRASERA_DENTRO.side.width, 
+        currentY, DIMENSIONS.TRASERA_DENTRO.main.width, DIMENSIONS.TRASERA_DENTRO.main.height, true)
+      this.drawImage(
+        doc,
+        images.traseraDentro.main.croppedImage,
+        backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width + DIMENSIONS.TRASERA_DENTRO.side.width,
+        currentY,
+        DIMENSIONS.TRASERA_DENTRO.main.width,
+        DIMENSIONS.TRASERA_DENTRO.main.height
+      )
+    }
+    
+    // Move to next section
+    currentY += DIMENSIONS.TRASERA_AFUERA.main.height + sectionPadding * 1.5
+    
+    // --- CD DISC SECTION ---
+    doc.text('CD Disc', x + sectionPadding, currentY)
+    currentY += 5
+    
+    // Center the disc
     if (images.disco?.croppedImage) {
-      const discCenterX = startX + DIMENSIONS.FRENTE_AFUERA.width + DIMENSIONS.FRENTE_DENTRO.width + margin + DIMENSIONS.DISCO.diameter / 2
-      const discCenterY = startY + DIMENSIONS.DISCO.diameter / 2 + margin
+      const discCenterX = componentCenterX
+      const discCenterY = currentY + DIMENSIONS.DISCO.diameter / 2 + 5
       
       this.drawCircularImage(
         doc,
@@ -140,77 +314,14 @@ class PDFService {
         DIMENSIONS.DISCO.holeSize
       )
     }
-    
-    // 3. Draw Back Covers
-    const backY = startY + DIMENSIONS.FRENTE_AFUERA.height + margin
-    
-    // Back Outside (Main + Side)
-    if (images.traseraAfuera.main?.croppedImage) {
-      this.drawImage(
-        doc,
-        images.traseraAfuera.main.croppedImage,
-        startX,
-        backY,
-        DIMENSIONS.TRASERA_AFUERA.main.width,
-        DIMENSIONS.TRASERA_AFUERA.main.height
-      )
-    }
-    
-    if (images.traseraAfuera.side?.croppedImage) {
-      this.drawImage(
-        doc,
-        images.traseraAfuera.side.croppedImage,
-        startX + DIMENSIONS.TRASERA_AFUERA.main.width,
-        backY,
-        DIMENSIONS.TRASERA_AFUERA.side.width,
-        DIMENSIONS.TRASERA_AFUERA.side.height
-      )
-    }
-    
-    // Back Inside (Side + Main)
-    if (images.traseraDentro.side?.croppedImage) {
-      this.drawImage(
-        doc,
-        images.traseraDentro.side.croppedImage,
-        startX + DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width,
-        backY,
-        DIMENSIONS.TRASERA_DENTRO.side.width,
-        DIMENSIONS.TRASERA_DENTRO.side.height
-      )
-    }
-    
-    if (images.traseraDentro.main?.croppedImage) {
-      this.drawImage(
-        doc,
-        images.traseraDentro.main.croppedImage,
-        startX + DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width + DIMENSIONS.TRASERA_DENTRO.side.width,
-        backY,
-        DIMENSIONS.TRASERA_DENTRO.main.width,
-        DIMENSIONS.TRASERA_DENTRO.main.height
-      )
-    }
-    
-    // 4. Add text labels
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(8)
-    
-    if (albumTitle) {
-      doc.text(albumTitle, startX, startY - 2, { align: 'left' })
-    }
-    
-    if (artistName) {
-      doc.text(artistName, startX, startY - 2 + 3, { align: 'left' })
-    }
-    
-    // Add MiniCDWorld footer
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(6)
-    doc.text('Generated with MiniCDWorld', startX, backY + DIMENSIONS.TRASERA_AFUERA.main.height + 3)
   }
 
   public async generatePDF(templateData: TemplateState): Promise<Blob> {
     const doc = this.createNewPDF()
-    const { cdsPerPage } = templateData
+    const { cdsPerPage: rawCdsPerPage, albumTitle, artistName } = templateData
+    
+    // Ensure cdsPerPage is only 1 or 2
+    const cdsPerPage = rawCdsPerPage > 2 ? 2 : rawCdsPerPage
     
     // Get page dimensions and calculate margins
     const pageWidth = DIMENSIONS.US_LETTER.width
@@ -221,54 +332,52 @@ class PDFService {
     const availWidth = pageWidth - 2 * margin
     const availHeight = pageHeight - 2 * margin
     
-    // Calculate CD positions based on number per page
-    const positions = []
+    // HEADER
+    const headerHeight = this.drawHeader(doc, margin, margin, availWidth, albumTitle, artistName)
+    
+    // FOOTER
+    const footerHeight = this.drawFooter(doc, margin, pageHeight - margin - 8, availWidth)
+    
+    // Calculate available area for CD blocks
+    const blocksAreaHeight = availHeight - headerHeight - footerHeight
+    
+    // Calculate block dimensions
+    const blockHeight = blocksAreaHeight / (cdsPerPage === 1 ? 1 : 2)
+    const blockPadding = 10 // padding between blocks
     
     if (cdsPerPage === 1) {
-      // Center the CD template in the page
-      positions.push({
-        x: margin + availWidth / 2 - DIMENSIONS.FRENTE_AFUERA.width,
-        y: margin + availHeight / 2 - DIMENSIONS.FRENTE_AFUERA.height
-      })
-    } else if (cdsPerPage === 2) {
-      // Place two CDs vertically
-      const spacing = 20 // Space between CDs
-      const totalHeight = 2 * (DIMENSIONS.FRENTE_AFUERA.height + DIMENSIONS.TRASERA_AFUERA.main.height + margin) + spacing
+      // Draw single CD block centered
+      this.drawCDBlock(
+        doc,
+        templateData,
+        margin,
+        margin + headerHeight + blockPadding,
+        availWidth,
+        blockHeight - blockPadding * 2,
+        0
+      )
+    } else {
+      // Draw first CD block
+      this.drawCDBlock(
+        doc, 
+        templateData,
+        margin, 
+        margin + headerHeight + blockPadding / 2,
+        availWidth,
+        blockHeight - blockPadding,
+        0
+      )
       
-      const startY = margin + (availHeight - totalHeight) / 2
-      
-      positions.push({
-        x: margin + availWidth / 2 - DIMENSIONS.FRENTE_AFUERA.width,
-        y: startY
-      })
-      
-      positions.push({
-        x: margin + availWidth / 2 - DIMENSIONS.FRENTE_AFUERA.width,
-        y: startY + DIMENSIONS.FRENTE_AFUERA.height + DIMENSIONS.TRASERA_AFUERA.main.height + margin + spacing
-      })
-    } else if (cdsPerPage === 3) {
-      // Place three CDs, with two on top and one on bottom
-      const spacing = 15
-      
-      positions.push({
-        x: margin,
-        y: margin
-      })
-      
-      positions.push({
-        x: margin + availWidth - 2 * DIMENSIONS.FRENTE_AFUERA.width - DIMENSIONS.DISCO.diameter - spacing,
-        y: margin
-      })
-      
-      positions.push({
-        x: margin + availWidth / 2 - DIMENSIONS.FRENTE_AFUERA.width,
-        y: margin + DIMENSIONS.FRENTE_AFUERA.height + DIMENSIONS.TRASERA_AFUERA.main.height + margin + spacing
-      })
-    }
-    
-    // Draw CDs at calculated positions
-    for (const pos of positions) {
-      await this.generateSingleCD(doc, templateData, pos.x, pos.y)
+      // Draw second CD block (identical to first)
+      this.drawCDBlock(
+        doc,
+        templateData,
+        margin,
+        margin + headerHeight + blockHeight,
+        availWidth,
+        blockHeight - blockPadding,
+        1
+      )
     }
     
     // Return the generated PDF as a blob

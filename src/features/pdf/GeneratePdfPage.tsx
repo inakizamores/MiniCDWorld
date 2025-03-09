@@ -155,9 +155,10 @@ const GeneratePdfPage: React.FC = () => {
               'Print on US Letter size paper (8.5" × 11")',
               'Select "Actual size" in printer settings (not "Fit to page")',
               'Use high-quality paper for best results',
-              'Cut along the dotted lines for precise dimensions',
-              'For the disc, carefully cut out the center hole',
-              'Fold along the connecting edges between front and back covers'
+              'Cut along the dotted lines for all components',
+              'For the CD disc, carefully cut out the center hole',
+              'Each block contains an identical complete CD template',
+              'If you need more than 2 CDs, simply print the PDF multiple times'
             ].map((instruction, index) => (
               <li key={index} className="flex items-start">
                 <div className="bg-primary-100 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">
