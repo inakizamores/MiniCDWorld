@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import ReactDOM from 'react-dom'
 import Cropper from 'react-cropper'
 import 'cropperjs/dist/cropper.css'
 import { FaCheck, FaTimes, FaSync } from 'react-icons/fa'
@@ -34,9 +35,36 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
     // Prevent scrolling
     document.body.style.overflow = 'hidden';
     
-    // Restore original overflow on component unmount
+    // Apply styles to any fixed headers
+    const fixedElements = document.querySelectorAll('header, .header, [class*="header"]');
+    const originalStyles = new Map();
+    
+    fixedElements.forEach((el) => {
+      const element = el as HTMLElement;
+      // Store original styles
+      originalStyles.set(element, {
+        zIndex: element.style.zIndex,
+        position: element.style.position
+      });
+      
+      // Apply lower z-index to ensure overlay covers it
+      element.style.zIndex = '1';
+      element.style.position = 'relative';
+    });
+    
+    // Restore original styles on component unmount
     return () => {
       document.body.style.overflow = originalOverflow;
+      
+      // Restore original styles to fixed elements
+      fixedElements.forEach((el) => {
+        const element = el as HTMLElement;
+        const original = originalStyles.get(element);
+        if (original) {
+          element.style.zIndex = original.zIndex;
+          element.style.position = original.position;
+        }
+      });
     };
   }, []);
 
@@ -72,8 +100,10 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
     }
   }
 
-  return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80">
+  // Create crop modal content
+  const cropperModal = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80" 
+         style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold">Crop Image</h3>
@@ -140,7 +170,13 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
         </div>
       </div>
     </div>
-  )
+  );
+
+  // Use React Portal to render at the root level of the DOM
+  return ReactDOM.createPortal(
+    cropperModal,
+    document.body
+  );
 }
 
 export default ImageCropper 
