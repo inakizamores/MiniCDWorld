@@ -189,16 +189,31 @@ class PDFService {
     // Section spacing - reduced padding for tighter layout
     const sectionPadding = 5
     
-    // Calculate y positions for different sections
-    let currentY = y + sectionPadding
+    // Calculate total content height to center vertically
+    const frontCoverHeight = DIMENSIONS.FRENTE_AFUERA.height;
+    const discHeight = DIMENSIONS.DISCO.diameter;
+    const backCoverHeight = DIMENSIONS.TRASERA_AFUERA.main.height;
+    const titleHeight = 4; // Approximate height of section titles
+    
+    // Calculate the height of the top row (max of front cover and disc height)
+    const topRowHeight = Math.max(frontCoverHeight, discHeight) + titleHeight;
+    
+    // Total content height including titles and spacing
+    const totalContentHeight = topRowHeight + backCoverHeight + titleHeight + sectionPadding * 2;
+    
+    // Calculate vertical centering offset
+    const verticalOffset = (blockHeight - totalContentHeight) / 2;
+    
+    // Adjust starting Y position to center content vertically
+    let currentY = y + verticalOffset;
     
     // --- TOP ROW: FRONT COVER COMPONENTS (LEFT) AND CD DISC (RIGHT) ---
     
     // FRONT COVER COMPONENTS (LEFT SIDE)
     const frontSectionWidth = blockWidth * 0.6 // 60% of block width for front covers
     
-    doc.text('Front Cover Components', x + sectionPadding, currentY)
-    currentY += 4
+    doc.text('Front Cover Components', x + sectionPadding, currentY);
+    currentY += 4;
     
     // Position the front covers
     const frontCoverX = x + (frontSectionWidth - (DIMENSIONS.FRENTE_AFUERA.width + DIMENSIONS.FRENTE_DENTRO.width)) / 2
@@ -232,7 +247,7 @@ class PDFService {
     const discSectionX = x + frontSectionWidth + sectionPadding
     const discSectionWidth = blockWidth - frontSectionWidth - sectionPadding * 2
     
-    doc.text('CD Disc', discSectionX, y + sectionPadding)
+    doc.text('CD Disc', discSectionX, y + verticalOffset);
     
     // Center the disc in its section
     if (images.disco?.croppedImage) {
