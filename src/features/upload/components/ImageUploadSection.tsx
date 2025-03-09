@@ -10,7 +10,6 @@ interface ImageUploadSectionProps {
   aspectRatio: number;
   currentImage: ImageSection | null;
   onImageSave: (image: ImageSection) => void;
-  required?: boolean;
 }
 
 const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
@@ -19,8 +18,7 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
   dimensions,
   aspectRatio,
   currentImage,
-  onImageSave,
-  required = false
+  onImageSave
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isCropping, setIsCropping] = useState<boolean>(false)
@@ -62,19 +60,15 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
     setSelectedFile(null)
   }
   
-  // Enhanced title with required indicator if needed
-  const displayTitle = required ? `${title} *` : title;
-  
   return (
     <div className="flex flex-col h-full min-h-[350px]">
       <ImageUploader
-        title={displayTitle}
+        title={title}
         description={description}
         dimensions={dimensions}
         onImageSelected={handleImageSelected}
         previewImage={currentImage?.croppedImage || null}
         onRemove={currentImage?.croppedImage ? handleRemoveImage : undefined}
-        required={required}
       />
       
       {isCropping && selectedFile && (
