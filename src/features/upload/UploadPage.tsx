@@ -81,16 +81,6 @@ const UploadPage: React.FC = () => {
           onImageSave={(image) => dispatch(setFrenteDentro(image))}
         />
         
-        {/* Disc */}
-        <ImageUploadSection
-          title="CD Disc"
-          description="This will be printed on the CD itself."
-          dimensions={`${DIMENSIONS.DISCO.diameter}mm diameter (with ${DIMENSIONS.DISCO.holeSize}mm center hole)`}
-          aspectRatio={ASPECT_RATIOS.DISCO}
-          currentImage={images.disco}
-          onImageSave={(image) => dispatch(setDisco(image))}
-        />
-        
         {/* Back outside main */}
         <ImageUploadSection
           title="Back Cover (Outside Main)"
@@ -129,6 +119,16 @@ const UploadPage: React.FC = () => {
           aspectRatio={ASPECT_RATIOS.TRASERA_SIDE}
           currentImage={images.traseraDentro.side}
           onImageSave={(image) => dispatch(setTraseraDentroSide(image))}
+        />
+        
+        {/* Disc - Moved to the last position */}
+        <ImageUploadSection
+          title="CD Disc"
+          description="This will be printed on the CD itself."
+          dimensions={`${DIMENSIONS.DISCO.diameter}mm diameter (with ${DIMENSIONS.DISCO.holeSize}mm center hole)`}
+          aspectRatio={ASPECT_RATIOS.DISCO}
+          currentImage={images.disco}
+          onImageSave={(image) => dispatch(setDisco(image))}
         />
       </div>
       
