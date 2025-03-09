@@ -31,17 +31,41 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
     return () => clearTimeout(timer)
   }, [currentStep, prevStep])
   
+  // Calculate percentage of completion for progress bar
+  const progressPercentage = ((Math.max(0, currentStep - 1) / (steps.length - 1)) * 100) + '%'
+  
   return (
     <nav aria-label="Progress" className="w-full my-8">
       <ol className="flex items-center justify-between px-5 relative">
         {/* Single continuous progress line that sits behind all steps */}
-        <div className="absolute h-1 bg-secondary-300 left-[12%] right-[12%] sm:left-[8%] sm:right-[8%] top-[1.625rem]" />
-        <div 
-          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 left-[12%] top-[1.625rem] transition-all duration-500 ease-in-out"
-          style={{ 
-            width: `${(Math.max(0, currentStep - 1) / (steps.length - 1)) * (100 - 24)}%`,
-          }}
-        />
+        <div className="absolute h-1 bg-secondary-300 left-[12%] right-[12%] sm:left-[8%] sm:right-[8%] md:left-[7%] md:right-[7%] lg:left-[5%] lg:right-[5%] top-[1.625rem]" />
+        
+        {/* This is the colored progress line with responsive width */}
+        <div className="absolute h-1 top-[1.625rem] transition-all duration-500 ease-in-out bg-gradient-to-r from-primary-600 to-primary-400">
+          {/* Mobile version - narrower */}
+          <div 
+            className="absolute h-full left-[12%] w-full sm:hidden"
+            style={{ width: progressPercentage, maxWidth: 'calc(76%)' }}
+          />
+          
+          {/* Small screens */}
+          <div 
+            className="absolute h-full left-[8%] w-full hidden sm:block md:hidden"
+            style={{ width: progressPercentage, maxWidth: 'calc(84%)' }}
+          />
+          
+          {/* Medium screens */}
+          <div 
+            className="absolute h-full left-[7%] w-full hidden md:block lg:hidden"
+            style={{ width: progressPercentage, maxWidth: 'calc(86%)' }}
+          />
+          
+          {/* Large screens - wider */}
+          <div 
+            className="absolute h-full left-[5%] w-full hidden lg:block"
+            style={{ width: progressPercentage, maxWidth: 'calc(90%)' }}
+          />
+        </div>
         
         {steps.map((step, index) => {
           const stepNumber = index + 1
