@@ -31,72 +31,19 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
     return () => clearTimeout(timer)
   }, [currentStep, prevStep])
   
-  // Adjusted progress calculations that account for the non-linear spacing on larger screens
-  const getProgressWidth = (screenSize: 'xs' | 'sm' | 'md' | 'lg') => {
-    // If we're at step 1, there's no progress
-    if (currentStep <= 1) return '0%';
-    
-    // If we're at step 2 (between steps 1 and 2)
-    if (currentStep === 2) {
-      // Different percentages for different screen sizes
-      if (screenSize === 'lg') return '25%'; // Much smaller for large screens
-      if (screenSize === 'md') return '28%'; 
-      if (screenSize === 'sm') return '30%';
-      return '33%'; // Default for xs
-    }
-    
-    // If we're at step 3 (between steps 2 and 3)
-    if (currentStep === 3) {
-      if (screenSize === 'lg') return '60%';
-      if (screenSize === 'md') return '60%';
-      if (screenSize === 'sm') return '58%';
-      return '55%'; // Default for xs
-    }
-    
-    // If we're at step 4 (fully complete)
-    return '100%';
-  }
+  // Simple progress calculation (0 to 1 scale)
+  const progressRatio = Math.max(0, (currentStep - 1) / (steps.length - 1))
   
   return (
     <nav aria-label="Progress" className="w-full my-8">
       <ol className="flex items-center justify-between px-5 relative">
-        {/* Background line */}
-        <div className="absolute h-1 bg-secondary-300 left-[12%] right-[12%] sm:left-[8%] sm:right-[8%] md:left-[7%] md:right-[7%] lg:left-[5%] lg:right-[5%] top-[1.625rem]" />
+        {/* Gray background line */}
+        <div className="absolute h-1 bg-secondary-300 left-0 right-0 top-[1.625rem]" />
         
-        {/* Colored progress line - mobile */}
+        {/* Blue progress line */}
         <div 
-          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 top-[1.625rem] transition-all duration-500 ease-in-out sm:hidden"
-          style={{
-            left: 'calc(12%)',
-            width: getProgressWidth('xs'),
-          }}
-        />
-        
-        {/* Small screen colored progress line */}
-        <div 
-          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 top-[1.625rem] transition-all duration-500 ease-in-out hidden sm:block md:hidden"
-          style={{
-            left: 'calc(8%)',
-            width: getProgressWidth('sm'),
-          }}
-        />
-        
-        {/* Medium screen colored progress line */}
-        <div 
-          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 top-[1.625rem] transition-all duration-500 ease-in-out hidden md:block lg:hidden"
-          style={{
-            left: 'calc(7%)',
-            width: getProgressWidth('md'),
-          }}
-        />
-        
-        {/* Large screen colored progress line */}
-        <div 
-          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 top-[1.625rem] transition-all duration-500 ease-in-out hidden lg:block"
-          style={{
-            left: 'calc(5%)',
-            width: getProgressWidth('lg'),
-          }}
+          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 left-0 top-[1.625rem] transition-all duration-500 ease-in-out"
+          style={{ width: `${progressRatio * 100}%` }}
         />
         
         {steps.map((step, index) => {
