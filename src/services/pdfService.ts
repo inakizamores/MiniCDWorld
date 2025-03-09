@@ -174,11 +174,9 @@ class PDFService {
     x: number,
     y: number,
     blockWidth: number,
-    blockHeight: number,
-    blockIndex: number
+    blockHeight: number
   ) {
     const { images } = templateData
-    const margin = DIMENSIONS.COMPONENT_SPACING
     
     // Draw block outline
     this.drawRect(doc, x, y, blockWidth, blockHeight)
@@ -353,8 +351,7 @@ class PDFService {
         margin,
         margin + headerHeight + blockPadding,
         availWidth,
-        blockHeight - blockPadding * 2,
-        0
+        blockHeight - blockPadding * 2
       )
     } else {
       // Draw first CD block
@@ -364,8 +361,7 @@ class PDFService {
         margin, 
         margin + headerHeight + blockPadding / 2,
         availWidth,
-        blockHeight - blockPadding,
-        0
+        blockHeight - blockPadding
       )
       
       // Draw second CD block (identical to first)
@@ -375,8 +371,7 @@ class PDFService {
         margin,
         margin + headerHeight + blockHeight,
         availWidth,
-        blockHeight - blockPadding,
-        1
+        blockHeight - blockPadding
       )
     }
     
