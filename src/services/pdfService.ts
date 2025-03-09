@@ -186,21 +186,22 @@ class PDFService {
     doc.setFontSize(7)
     doc.setTextColor(100, 100, 100)
     
-    // Section spacing
-    const sectionPadding = 7
-    
-    // Calculate center x position for components
-    const componentCenterX = x + blockWidth / 2
+    // Section spacing - reduced padding for tighter layout
+    const sectionPadding = 5
     
     // Calculate y positions for different sections
     let currentY = y + sectionPadding
     
-    // --- FRONT COVER COMPONENTS SECTION ---
-    doc.text('Front Cover Components', x + sectionPadding, currentY)
-    currentY += 5
+    // --- TOP ROW: FRONT COVER COMPONENTS (LEFT) AND CD DISC (RIGHT) ---
     
-    // Center the front covers
-    const frontCoverX = componentCenterX - (DIMENSIONS.FRENTE_AFUERA.width + DIMENSIONS.FRENTE_DENTRO.width) / 2
+    // FRONT COVER COMPONENTS (LEFT SIDE)
+    const frontSectionWidth = blockWidth * 0.6 // 60% of block width for front covers
+    
+    doc.text('Front Cover Components', x + sectionPadding, currentY)
+    currentY += 4
+    
+    // Position the front covers
+    const frontCoverX = x + (frontSectionWidth - (DIMENSIONS.FRENTE_AFUERA.width + DIMENSIONS.FRENTE_DENTRO.width)) / 2
     
     // Draw crop outlines for front covers
     if (images.frenteAfuera?.croppedImage) {
@@ -227,17 +228,39 @@ class PDFService {
       )
     }
     
-    // Move to next section
-    currentY += DIMENSIONS.FRENTE_AFUERA.height + sectionPadding * 1.5
+    // CD DISC (RIGHT SIDE)
+    const discSectionX = x + frontSectionWidth + sectionPadding
+    const discSectionWidth = blockWidth - frontSectionWidth - sectionPadding * 2
     
-    // --- BACK COVER COMPONENTS SECTION ---
+    doc.text('CD Disc', discSectionX, y + sectionPadding)
+    
+    // Center the disc in its section
+    if (images.disco?.croppedImage) {
+      const discCenterX = discSectionX + discSectionWidth / 2
+      const discCenterY = currentY + DIMENSIONS.DISCO.diameter / 2 + 4
+      
+      this.drawCircularImage(
+        doc,
+        images.disco.croppedImage,
+        discCenterX,
+        discCenterY,
+        DIMENSIONS.DISCO.diameter,
+        DIMENSIONS.DISCO.holeSize
+      )
+    }
+    
+    // --- BOTTOM ROW: BACK COVER COMPONENTS ---
+    
+    // Move to back cover components section (below front covers and disc)
+    currentY += Math.max(DIMENSIONS.FRENTE_AFUERA.height, DIMENSIONS.DISCO.diameter) + sectionPadding
+    
     doc.text('Back Cover Components', x + sectionPadding, currentY)
-    currentY += 5
+    currentY += 4
     
-    // Center the back covers
+    // Center the back covers in the full width
     const backCoverFullWidth = DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width + 
                              DIMENSIONS.TRASERA_DENTRO.side.width + DIMENSIONS.TRASERA_DENTRO.main.width
-    const backCoverX = componentCenterX - backCoverFullWidth / 2
+    const backCoverX = x + (blockWidth - backCoverFullWidth) / 2
     
     // Back Outside (Main + Side) with crop outlines
     if (images.traseraAfuera.main?.croppedImage) {
@@ -288,28 +311,6 @@ class PDFService {
         currentY,
         DIMENSIONS.TRASERA_DENTRO.main.width,
         DIMENSIONS.TRASERA_DENTRO.main.height
-      )
-    }
-    
-    // Move to next section
-    currentY += DIMENSIONS.TRASERA_AFUERA.main.height + sectionPadding * 1.5
-    
-    // --- CD DISC SECTION ---
-    doc.text('CD Disc', x + sectionPadding, currentY)
-    currentY += 5
-    
-    // Center the disc
-    if (images.disco?.croppedImage) {
-      const discCenterX = componentCenterX
-      const discCenterY = currentY + DIMENSIONS.DISCO.diameter / 2 + 5
-      
-      this.drawCircularImage(
-        doc,
-        images.disco.croppedImage,
-        discCenterX,
-        discCenterY,
-        DIMENSIONS.DISCO.diameter,
-        DIMENSIONS.DISCO.holeSize
       )
     }
   }
