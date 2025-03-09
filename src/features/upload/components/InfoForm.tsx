@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { 
   setAlbumTitle, 
@@ -6,10 +6,57 @@ import {
   selectTemplateState, 
   nextStep 
 } from '@features/template/templateSlice'
+import { FaArrowRight } from 'react-icons/fa'
+
+// Define the animations as CSS classes
+const animationStyles = `
+  @keyframes pulse-subtle {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s infinite;
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 1s ease-in;
+  }
+`;
 
 const InfoForm: React.FC = () => {
   const dispatch = useDispatch()
   const { albumTitle, artistName } = useSelector(selectTemplateState)
+  const [isPulsing, setIsPulsing] = useState(false)
+  
+  // Add animation styles to the document head
+  useEffect(() => {
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = animationStyles;
+    document.head.appendChild(styleElement);
+    
+    return () => {
+      document.head.removeChild(styleElement);
+    };
+  }, []);
+  
+  // Start pulsing animation after a short delay once form fields are populated
+  useEffect(() => {
+    if (albumTitle.trim() && artistName.trim()) {
+      const timer = setTimeout(() => {
+        setIsPulsing(true);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    } else {
+      setIsPulsing(false);
+    }
+  }, [albumTitle, artistName]);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -56,13 +103,21 @@ const InfoForm: React.FC = () => {
           />
         </div>
         
-        <div className="flex justify-end">
+        <div className="flex flex-col items-center mt-10">
           <button
             type="submit"
-            className="btn btn-primary"
+            className={`btn btn-primary px-8 py-3 flex items-center text-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg ${
+              isPulsing ? 'animate-pulse-subtle hover:animate-none' : ''
+            }`}
           >
-            Continue to Uploads
+            Continue to Uploads <FaArrowRight className="ml-2" />
           </button>
+          
+          {isPulsing && (
+            <p className="text-primary-600 text-sm mt-3 animate-fade-in">
+              Ready to proceed! Click the button to continue.
+            </p>
+          )}
         </div>
       </form>
     </div>
