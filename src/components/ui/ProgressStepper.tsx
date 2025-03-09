@@ -35,9 +35,9 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
     <nav aria-label="Progress" className="w-full my-8 overflow-hidden">
       <ol className="flex items-center justify-between px-5 relative">
         {/* Single continuous progress line that sits behind all steps */}
-        <div className="absolute h-1 bg-secondary-300 left-[5%] right-[5%] top-1/2 -translate-y-1/2" />
+        <div className="absolute h-1 bg-secondary-300 left-[5%] right-[5%] top-5" />
         <div 
-          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 left-[5%] top-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out"
+          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 left-[5%] top-5 transition-all duration-500 ease-in-out"
           style={{ 
             width: `${(Math.max(0, currentStep - 1) / (steps.length - 1)) * 90}%`,
           }}
