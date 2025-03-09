@@ -3,16 +3,16 @@ import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaCheck } from 'react-icons/
 
 const HomePage = () => {
   return (
-    <div className="space-y-20">
+    <div className="space-y-24">
       {/* Hero Section with gradient and animation */}
       <section className="pt-8 md:pt-12 pb-16 md:pb-24 text-center relative overflow-hidden">
         {/* Background circles */}
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary-100 rounded-full opacity-30 blur-3xl -z-10"></div>
         <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary-200 rounded-full opacity-30 blur-3xl -z-10"></div>
         
-        <div className="relative max-w-6xl mx-auto px-4">
+        <div className="relative">
           <div className="animate-fade-in-up">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 mt-8 leading-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 mt-8">
               Create Professional <span className="gradient-text">CD Templates</span>
             </h1>
             <p className="text-xl text-secondary-600 max-w-3xl mx-auto mb-10 leading-relaxed">
@@ -37,41 +37,41 @@ const HomePage = () => {
       
       {/* How It Works with hover effects */}
       <section id="how-it-works" className="py-16 bg-gradient-to-b from-white to-primary-50">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold mb-4">How It Works</h2>
+          <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
+            Create your custom CD template in just a few simple steps
+          </p>
+        </div>
+        
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">How It Works</h2>
-            <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
-              Create your custom CD template in just a few simple steps
-            </p>
-          </div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="feature-card">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="card text-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
               <div className="bg-primary-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
                 <FaUpload className="text-3xl text-primary-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-center">1. Upload Your Artwork</h3>
-              <p className="text-secondary-600 leading-relaxed text-center flex-grow">
+              <h3 className="text-xl font-bold mb-3">1. Upload Your Artwork</h3>
+              <p className="text-secondary-600 leading-relaxed">
                 Upload your images for the CD cover, back, and the CD itself. Our tool supports all common image formats.
               </p>
             </div>
             
-            <div className="feature-card">
+            <div className="card text-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
               <div className="bg-primary-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
                 <FaCrop className="text-3xl text-primary-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-center">2. Crop & Position</h3>
-              <p className="text-secondary-600 leading-relaxed text-center flex-grow">
+              <h3 className="text-xl font-bold mb-3">2. Crop & Position</h3>
+              <p className="text-secondary-600 leading-relaxed">
                 Adjust your images to fit perfectly within the CD template dimensions. Our smart cropping tools make it easy.
               </p>
             </div>
             
-            <div className="feature-card sm:col-span-2 lg:col-span-1">
+            <div className="card text-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
               <div className="bg-primary-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
                 <FaFilePdf className="text-3xl text-primary-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-center">3. Generate & Print</h3>
-              <p className="text-secondary-600 leading-relaxed text-center flex-grow">
+              <h3 className="text-xl font-bold mb-3">3. Generate & Print</h3>
+              <p className="text-secondary-600 leading-relaxed">
                 Download your PDF template, ready for printing on US Letter paper. High-quality output every time.
               </p>
             </div>
@@ -80,8 +80,8 @@ const HomePage = () => {
       </section>
       
       {/* Features Section with cards */}
-      <section className="py-16 bg-secondary-50">
-        <div className="container mx-auto px-4">
+      <section className="py-16 bg-secondary-50 -mx-4 px-4">
+        <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Features</h2>
             <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
@@ -89,9 +89,9 @@ const HomePage = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="feature-card flex-row">
-              <div className="mr-5 text-primary-600 flex-shrink-0">
+          <div className="grid md:grid-cols-2 gap-10">
+            <div className="flex bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <div className="mr-5 text-primary-600">
                 <div className="bg-primary-100 rounded-full p-3 flex items-center justify-center">
                   <FaCheck className="text-xl" />
                 </div>
@@ -102,8 +102,8 @@ const HomePage = () => {
               </div>
             </div>
             
-            <div className="feature-card flex-row">
-              <div className="mr-5 text-primary-600 flex-shrink-0">
+            <div className="flex bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <div className="mr-5 text-primary-600">
                 <div className="bg-primary-100 rounded-full p-3 flex items-center justify-center">
                   <FaCheck className="text-xl" />
                 </div>
@@ -114,8 +114,8 @@ const HomePage = () => {
               </div>
             </div>
             
-            <div className="feature-card flex-row">
-              <div className="mr-5 text-primary-600 flex-shrink-0">
+            <div className="flex bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <div className="mr-5 text-primary-600">
                 <div className="bg-primary-100 rounded-full p-3 flex items-center justify-center">
                   <FaCheck className="text-xl" />
                 </div>
@@ -126,8 +126,8 @@ const HomePage = () => {
               </div>
             </div>
             
-            <div className="feature-card flex-row">
-              <div className="mr-5 text-primary-600 flex-shrink-0">
+            <div className="flex bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <div className="mr-5 text-primary-600">
                 <div className="bg-primary-100 rounded-full p-3 flex items-center justify-center">
                   <FaCheck className="text-xl" />
                 </div>
@@ -142,8 +142,8 @@ const HomePage = () => {
       </section>
       
       {/* CTA Section with gradient background */}
-      <section className="py-16 text-center bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg">
-        <div className="container mx-auto px-4">
+      <section className="py-16 text-center bg-gradient-to-r from-primary-600 to-primary-700 text-white -mx-4 px-4 shadow-lg">
+        <div className="container mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Ready to Create Your CD Template?</h2>
           <p className="text-xl text-primary-100 max-w-2xl mx-auto mb-10 leading-relaxed">
             Start designing your custom CD templates today with our easy-to-use tool
