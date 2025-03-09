@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf'
 import { TemplateState } from '@features/template/templateSlice'
-import { DIMENSIONS, mmToPixels, pixelsToMm } from '@constants/dimensions'
+import { DIMENSIONS } from '@constants/dimensions'
 
 // This augments the jsPDF type to include the polygon method
 declare module 'jspdf' {
@@ -9,10 +9,6 @@ declare module 'jspdf' {
   }
 }
 
-// Convert points to mm (1 pt = 0.3528 mm)
-const ptToMm = (pt: number) => pt * 0.3528
-const mmToPt = (mm: number) => mm / 0.3528
-
 class PDFService {
   private createNewPDF() {
     // Create a new PDF with US Letter dimensions
@@ -20,15 +16,6 @@ class PDFService {
       orientation: 'portrait',
       unit: 'mm',
       format: 'letter',
-    })
-  }
-
-  private async loadImage(imageDataUrl: string): Promise<HTMLImageElement> {
-    return new Promise((resolve, reject) => {
-      const img = new Image()
-      img.onload = () => resolve(img)
-      img.onerror = reject
-      img.src = imageDataUrl
     })
   }
 
