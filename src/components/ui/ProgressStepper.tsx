@@ -36,64 +36,67 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
   
   return (
     <nav aria-label="Progress" className="w-full my-8">
-      <ol className="flex items-center justify-between px-5 relative">
-        {/* Gray background line */}
-        <div className="absolute h-1 bg-secondary-300 left-0 right-0 top-[1.625rem]" />
-        
-        {/* Blue progress line */}
-        <div 
-          className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 left-0 top-[1.625rem] transition-all duration-500 ease-in-out"
-          style={{ width: `${progressRatio * 100}%` }}
-        />
-        
-        {steps.map((step, index) => {
-          const stepNumber = index + 1
-          const isActive = stepNumber === currentStep
-          const isCompleted = stepNumber < currentStep
+      {/* Container with proper padding to align with circle centers */}
+      <div className="relative px-[5%]">
+        <ol className="flex items-center justify-between relative">
+          {/* Gray background line - positioned to exactly connect the circles */}
+          <div className="absolute h-1 bg-secondary-300 left-[5%] right-[5%] top-[1.625rem]" />
           
-          // Animation classes
-          let animationClass = ''
-          if (animationDirection === 'forward' && stepNumber === currentStep) {
-            animationClass = 'animate-bounce-in'
-          } else if (animationDirection === 'backward' && stepNumber === currentStep) {
-            animationClass = 'animate-slide-in'
-          }
+          {/* Blue progress line - also positioned to match */}
+          <div 
+            className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 left-[5%] top-[1.625rem] transition-all duration-500 ease-in-out"
+            style={{ width: `${progressRatio * 90}%` }}
+          />
           
-          return (
-            <li key={step.name} className="relative flex flex-col items-center z-10">
-              {/* Add padding space and ensure overflow visible for animations */}
-              <div className="p-2 overflow-visible">
-                <div className={`flex flex-col items-center ${animationClass} overflow-visible`}>
-                  {/* Circle indicator */}
-                  <div className="relative overflow-visible">
-                    {isCompleted ? (
-                      <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary-600 to-primary-500 shadow-md transition-all duration-300">
-                        <FaCheck className="h-5 w-5 text-white" aria-hidden="true" />
+          {steps.map((step, index) => {
+            const stepNumber = index + 1
+            const isActive = stepNumber === currentStep
+            const isCompleted = stepNumber < currentStep
+            
+            // Animation classes
+            let animationClass = ''
+            if (animationDirection === 'forward' && stepNumber === currentStep) {
+              animationClass = 'animate-bounce-in'
+            } else if (animationDirection === 'backward' && stepNumber === currentStep) {
+              animationClass = 'animate-slide-in'
+            }
+            
+            return (
+              <li key={step.name} className="relative flex flex-col items-center z-10">
+                {/* Add padding space and ensure overflow visible for animations */}
+                <div className="p-2 overflow-visible">
+                  <div className={`flex flex-col items-center ${animationClass} overflow-visible`}>
+                    {/* Circle indicator */}
+                    <div className="relative overflow-visible">
+                      {isCompleted ? (
+                        <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary-600 to-primary-500 shadow-md transition-all duration-300">
+                          <FaCheck className="h-5 w-5 text-white" aria-hidden="true" />
+                        </span>
+                      ) : isActive ? (
+                        <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-primary-600 bg-white shadow-[0_0_0_4px_rgba(2,132,199,0.1)] transition-all duration-300">
+                          <span className="text-primary-600 font-bold">{stepNumber}</span>
+                        </span>
+                      ) : (
+                        <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-secondary-300 bg-white transition-all duration-300">
+                          <span className="text-secondary-500">{stepNumber}</span>
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Text - shown only on medium screens and up */}
+                    <div className="mt-3 hidden md:block text-center max-w-[120px]">
+                      <span className={`font-medium block ${isActive || isCompleted ? 'text-primary-600' : 'text-secondary-500'}`}>
+                        {step.name}
                       </span>
-                    ) : isActive ? (
-                      <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-primary-600 bg-white shadow-[0_0_0_4px_rgba(2,132,199,0.1)] transition-all duration-300">
-                        <span className="text-primary-600 font-bold">{stepNumber}</span>
-                      </span>
-                    ) : (
-                      <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-secondary-300 bg-white transition-all duration-300">
-                        <span className="text-secondary-500">{stepNumber}</span>
-                      </span>
-                    )}
-                  </div>
-                  
-                  {/* Text - shown only on medium screens and up */}
-                  <div className="mt-3 hidden md:block text-center max-w-[120px]">
-                    <span className={`font-medium block ${isActive || isCompleted ? 'text-primary-600' : 'text-secondary-500'}`}>
-                      {step.name}
-                    </span>
-                    <p className="text-xs text-secondary-500 mt-1">{step.description}</p>
+                      <p className="text-xs text-secondary-500 mt-1">{step.description}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </li>
-          )
-        })}
-      </ol>
+              </li>
+            )
+          })}
+        </ol>
+      </div>
     </nav>
   )
 }
