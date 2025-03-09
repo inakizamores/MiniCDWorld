@@ -73,10 +73,10 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           </button>
         </div>
         
-        <div className="flex-grow overflow-hidden">
+        <div className="flex-grow overflow-hidden" style={{ maxHeight: '60vh' }}>
           <Cropper
             src={imageUrl}
-            style={{ height: '100%', width: '100%' }}
+            style={{ height: '100%', width: '100%', maxHeight: '60vh' }}
             aspectRatio={aspectRatio}
             guides={true}
             ref={cropperRef}
