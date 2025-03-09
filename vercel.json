@@ -1,70 +1,7 @@
 {
-  "version": 2,
   "buildCommand": "npm run build",
-  "outputDirectory": "build",
-  "framework": "create-react-app",
-  "functions": {
-    "api/index.js": {
-      "memory": 2048,
-      "maxDuration": 60
-    },
-    "api/upload.js": {
-      "memory": 2048,
-      "maxDuration": 60
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/upload/prepare",
-      "methods": ["POST", "OPTIONS"],
-      "dest": "/api/upload.js"
-    },
-    {
-      "src": "/api/upload/complete",
-      "methods": ["POST", "OPTIONS"],
-      "dest": "/api/upload.js"
-    },
-    {
-      "src": "/api/upload/form",
-      "methods": ["POST", "OPTIONS"],
-      "dest": "/api/upload.js"
-    },
-    {
-      "src": "/api/upload/status/(.*)",
-      "methods": ["GET", "OPTIONS"],
-      "dest": "/api/upload.js"
-    },
-    {
-      "src": "/api/upload",
-      "methods": ["POST", "OPTIONS"],
-      "dest": "/api/upload.js"
-    },
-    {
-      "src": "/api/generate",
-      "methods": ["POST", "OPTIONS"],
-      "dest": "/api/index.js"
-    },
-    {
-      "src": "/api/status/(.*)",
-      "methods": ["GET", "OPTIONS"],
-      "dest": "/api/index.js"
-    },
-    {
-      "src": "/api/download/(.*)",
-      "methods": ["GET", "OPTIONS"],
-      "dest": "/api/index.js"
-    },
-    {
-      "src": "/api",
-      "methods": ["GET", "OPTIONS"],
-      "dest": "/api/index.js"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ]
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "regions": ["auto"]
 } 

@@ -1,135 +1,126 @@
-# MiniCDWorld - CD Template Generator
+# CD Template Generator
 
-MiniCDWorld is a web application that allows users to create custom CD case templates by uploading images and entering text. The application generates a printable PDF template with precise measurements for CD cases.
+A modern web application for creating printable CD templates with custom artwork. Upload images, add album information, and generate professional print-ready PDF templates for CD covers, labels, and packaging.
 
 ## Features
 
-- Upload images for different parts of a CD case (front cover, back cover, CD image, etc.)
-- Enter album title, artist name, and other text information
-- Choose the number of CD templates per page (up to 3)
-- Generate a printable PDF template
-- Responsive design for desktop and mobile devices
+- **Custom Artwork Upload**: Upload images for all 7 parts of your CD package with precise specifications
+- **Image Cropping**: Interactive cropping interface for each image with correct aspect ratios
+- **Accurate Measurements**: Templates use precise industry-standard measurements for CD packaging
+- **Multiple Templates per Page**: Choose to print 1-3 CD templates per page
+- **High-Quality PDFs**: Generate print-ready PDF templates with proper bleed areas and cut marks
+- **Modern UI**: User-friendly interface built with React and Tailwind CSS
 
 ## Tech Stack
 
-### Frontend
-- React.js
-- React Router for navigation
-- Axios for API requests
-- React Dropzone for file uploads
-- CSS for styling (with Flexbox and Grid)
-
-### Backend
-- Node.js with Express
-- Multer for file uploads (memory storage)
-- PDFKit for PDF generation
-- Sharp for image processing
-- Vercel Blob for file storage
-- Serverless functions for API endpoints
-
-## Project Structure
-
-The project is organized into two main directories:
-
-- `frontend/`: Contains the React application
-- `backend/`: Contains the Express server and API
+- **Framework**: Next.js (React)
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand with persistent storage
+- **PDF Generation**: React-PDF
+- **Image Storage**: Vercel Blob
+- **Image Cropping**: React Image Crop
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js 14.x or higher
 - npm or yarn
+- Vercel account (for deployment and Blob storage)
 
-### Installation
+### Local Development
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/minicdworld.git
-   cd minicdworld
+   git clone https://github.com/your-username/cd-template-generator.git
+   cd cd-template-generator
    ```
 
 2. Install dependencies:
    ```
    npm install
+   # or
+   yarn install
    ```
 
 3. Set up environment variables:
    - Copy `.env.local.example` to `.env.local`
-   - Add your Vercel Blob token to `.env.local`
+   - Create a Vercel Blob store and add your token to `.env.local`
 
-4. Install backend dependencies:
+4. Start the development server:
    ```
-   cd backend
-   npm install
-   ```
-
-5. Install frontend dependencies:
-   ```
-   cd ../frontend
-   npm install
-   ```
-
-### Running the Application
-
-1. Start the backend server:
-   ```
-   cd backend
    npm run dev
+   # or
+   yarn dev
    ```
 
-2. Start the frontend development server:
-   ```
-   cd frontend
-   npm start
-   ```
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-3. Open your browser and navigate to `http://localhost:3000`
+## Deployment on Vercel
 
-## Deployment
+### 1. Create a Vercel Blob Store
 
-This application is designed to be deployed to Vercel using serverless functions. See the [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) file for detailed deployment instructions.
+1. Login to your [Vercel Dashboard](https://vercel.com/dashboard)
+2. Navigate to Storage -> Create a new Blob store
+3. Copy the provided `BLOB_READ_WRITE_TOKEN`
 
-## Key Features Explained
+### 2. Deploy with Vercel CLI
 
-### Vercel Blob Storage
+```bash
+# Install Vercel CLI if you haven't already
+npm install -g vercel
 
-The application uses Vercel Blob for storing uploaded images and generated PDFs. This provides several advantages:
-- Scalable storage solution for files
-- Improved performance and reliability
-- Better handling of larger files
-- Persistent storage across serverless function executions
+# Login to Vercel
+vercel login
 
-To use Vercel Blob:
-1. Create a Vercel account and set up a project
-2. Navigate to Storage → Blob in your Vercel dashboard
-3. Create a new Blob store
-4. Copy the BLOB_READ_WRITE_TOKEN to your environment variables
+# Deploy the project
+vercel
+```
 
-### Serverless Architecture
+### 3. Deploy via Vercel Dashboard
 
-The application is built with a serverless architecture in mind:
-- API endpoints are implemented as serverless functions
-- Files are stored in Vercel Blob, not on the filesystem
-- State management is handled through Vercel Blob and client-side state
+1. Push your code to a GitHub repository
+2. Import the project into Vercel:
+   - Go to the [Vercel Dashboard](https://vercel.com/dashboard)
+   - Click "New Project"
+   - Import your GitHub repository
+   - Configure environment variables:
+     - Add `BLOB_READ_WRITE_TOKEN` with your token value
+   - Click "Deploy"
 
-### In-Memory Processing
+### 4. Verify Deployment
 
-The application uses in-memory processing for handling file uploads and PDF generation. Files are stored in memory for the duration of the user session, and PDFs are generated on-demand and streamed directly to the user.
+- Once deployed, verify that all features work correctly:
+  - Image uploads and cropping
+  - PDF generation
+  - Form submissions
 
-### PDF Generation
+## CD Template Specifications
 
-PDFs are generated using PDFKit with precise measurements for CD cases. The application supports:
-- 1-3 templates per page
-- Custom text for album title, artist name, etc.
-- Image placement for front cover, back cover, CD image, etc.
+Our template includes 7 distinct components:
+
+1. **FRENTE_AFUERA** (Front Exterior): 41mm × 41mm
+2. **FRENTE_DENTRO** (Front Interior): 41mm × 41mm
+3. **DISCO** (CD Label): 40mm diameter with 6mm center hole
+4. **TRASERA_AFUERA Left**: 50mm × 38mm
+5. **TRASERA_AFUERA Right**: 4mm × 38mm
+6. **TRASERA_DENTRO Left**: 4mm × 38mm
+7. **TRASERA_DENTRO Right**: 50mm × 38mm
+
+All components follow specific measurements to ensure precise printing results.
+
+## Usage Instructions
+
+1. **Start Creating**: Click "Start Creating" on the homepage
+2. **Add Album Info**: Enter album title, artist name, and release year
+3. **Upload Images**: Upload your artwork for each part of the CD package
+4. **Set Layout Options**: Choose how many templates to print per page
+5. **Generate & Download**: Generate a preview and download your PDF template
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- [PDFKit](https://pdfkit.org/) for PDF generation
-- [Sharp](https://sharp.pixelplumbing.com/) for image processing
-- [React Dropzone](https://react-dropzone.js.org/) for file uploads 
+This project is licensed under the MIT License - see the LICENSE file for details. 
