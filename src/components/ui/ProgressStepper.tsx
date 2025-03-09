@@ -31,14 +31,6 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
     return () => clearTimeout(timer)
   }, [currentStep, prevStep])
   
-  // Calculate progress width
-  const maxWidth = {
-    xs: 76, // 100 - (12% * 2)
-    sm: 84, // 100 - (8% * 2)
-    md: 86, // 100 - (7% * 2)
-    lg: 90, // 100 - (5% * 2)
-  }
-  
   // Adjusted progress calculations that account for the non-linear spacing on larger screens
   const getProgressWidth = (screenSize: 'xs' | 'sm' | 'md' | 'lg') => {
     // If we're at step 1, there's no progress
