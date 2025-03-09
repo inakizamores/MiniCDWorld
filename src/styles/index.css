@@ -1,0 +1,4 @@
+/* Add this if it doesn't exist yet, or modify the existing styles */
+.cta-card {
+  border-radius: 0.75rem; /* This adds rounded edges */
+} 
