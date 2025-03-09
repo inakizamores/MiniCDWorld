@@ -125,36 +125,25 @@ const GeneratePdfPage: React.FC = () => {
           )}
         </div>
         
-        {/* Fixed height container for status messages to prevent layout shift */}
-        <div className="min-h-[100px] mb-8">
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg flex items-start">
-              <FaInfoCircle className="text-red-500 mr-3 mt-1 flex-shrink-0" />
-              <div>
-                <p className="font-medium">{error}</p>
-                <p className="text-sm mt-1">Please try again or check your images.</p>
-              </div>
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg mb-6 flex items-start">
+            <FaInfoCircle className="text-red-500 mr-3 mt-1 flex-shrink-0" />
+            <div>
+              <p className="font-medium">{error}</p>
+              <p className="text-sm mt-1">Please try again or check your images.</p>
             </div>
-          )}
-          
-          {pdfUrl && (
-            <div className="bg-green-50 border border-green-200 p-4 rounded-lg flex items-center animate-fade-in">
-              <FaCheckCircle className="text-green-500 mr-3 text-xl flex-shrink-0" />
-              <div>
-                <p className="text-green-800 font-medium">PDF generated successfully!</p>
-                <p className="text-green-700 text-sm mt-1">Your PDF is ready to download and print.</p>
-              </div>
+          </div>
+        )}
+        
+        {pdfUrl && (
+          <div className="bg-green-50 border border-green-200 p-4 rounded-lg flex items-center mb-8 animate-fade-in">
+            <FaCheckCircle className="text-green-500 mr-3 text-xl flex-shrink-0" />
+            <div>
+              <p className="text-green-800 font-medium">PDF generated successfully!</p>
+              <p className="text-green-700 text-sm mt-1">Your PDF is ready to download and print.</p>
             </div>
-          )}
-          
-          {!error && !pdfUrl && (
-            <div className="bg-primary-50 border border-primary-100 p-4 rounded-lg">
-              <p className="text-primary-700 text-center">
-                Click "Generate PDF" to create your template
-              </p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
         
         <div className="bg-secondary-50 border border-secondary-200 rounded-lg p-6">
           <h3 className="font-bold mb-4 flex items-center text-lg">
@@ -196,9 +185,6 @@ const GeneratePdfPage: React.FC = () => {
           <FaRedo className="mr-2" /> Create Another Template
         </button>
       </div>
-      
-      {/* Extra spacer specifically for the Generate PDF page to ensure consistent footer placement */}
-      <div className="h-32"></div>
     </div>
   )
 }
