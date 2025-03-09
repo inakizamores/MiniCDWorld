@@ -3,11 +3,5 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "regions": ["auto"],
-  "env": {
-    "BLOB_READ_WRITE_TOKEN": {
-      "type": "secret",
-      "description": "Token for Vercel Blob storage"
-    }
-  }
+  "regions": ["auto"]
 } 

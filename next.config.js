@@ -4,12 +4,12 @@ const nextConfig = {
   images: {
     domains: ['cdn.vercel-blob.com'], // Allow images from Vercel Blob
   },
-  // Simplify configuration - no environment variables in config
+  // Simplify configuration for initial deployment
   swcMinify: true,
   poweredByHeader: false,
   // Handle trailing slashes consistently
   trailingSlash: false,
-  // Disable type checking and linting to ensure build succeeds
+  // Disable type checking and linting to ensure first deployment succeeds
   typescript: {
     ignoreBuildErrors: true, 
   },

@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
+import { getBlobToken } from '@/lib/blob-config';
 
 export const config = {
   api: {
@@ -30,6 +31,7 @@ export default async function handler(
     const jsonResponse = await handleUpload({
       body,
       request,
+      token: getBlobToken(),
       onBeforeGenerateToken: async (pathname) => {
         // Generate a client token for the browser to upload the file
         return {
