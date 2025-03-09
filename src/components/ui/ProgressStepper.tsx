@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaCheck } from 'react-icons/fa'
 
 interface Step {
@@ -12,63 +12,80 @@ interface ProgressStepperProps {
 }
 
 const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep }) => {
+  const [prevStep, setPrevStep] = useState(currentStep)
+  const [animationDirection, setAnimationDirection] = useState<'forward' | 'backward' | null>(null)
+  
+  useEffect(() => {
+    if (currentStep > prevStep) {
+      setAnimationDirection('forward')
+    } else if (currentStep < prevStep) {
+      setAnimationDirection('backward')
+    }
+    setPrevStep(currentStep)
+    
+    // Reset animation direction after animation completes
+    const timer = setTimeout(() => {
+      setAnimationDirection(null)
+    }, 600)
+    
+    return () => clearTimeout(timer)
+  }, [currentStep, prevStep])
+  
   return (
-    <nav aria-label="Progress" className="w-full my-8">
-      <ol className="flex items-center">
+    <nav aria-label="Progress" className="w-full my-8 overflow-hidden">
+      {/* Single continuous progress line that sits behind all steps */}
+      <div className="relative mb-5 mx-5">
+        <div className="absolute h-0.5 bg-secondary-300 left-0 right-0 top-5" />
+        <div 
+          className="absolute h-0.5 bg-gradient-to-r from-primary-600 to-primary-400 left-0 top-5 transition-all duration-500 ease-in-out"
+          style={{ 
+            width: `${(Math.max(0, currentStep - 1) / (steps.length - 1)) * 100}%`,
+          }}
+        />
+      </div>
+      
+      <ol className="flex items-center justify-between px-5">
         {steps.map((step, index) => {
           const stepNumber = index + 1
           const isActive = stepNumber === currentStep
           const isCompleted = stepNumber < currentStep
-          const isFirstStep = index === 0
+          
+          // Animation classes
+          let animationClass = ''
+          if (animationDirection === 'forward' && stepNumber === currentStep) {
+            animationClass = 'animate-bounce-in'
+          } else if (animationDirection === 'backward' && stepNumber === currentStep) {
+            animationClass = 'animate-slide-in'
+          }
           
           return (
-            <li key={step.name} className={`relative ${index !== steps.length - 1 ? 'flex-1' : ''}`}>
-              {/* Connector line between steps with gradient for completed steps */}
-              {index !== steps.length - 1 && (
-                <div className={`absolute top-5 h-0.5 z-0 ${
-                  isFirstStep ? 'left-1/2 w-1/2' : 'left-0 w-full'
-                }`}>
-                  <div
-                    className={`h-0.5 ${
-                      isCompleted 
-                        ? 'bg-gradient-to-r from-primary-600 to-primary-400' 
-                        : 'bg-secondary-300'
-                    }`}
-                  />
+            <li key={step.name} className="relative flex flex-col items-center">
+              <div className={`flex flex-col items-center ${animationClass}`}>
+                {/* Circle indicator */}
+                <div className="relative z-10">
+                  {isCompleted ? (
+                    <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary-600 to-primary-500 shadow-md transition-all duration-300">
+                      <FaCheck className="h-5 w-5 text-white" aria-hidden="true" />
+                    </span>
+                  ) : isActive ? (
+                    <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-primary-600 bg-white shadow-[0_0_0_4px_rgba(2,132,199,0.1)] transition-all duration-300">
+                      <span className="text-primary-600 font-bold">{stepNumber}</span>
+                    </span>
+                  ) : (
+                    <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-secondary-300 bg-white transition-all duration-300">
+                      <span className="text-secondary-500">{stepNumber}</span>
+                    </span>
+                  )}
                 </div>
-              )}
-            
-              {isCompleted ? (
-                <div className="group flex items-center relative z-10">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary-600 to-primary-500 shadow-md">
-                    <FaCheck className="h-5 w-5 text-white" aria-hidden="true" />
+                
+                {/* Text - shown only on medium screens and up */}
+                <div className="mt-3 hidden md:block text-center max-w-[120px]">
+                  <span className={`font-medium block ${isActive || isCompleted ? 'text-primary-600' : 'text-secondary-500'}`}>
+                    {step.name}
                   </span>
-                  <div className="ml-3">
-                    <span className="font-medium text-primary-600">{step.name}</span>
-                    <p className="text-xs text-secondary-500">{step.description}</p>
-                  </div>
+                  <p className="text-xs text-secondary-500 mt-1">{step.description}</p>
                 </div>
-              ) : isActive ? (
-                <div className="flex items-center relative z-10" aria-current="step">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary-600 bg-white shadow-[0_0_0_4px_rgba(2,132,199,0.1)]">
-                    <span className="text-primary-600 font-bold">{stepNumber}</span>
-                  </span>
-                  <div className="ml-3">
-                    <span className="font-medium text-primary-600">{step.name}</span>
-                    <p className="text-xs text-secondary-500">{step.description}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="group flex items-center relative z-10">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-secondary-300 bg-white">
-                    <span className="text-secondary-500">{stepNumber}</span>
-                  </span>
-                  <div className="ml-3">
-                    <span className="text-secondary-500">{step.name}</span>
-                    <p className="text-xs text-secondary-400">{step.description}</p>
-                  </div>
-                </div>
-              )}
+              </div>
             </li>
           )
         })}

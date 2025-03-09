@@ -41,6 +41,8 @@ export default {
         'fade-in': 'fadeIn 1s ease-in-out',
         'fade-in-up': 'fadeInUp 0.8s ease-out',
         'pulse-slow': 'pulse 4s infinite',
+        'bounce-in': 'bounceIn 0.6s ease-out',
+        'slide-in': 'slideIn 0.6s ease-out',
       },
       keyframes: {
         fadeIn: {
@@ -50,6 +52,15 @@ export default {
         fadeInUp: {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        bounceIn: {
+          '0%': { opacity: '0', transform: 'scale(0.8)' },
+          '50%': { opacity: '1', transform: 'scale(1.1)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        slideIn: {
+          '0%': { opacity: '0', transform: 'translateX(-10px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
         },
       },
       boxShadow: {
