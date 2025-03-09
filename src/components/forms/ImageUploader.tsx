@@ -23,9 +23,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     onImageSelected
   })
 
-  // Check if this is a narrow image based on dimensions (like 4mm × 38mm)
-  const isNarrowImage = dimensions.includes('4mm × 38mm')
-
   return (
     <div className="card h-full image-uploader">
       <h3 className="text-lg font-bold mb-2 flex items-center">
@@ -68,25 +65,14 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         </div>
       ) : (
         <div className="relative image-preview">
-          {isNarrowImage ? (
-            // For narrow images - limit height and center horizontally
-            <div className="flex justify-center">
-              <img
-                src={previewImage}
-                alt={`Preview for ${title}`}
-                className="rounded-lg object-contain"
-                style={{ maxHeight: '200px', width: 'auto' }}
-              />
-            </div>
-          ) : (
-            // For normal images - standard display
+          {/* Image preview container with fixed aspect ratio */}
+          <div className="w-full relative pb-[75%] overflow-hidden rounded-lg bg-secondary-50">
             <img
               src={previewImage}
               alt={`Preview for ${title}`}
-              className="w-full h-auto rounded-lg object-cover"
-              style={{ maxHeight: '300px' }}
+              className="absolute inset-0 w-full h-full object-contain rounded-lg"
             />
-          )}
+          </div>
           
           {onRemove && (
             <button
