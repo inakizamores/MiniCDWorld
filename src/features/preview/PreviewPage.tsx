@@ -8,7 +8,7 @@ import {
   setCdsPerPage 
 } from '@features/template/templateSlice'
 import { DIMENSIONS, mmToPixels } from '@constants/dimensions'
-import { FaArrowLeft, FaArrowRight, FaEye } from 'react-icons/fa'
+import { FaArrowLeft, FaArrowRight, FaEye, FaFileAlt, FaPrint } from 'react-icons/fa'
 
 const PreviewPage: React.FC = () => {
   const dispatch = useDispatch()
@@ -76,8 +76,8 @@ const PreviewPage: React.FC = () => {
                       src={images.frenteAfuera.croppedImage}
                       alt="Front Cover Outside"
                       style={{ 
-                        width: mmToPixels(DIMENSIONS.FRENTE_AFUERA.width) / 2.5,
-                        height: mmToPixels(DIMENSIONS.FRENTE_AFUERA.height) / 2.5
+                        width: mmToPixels(DIMENSIONS.FRENTE_AFUERA.width) / 3,
+                        height: mmToPixels(DIMENSIONS.FRENTE_AFUERA.height) / 3
                       }}
                     />
                   </div>
@@ -89,8 +89,8 @@ const PreviewPage: React.FC = () => {
                       src={images.frenteDentro.croppedImage}
                       alt="Front Cover Inside"
                       style={{ 
-                        width: mmToPixels(DIMENSIONS.FRENTE_DENTRO.width) / 2.5,
-                        height: mmToPixels(DIMENSIONS.FRENTE_DENTRO.height) / 2.5
+                        width: mmToPixels(DIMENSIONS.FRENTE_DENTRO.width) / 3,
+                        height: mmToPixels(DIMENSIONS.FRENTE_DENTRO.height) / 3
                       }}
                     />
                   </div>
@@ -109,8 +109,8 @@ const PreviewPage: React.FC = () => {
                         src={images.disco.croppedImage}
                         alt="CD Disc"
                         style={{ 
-                          width: mmToPixels(DIMENSIONS.DISCO.diameter) / 2.5,
-                          height: mmToPixels(DIMENSIONS.DISCO.diameter) / 2.5,
+                          width: mmToPixels(DIMENSIONS.DISCO.diameter) / 3,
+                          height: mmToPixels(DIMENSIONS.DISCO.diameter) / 3,
                         }}
                       />
                     </div>
@@ -118,8 +118,8 @@ const PreviewPage: React.FC = () => {
                     <div 
                       className="absolute bg-black rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                       style={{ 
-                        width: mmToPixels(DIMENSIONS.DISCO.holeSize) / 2.5,
-                        height: mmToPixels(DIMENSIONS.DISCO.holeSize) / 2.5,
+                        width: mmToPixels(DIMENSIONS.DISCO.holeSize) / 3,
+                        height: mmToPixels(DIMENSIONS.DISCO.holeSize) / 3,
                       }}
                     />
                   </div>
@@ -139,8 +139,8 @@ const PreviewPage: React.FC = () => {
                     src={images.traseraAfuera.main.croppedImage}
                     alt="Back Cover Outside Main"
                     style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.width) / 2.5,
-                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.height) / 2.5
+                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.width) / 3,
+                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.height) / 3
                     }}
                   />
                 </div>
@@ -153,8 +153,8 @@ const PreviewPage: React.FC = () => {
                     src={images.traseraAfuera.side.croppedImage}
                     alt="Back Cover Outside Side"
                     style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.width) / 2.5,
-                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.height) / 2.5
+                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.width) / 3,
+                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.height) / 3
                     }}
                   />
                 </div>
@@ -167,8 +167,8 @@ const PreviewPage: React.FC = () => {
                     src={images.traseraDentro.side.croppedImage}
                     alt="Back Cover Inside Side"
                     style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.width) / 2.5,
-                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.height) / 2.5
+                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.width) / 3,
+                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.height) / 3
                     }}
                   />
                 </div>
@@ -181,8 +181,8 @@ const PreviewPage: React.FC = () => {
                     src={images.traseraDentro.main.croppedImage}
                     alt="Back Cover Inside Main"
                     style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.width) / 2.5,
-                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.height) / 2.5
+                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.width) / 3,
+                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.height) / 3
                     }}
                   />
                 </div>
@@ -204,68 +204,113 @@ const PreviewPage: React.FC = () => {
       </div>
       
       <div className="card mb-10">
-        <div className="mb-8">
-          <label className="block text-secondary-700 font-medium mb-3">
-            Number of CDs per page
-          </label>
-          <div className="flex flex-wrap gap-4">
-            {[1, 2].map((num) => (
-              <label key={num} className="flex items-center cursor-pointer bg-white border border-secondary-200 rounded-lg p-3 transition-all hover:bg-primary-50 hover:border-primary-300">
-                <input
-                  type="radio"
-                  name="cdsPerPage"
-                  value={num}
-                  checked={cdsPerPage === num}
-                  onChange={handleCdsPerPageChange}
-                  className="mr-3 h-4 w-4 text-primary-600 border-secondary-300 focus:ring-primary-500"
-                />
-                <div>
-                  <span className="font-medium">{num} {num === 1 ? 'CD' : 'CDs'}</span>
-                  <p className="text-xs text-secondary-500">per page</p>
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
-        
-        <div className="mb-6">
-          <div className="font-medium mb-3 flex items-center">
-            <FaEye className="mr-2 text-primary-600" /> 
-            Template Preview
-          </div>
-          <div className="bg-secondary-100 border border-secondary-300 rounded-lg p-4 overflow-auto">
-            <div className="relative bg-white shadow-lg rounded border border-secondary-200 w-[800px] mx-auto transform transition-transform hover:scale-[1.01]">
-              {/* Header */}
-              <div className="border-b border-secondary-200 p-3 flex justify-between items-center">
-                <div className="text-xs font-bold">MiniCDWorld US Letter Printable Template</div>
-                <div className="text-xs text-right">
-                  <span>{albumTitle || 'Album Title'} - {artistName || 'Artist Name'}</span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Options Panel */}
+          <div className="lg:col-span-1">
+            <div className="bg-white p-6 rounded-lg border border-secondary-200 h-full">
+              <h2 className="text-xl font-bold mb-6 pb-2 border-b border-secondary-200 text-primary-700 flex items-center">
+                <FaPrint className="mr-2" /> Print Options
+              </h2>
+              
+              <div className="mb-6">
+                <label className="block text-secondary-700 font-medium mb-3">
+                  Number of CDs per page
+                </label>
+                <div className="space-y-3">
+                  {[1, 2].map((num) => (
+                    <label 
+                      key={num} 
+                      className={`flex items-center cursor-pointer rounded-lg p-4 transition-all ${
+                        cdsPerPage === num 
+                          ? 'bg-primary-50 border border-primary-300 shadow-sm' 
+                          : 'bg-white border border-secondary-200 hover:bg-secondary-50'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="cdsPerPage"
+                        value={num}
+                        checked={cdsPerPage === num}
+                        onChange={handleCdsPerPageChange}
+                        className="h-5 w-5 text-primary-600 border-secondary-300 focus:ring-primary-500"
+                      />
+                      <div className="ml-4">
+                        <span className="font-medium block">{num} {num === 1 ? 'CD' : 'CDs'} per page</span>
+                        <p className="text-sm text-secondary-500 mt-1">
+                          {num === 1 
+                            ? 'Larger size, easier to cut and fold' 
+                            : 'Same size, saves paper for multiple CDs'}
+                        </p>
+                      </div>
+                    </label>
+                  ))}
                 </div>
               </div>
               
-              {/* CD Blocks */}
-              <div className="p-4">
-                {renderCDBlock()}
-                {cdsPerPage > 1 && renderCDBlock()}
-              </div>
-              
-              {/* Footer */}
-              <div className="border-t border-secondary-200 p-3">
-                <div className="text-xs text-secondary-500">
-                  Created with the tool made by Inaki Zamores and findable on: https://mini-cd-world.vercel.app/
-                </div>
+              <div className="bg-primary-50 rounded-lg p-4 border border-primary-100">
+                <h3 className="font-medium flex items-center text-primary-700 mb-2">
+                  <FaFileAlt className="mr-2" /> CD Template Details
+                </h3>
+                <ul className="space-y-2 text-sm text-secondary-600">
+                  <li className="flex justify-between">
+                    <span>Album Title:</span>
+                    <span className="font-medium">{albumTitle || 'Untitled'}</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Artist Name:</span>
+                    <span className="font-medium">{artistName || 'Unknown'}</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Paper Size:</span>
+                    <span className="font-medium">US Letter (8.5" × 11")</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div className="text-sm text-secondary-600 bg-primary-50 border border-primary-100 rounded-lg p-4">
-          <p className="flex items-center">
-            <svg className="w-5 h-5 mr-2 text-primary-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-            </svg>
-            Note: This preview is scaled down. The actual PDF will maintain precise measurements for printing.
-          </p>
+          
+          {/* Right Column - Preview */}
+          <div className="lg:col-span-2">
+            <div className="bg-white p-6 rounded-lg border border-secondary-200">
+              <h2 className="text-xl font-bold mb-6 pb-2 border-b border-secondary-200 text-primary-700 flex items-center">
+                <FaEye className="mr-2" /> Template Preview
+              </h2>
+              
+              <div className="bg-secondary-100 border border-secondary-300 rounded-lg p-4 overflow-auto">
+                <div className="relative bg-white shadow-lg rounded border border-secondary-200 max-w-2xl mx-auto transform transition-transform hover:scale-[1.01]">
+                  {/* Header */}
+                  <div className="border-b border-secondary-200 p-3 flex justify-between items-center">
+                    <div className="text-xs font-bold">MiniCDWorld US Letter Printable Template</div>
+                    <div className="text-xs text-right">
+                      <span>{albumTitle || 'Album Title'} - {artistName || 'Artist Name'}</span>
+                    </div>
+                  </div>
+                  
+                  {/* CD Blocks */}
+                  <div className="p-4">
+                    {renderCDBlock()}
+                    {cdsPerPage > 1 && renderCDBlock()}
+                  </div>
+                  
+                  {/* Footer */}
+                  <div className="border-t border-secondary-200 p-3">
+                    <div className="text-xs text-secondary-500">
+                      Created with the tool made by Inaki Zamores and findable on: https://mini-cd-world.vercel.app/
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-sm text-secondary-600 bg-primary-50 border border-primary-100 rounded-lg p-4 mt-4">
+                <p className="flex items-center">
+                  <svg className="w-5 h-5 mr-2 text-primary-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  Note: This preview is scaled down. The actual PDF will maintain precise measurements for printing.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
