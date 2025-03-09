@@ -44,7 +44,7 @@ const GeneratePdfPage: React.FC = () => {
   
   const handleStartOver = () => {
     dispatch(resetTemplate())
-    navigate('/')
+    navigate('/upload')
   }
   
   const downloadFileName = templateData.albumTitle

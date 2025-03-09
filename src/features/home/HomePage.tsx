@@ -1,7 +1,18 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaCheck } from 'react-icons/fa'
+import { useDispatch } from 'react-redux'
+import { resetTemplate } from '@features/template/templateSlice'
 
 const HomePage = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  
+  // Handler to reset template state and navigate to upload page
+  const handleCreateTemplate = () => {
+    dispatch(resetTemplate())
+    navigate('/upload')
+  }
+  
   return (
     <div className="space-y-24">
       {/* Hero Section with gradient and animation */}
@@ -20,10 +31,13 @@ const HomePage = () => {
               Upload your artwork, customize your design, and download a print-ready PDF.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link to="/upload" className="btn btn-primary text-lg px-8 py-3 flex items-center justify-center gap-2 group">
+              <button 
+                onClick={handleCreateTemplate}
+                className="btn btn-primary text-lg px-8 py-3 flex items-center justify-center gap-2 group"
+              >
                 Create Your Template
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </button>
               <a 
                 href="#how-it-works" 
                 className="btn btn-outline text-lg px-8 py-3"
@@ -148,9 +162,12 @@ const HomePage = () => {
           <p className="text-xl text-primary-100 max-w-2xl mx-auto mb-10 leading-relaxed">
             Start designing your custom CD templates today with our easy-to-use tool
           </p>
-          <Link to="/upload" className="btn bg-white text-primary-700 hover:bg-primary-50 text-lg px-10 py-3 shadow-lg hover:shadow-xl transition-all">
+          <button 
+            onClick={handleCreateTemplate}
+            className="btn bg-white text-primary-700 hover:bg-primary-50 text-lg px-10 py-3 shadow-lg hover:shadow-xl transition-all"
+          >
             Get Started Now
-          </Link>
+          </button>
         </div>
       </section>
     </div>

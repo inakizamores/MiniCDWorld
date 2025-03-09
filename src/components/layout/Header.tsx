@@ -1,7 +1,18 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FaCompactDisc } from 'react-icons/fa'
+import { useDispatch } from 'react-redux'
+import { resetTemplate } from '@features/template/templateSlice'
 
 const Header = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  
+  // Handler to reset template state and navigate to upload page
+  const handleCreateTemplate = () => {
+    dispatch(resetTemplate())
+    navigate('/upload')
+  }
+  
   return (
     <header className="bg-white backdrop-blur-sm bg-opacity-90 shadow-md sticky top-0 z-50 border-b border-secondary-100">
       <div className="container mx-auto px-4 py-4">
@@ -34,12 +45,12 @@ const Header = () => {
                 </a>
               </li>
               <li>
-                <Link
-                  to="/upload"
+                <button
+                  onClick={handleCreateTemplate}
                   className="btn btn-primary flex items-center"
                 >
                   Create Template
-                </Link>
+                </button>
               </li>
             </ul>
           </nav>
