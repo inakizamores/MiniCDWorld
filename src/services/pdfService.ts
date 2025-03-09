@@ -189,37 +189,16 @@ class PDFService {
     // Section spacing - reduced padding for tighter layout
     const sectionPadding = 5
     
-    // Calculate total content height to center vertically
-    const frontCoverHeight = DIMENSIONS.FRENTE_AFUERA.height;
-    const discHeight = DIMENSIONS.DISCO.diameter;
-    const backCoverHeight = DIMENSIONS.TRASERA_AFUERA.main.height;
-    const titleHeight = 4; // Approximate height of section titles
-    
-    // Calculate the height of the top row (max of front cover and disc height)
-    const topRowHeight = Math.max(frontCoverHeight, discHeight) + titleHeight;
-    
-    // Total content height including titles and spacing between sections
-    const totalContentHeight = topRowHeight + backCoverHeight + titleHeight + sectionPadding * 3;
-    
-    // Calculate vertical centering offset with extra padding
-    const verticalOffset = Math.max((blockHeight - totalContentHeight) / 2, 10);
-    
-    // Adjust starting Y position to center content vertically
-    const startY = y + verticalOffset;
-    let currentY = startY + sectionPadding; // Start with additional padding
+    // Calculate y positions for different sections
+    let currentY = y + sectionPadding
     
     // --- TOP ROW: FRONT COVER COMPONENTS (LEFT) AND CD DISC (RIGHT) ---
     
     // FRONT COVER COMPONENTS (LEFT SIDE)
     const frontSectionWidth = blockWidth * 0.6 // 60% of block width for front covers
     
-    // Draw section titles
-    doc.text('Front Cover Components', x + sectionPadding, currentY);
-    
-    // Position for CD Disc title, aligned with Front Cover title
-    doc.text('CD Disc', x + frontSectionWidth + sectionPadding, currentY);
-    
-    currentY += titleHeight + 2; // Move below the title with some spacing
+    doc.text('Front Cover Components', x + sectionPadding, currentY)
+    currentY += 4
     
     // Position the front covers
     const frontCoverX = x + (frontSectionWidth - (DIMENSIONS.FRENTE_AFUERA.width + DIMENSIONS.FRENTE_DENTRO.width)) / 2
@@ -253,10 +232,12 @@ class PDFService {
     const discSectionX = x + frontSectionWidth + sectionPadding
     const discSectionWidth = blockWidth - frontSectionWidth - sectionPadding * 2
     
+    doc.text('CD Disc', discSectionX, y + sectionPadding)
+    
     // Center the disc in its section
     if (images.disco?.croppedImage) {
       const discCenterX = discSectionX + discSectionWidth / 2
-      const discCenterY = currentY + DIMENSIONS.DISCO.diameter / 2
+      const discCenterY = currentY + DIMENSIONS.DISCO.diameter / 2 + 4
       
       this.drawCircularImage(
         doc,
@@ -271,10 +252,10 @@ class PDFService {
     // --- BOTTOM ROW: BACK COVER COMPONENTS ---
     
     // Move to back cover components section (below front covers and disc)
-    currentY += Math.max(DIMENSIONS.FRENTE_AFUERA.height, DIMENSIONS.DISCO.diameter) + sectionPadding * 2;
+    currentY += Math.max(DIMENSIONS.FRENTE_AFUERA.height, DIMENSIONS.DISCO.diameter) + sectionPadding
     
     doc.text('Back Cover Components', x + sectionPadding, currentY)
-    currentY += titleHeight + 2;
+    currentY += 4
     
     // Center the back covers in the full width
     const backCoverFullWidth = DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width + 

@@ -58,6 +58,142 @@ const PreviewPage: React.FC = () => {
     )
   }
   
+  // Helper function to render a CD block
+  const renderCDBlock = () => {
+    return (
+      <div className="bg-white border border-secondary-200 rounded-lg p-4 mb-4 relative">
+        {/* Block outline */}
+        <div className="border border-secondary-200 rounded p-4">
+          {/* Top row: Front Cover Components (left) and CD Disc (right) */}
+          <div className="flex flex-wrap mb-6">
+            {/* Front Cover Components */}
+            <div className="w-3/5 pr-4">
+              <div className="text-xs font-bold text-secondary-600 mb-2">Front Cover Components</div>
+              <div className="flex">
+                {images.frenteAfuera?.croppedImage && (
+                  <div className="relative border border-dashed border-secondary-400">
+                    <img 
+                      src={images.frenteAfuera.croppedImage}
+                      alt="Front Cover Outside"
+                      style={{ 
+                        width: mmToPixels(DIMENSIONS.FRENTE_AFUERA.width) / 2.5,
+                        height: mmToPixels(DIMENSIONS.FRENTE_AFUERA.height) / 2.5
+                      }}
+                    />
+                  </div>
+                )}
+                
+                {images.frenteDentro?.croppedImage && (
+                  <div className="relative border border-dashed border-secondary-400">
+                    <img 
+                      src={images.frenteDentro.croppedImage}
+                      alt="Front Cover Inside"
+                      style={{ 
+                        width: mmToPixels(DIMENSIONS.FRENTE_DENTRO.width) / 2.5,
+                        height: mmToPixels(DIMENSIONS.FRENTE_DENTRO.height) / 2.5
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* CD Disc */}
+            <div className="w-2/5">
+              <div className="text-xs font-bold text-secondary-600 mb-2">CD Disc</div>
+              {images.disco?.croppedImage && (
+                <div className="flex justify-center">
+                  <div className="relative">
+                    <div className="rounded-full overflow-hidden border border-dashed border-secondary-400">
+                      <img 
+                        src={images.disco.croppedImage}
+                        alt="CD Disc"
+                        style={{ 
+                          width: mmToPixels(DIMENSIONS.DISCO.diameter) / 2.5,
+                          height: mmToPixels(DIMENSIONS.DISCO.diameter) / 2.5,
+                        }}
+                      />
+                    </div>
+                    {/* Center hole */}
+                    <div 
+                      className="absolute bg-black rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                      style={{ 
+                        width: mmToPixels(DIMENSIONS.DISCO.holeSize) / 2.5,
+                        height: mmToPixels(DIMENSIONS.DISCO.holeSize) / 2.5,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Bottom row: Back Cover Components */}
+          <div>
+            <div className="text-xs font-bold text-secondary-600 mb-2">Back Cover Components</div>
+            <div className="flex justify-center">
+              {/* Back outside main */}
+              {images.traseraAfuera.main?.croppedImage && (
+                <div className="relative border border-dashed border-secondary-400">
+                  <img 
+                    src={images.traseraAfuera.main.croppedImage}
+                    alt="Back Cover Outside Main"
+                    style={{ 
+                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.width) / 2.5,
+                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.height) / 2.5
+                    }}
+                  />
+                </div>
+              )}
+              
+              {/* Back outside side */}
+              {images.traseraAfuera.side?.croppedImage && (
+                <div className="relative border border-dashed border-secondary-400">
+                  <img 
+                    src={images.traseraAfuera.side.croppedImage}
+                    alt="Back Cover Outside Side"
+                    style={{ 
+                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.width) / 2.5,
+                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.height) / 2.5
+                    }}
+                  />
+                </div>
+              )}
+              
+              {/* Back inside side */}
+              {images.traseraDentro.side?.croppedImage && (
+                <div className="relative border border-dashed border-secondary-400">
+                  <img 
+                    src={images.traseraDentro.side.croppedImage}
+                    alt="Back Cover Inside Side"
+                    style={{ 
+                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.width) / 2.5,
+                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.height) / 2.5
+                    }}
+                  />
+                </div>
+              )}
+              
+              {/* Back inside main */}
+              {images.traseraDentro.main?.croppedImage && (
+                <div className="relative border border-dashed border-secondary-400">
+                  <img 
+                    src={images.traseraDentro.main.croppedImage}
+                    alt="Back Cover Inside Main"
+                    style={{ 
+                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.width) / 2.5,
+                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.height) / 2.5
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  
   return (
     <div>
       <div className="text-center mb-10">
@@ -98,140 +234,26 @@ const PreviewPage: React.FC = () => {
             Template Preview
           </div>
           <div className="bg-secondary-100 border border-secondary-300 rounded-lg p-4 overflow-auto">
-            <div className="relative bg-white shadow-lg rounded border border-secondary-200 w-[800px] h-[1035px] mx-auto transform transition-transform hover:scale-[1.01]">
-              {/* This is a simplified preview - the actual PDF will have proper measurements */}
-              <div className="absolute left-12 top-12 text-xs text-secondary-500">
-                <div className="font-bold text-secondary-700 text-sm">{albumTitle || 'Album Title'}</div>
-                <div className="text-secondary-500">{artistName || 'Artist Name'}</div>
-              </div>
-              
-              {/* Front cover outside and inside */}
-              <div className="absolute left-12 top-24 flex shadow-md">
-                {images.frenteAfuera?.croppedImage && (
-                  <img 
-                    src={images.frenteAfuera.croppedImage}
-                    alt="Front Cover Outside"
-                    className="border border-secondary-300"
-                    style={{ 
-                      width: mmToPixels(DIMENSIONS.FRENTE_AFUERA.width) / 2,
-                      height: mmToPixels(DIMENSIONS.FRENTE_AFUERA.height) / 2
-                    }}
-                  />
-                )}
-                
-                {images.frenteDentro?.croppedImage && (
-                  <img 
-                    src={images.frenteDentro.croppedImage}
-                    alt="Front Cover Inside"
-                    className="border border-secondary-300"
-                    style={{ 
-                      width: mmToPixels(DIMENSIONS.FRENTE_DENTRO.width) / 2,
-                      height: mmToPixels(DIMENSIONS.FRENTE_DENTRO.height) / 2
-                    }}
-                  />
-                )}
-              </div>
-              
-              {/* Disc */}
-              {images.disco?.croppedImage && (
-                <div 
-                  className="absolute rounded-full overflow-hidden border border-secondary-300 shadow-md"
-                  style={{ 
-                    width: mmToPixels(DIMENSIONS.DISCO.diameter) / 2,
-                    height: mmToPixels(DIMENSIONS.DISCO.diameter) / 2,
-                    left: mmToPixels(2 * DIMENSIONS.FRENTE_AFUERA.width + DIMENSIONS.COMPONENT_SPACING) / 2 + 12,
-                    top: 24 + mmToPixels(DIMENSIONS.COMPONENT_SPACING) / 2,
-                  }}
-                >
-                  <img 
-                    src={images.disco.croppedImage}
-                    alt="CD Disc"
-                    style={{ 
-                      width: '100%',
-                      height: '100%',
-                    }}
-                  />
-                  {/* Center hole */}
-                  <div 
-                    className="absolute bg-black rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                    style={{ 
-                      width: mmToPixels(DIMENSIONS.DISCO.holeSize) / 2,
-                      height: mmToPixels(DIMENSIONS.DISCO.holeSize) / 2,
-                    }}
-                  />
+            <div className="relative bg-white shadow-lg rounded border border-secondary-200 w-[800px] mx-auto transform transition-transform hover:scale-[1.01]">
+              {/* Header */}
+              <div className="border-b border-secondary-200 p-3 flex justify-between items-center">
+                <div className="text-xs font-bold">MiniCDWorld US Letter Printable Template</div>
+                <div className="text-xs text-right">
+                  <span>{albumTitle || 'Album Title'} - {artistName || 'Artist Name'}</span>
                 </div>
-              )}
-              
-              {/* Back sections */}
-              <div 
-                className="absolute flex shadow-md"
-                style={{ 
-                  left: 12,
-                  top: 24 + mmToPixels(DIMENSIONS.FRENTE_AFUERA.height + DIMENSIONS.COMPONENT_SPACING) / 2,
-                }}
-              >
-                {/* Back outside main */}
-                {images.traseraAfuera.main?.croppedImage && (
-                  <img 
-                    src={images.traseraAfuera.main.croppedImage}
-                    alt="Back Cover Outside Main"
-                    className="border border-secondary-300"
-                    style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.width) / 2,
-                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.height) / 2
-                    }}
-                  />
-                )}
-                
-                {/* Back outside side */}
-                {images.traseraAfuera.side?.croppedImage && (
-                  <img 
-                    src={images.traseraAfuera.side.croppedImage}
-                    alt="Back Cover Outside Side"
-                    className="border border-secondary-300"
-                    style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.width) / 2,
-                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.height) / 2
-                    }}
-                  />
-                )}
-                
-                {/* Back inside side */}
-                {images.traseraDentro.side?.croppedImage && (
-                  <img 
-                    src={images.traseraDentro.side.croppedImage}
-                    alt="Back Cover Inside Side"
-                    className="border border-secondary-300"
-                    style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.width) / 2,
-                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.height) / 2
-                    }}
-                  />
-                )}
-                
-                {/* Back inside main */}
-                {images.traseraDentro.main?.croppedImage && (
-                  <img 
-                    src={images.traseraDentro.main.croppedImage}
-                    alt="Back Cover Inside Main"
-                    className="border border-secondary-300"
-                    style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.width) / 2,
-                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.height) / 2
-                    }}
-                  />
-                )}
               </div>
               
-              {/* Footer text */}
-              <div 
-                className="absolute text-xs text-secondary-400"
-                style={{ 
-                  left: 12,
-                  bottom: 12,
-                }}
-              >
-                Generated with MiniCDWorld
+              {/* CD Blocks */}
+              <div className="p-4">
+                {renderCDBlock()}
+                {cdsPerPage > 1 && renderCDBlock()}
+              </div>
+              
+              {/* Footer */}
+              <div className="border-t border-secondary-200 p-3">
+                <div className="text-xs text-secondary-500">
+                  Created with the tool made by Inaki Zamores and findable on: https://mini-cd-world.vercel.app/
+                </div>
               </div>
             </div>
           </div>
