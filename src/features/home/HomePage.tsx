@@ -5,14 +5,14 @@ const HomePage = () => {
   return (
     <div className="space-y-24">
       {/* Hero Section with gradient and animation */}
-      <section className="py-16 md:py-24 text-center relative overflow-hidden">
+      <section className="pt-8 md:pt-12 pb-16 md:pb-24 text-center relative overflow-hidden">
         {/* Background circles */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary-100 rounded-full opacity-30 blur-3xl"></div>
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary-200 rounded-full opacity-30 blur-3xl"></div>
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary-100 rounded-full opacity-30 blur-3xl -z-10"></div>
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary-200 rounded-full opacity-30 blur-3xl -z-10"></div>
         
-        <div className="relative z-10">
+        <div className="relative">
           <div className="animate-fade-in-up">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 mt-8">
               Create Professional <span className="gradient-text">CD Templates</span>
             </h1>
             <p className="text-xl text-secondary-600 max-w-3xl mx-auto mb-10 leading-relaxed">
