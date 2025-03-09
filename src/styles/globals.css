@@ -6,6 +6,8 @@
   --primary-color: #0284C7;
   --primary-light: #E0F2FE;
   --dark-bg: #0F172A;
+  --card-radius: 1rem;
+  --container-width: min(1200px, 95%);
 }
 
 html {
@@ -20,6 +22,13 @@ body {
     radial-gradient(at 70% 20%, hsla(209, 100%, 47%, 0.05) 0px, transparent 50%),
     radial-gradient(at 10% 75%, hsla(209, 100%, 47%, 0.05) 0px, transparent 50%);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.container {
+  width: var(--container-width);
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 main {
@@ -53,7 +62,7 @@ h4 {
 /* Enhanced Component Styles */
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-md font-medium transition-all duration-200 transform;
+    @apply px-4 py-2 rounded-xl font-medium transition-all duration-200 transform;
   }
   
   .btn:active {
@@ -74,12 +83,13 @@ h4 {
   }
   
   .card {
-    @apply bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300;
+    @apply bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: var(--card-radius);
   }
   
   .input {
-    @apply w-full px-3 py-2 border border-secondary-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply w-full px-3 py-2 border border-secondary-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
   }
 
   /* Modern image uploader */
@@ -101,12 +111,19 @@ h4 {
 
   /* Image preview effects */
   .image-preview {
-    @apply relative overflow-hidden rounded-lg transition-all duration-300;
+    @apply relative overflow-hidden transition-all duration-300;
+    border-radius: var(--card-radius);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   }
 
   .image-preview:hover {
     @apply transform scale-[1.02];
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Feature card */
+  .feature-card {
+    @apply bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300 h-full flex flex-col;
+    border: 1px solid rgba(0, 0, 0, 0.05);
   }
 } 

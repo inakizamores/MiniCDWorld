@@ -5,21 +5,21 @@ const Footer = () => {
 
   return (
     <footer className="bg-gradient-to-r from-secondary-900 to-secondary-800 text-white">
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-6 md:mb-0">
+      <div className="container mx-auto py-12">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="mb-6 md:mb-0 text-center md:text-left">
             <h3 className="text-xl font-bold text-white mb-3">MiniCDWorld</h3>
             <p className="text-secondary-300 max-w-md">
               Create stunning, print-ready CD templates with precise measurements.
               Upload your artwork, customize your design, and download a professional PDF.
             </p>
             
-            <div className="mt-4 flex space-x-4">
+            <div className="mt-4 flex space-x-4 justify-center md:justify-start">
               <a 
                 href="https://github.com/inakizamores/MiniCDWorld"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-secondary-300 hover:text-white transition-colors"
+                className="text-secondary-300 hover:text-white transition-colors rounded-full bg-secondary-800 p-2 hover:bg-secondary-700"
                 aria-label="GitHub"
               >
                 <FaGithub className="text-xl" />
@@ -28,7 +28,7 @@ const Footer = () => {
                 href="#"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-secondary-300 hover:text-white transition-colors"
+                className="text-secondary-300 hover:text-white transition-colors rounded-full bg-secondary-800 p-2 hover:bg-secondary-700"
                 aria-label="Twitter"
               >
                 <FaTwitter className="text-xl" />

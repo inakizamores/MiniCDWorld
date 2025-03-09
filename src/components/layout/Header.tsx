@@ -4,7 +4,7 @@ import { FaCompactDisc } from 'react-icons/fa'
 const Header = () => {
   return (
     <header className="bg-white backdrop-blur-sm bg-opacity-90 shadow-md sticky top-0 z-50 border-b border-secondary-100">
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 text-primary-700 hover:text-primary-600 transition-colors">
             <div className="rounded-full bg-primary-100 p-2 flex items-center justify-center">
@@ -14,7 +14,7 @@ const Header = () => {
           </Link>
           
           <nav>
-            <ul className="flex items-center space-x-6">
+            <ul className="flex items-center space-x-4 md:space-x-6">
               <li className="hidden md:block">
                 <Link 
                   to="/" 
@@ -36,7 +36,7 @@ const Header = () => {
               <li>
                 <Link
                   to="/upload"
-                  className="btn btn-primary flex items-center"
+                  className="btn btn-primary flex items-center text-sm md:text-base"
                 >
                   Create Template
                 </Link>

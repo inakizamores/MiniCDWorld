@@ -21,7 +21,10 @@ const Layout = () => {
       
       <main className="flex-grow relative z-0 pt-4">
         <div className="container mx-auto px-4 py-4">
-          <ProgressStepper steps={steps} currentStep={step} />
+          {/* Only show progress stepper when not on home page */}
+          {window.location.pathname !== '/' && (
+            <ProgressStepper steps={steps} currentStep={step} />
+          )}
           
           <div className="mt-6">
             <Outlet />
