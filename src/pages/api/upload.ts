@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { handleUpload } from '@vercel/blob/client';
+import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 
 export const config = {
   api: {
@@ -12,13 +12,36 @@ export default async function handler(
   response: NextApiResponse,
 ) {
   try {
+    if (request.method !== 'POST') {
+      return response.status(405).json({ error: 'Method not allowed' });
+    }
+
+    // Parse the request body
+    const body = await new Promise<HandleUploadBody>((resolve) => {
+      let body = '';
+      request.on('data', (chunk) => {
+        body += chunk;
+      });
+      request.on('end', () => {
+        resolve(JSON.parse(body) as HandleUploadBody);
+      });
+    });
+
     const jsonResponse = await handleUpload({
+      body,
       request,
-      response,
-      // Optional: Set a maximum file size
-      options: {
-        access: 'public',
-        maxUploadSizeBytes: 5 * 1024 * 1024, // 5MB
+      onBeforeGenerateToken: async (pathname) => {
+        // Generate a client token for the browser to upload the file
+        return {
+          allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif'],
+          tokenPayload: JSON.stringify({
+            // optional, sent to your server on upload completion
+          }),
+        };
+      },
+      onUploadCompleted: async ({ blob, tokenPayload }) => {
+        // Get notified of client upload completion
+        console.log('blob upload completed', blob, tokenPayload);
       },
     });
 

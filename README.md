@@ -58,13 +58,27 @@ A modern web application for creating printable CD templates with custom artwork
 
 ## Deployment on Vercel
 
+Follow these steps to deploy your CD Template Generator to Vercel:
+
 ### 1. Create a Vercel Blob Store
 
 1. Login to your [Vercel Dashboard](https://vercel.com/dashboard)
 2. Navigate to Storage -> Create a new Blob store
 3. Copy the provided `BLOB_READ_WRITE_TOKEN`
 
-### 2. Deploy with Vercel CLI
+### 2. Deploy with Vercel Dashboard (Recommended)
+
+1. Fork or push your code to a GitHub repository
+2. Import the project into Vercel:
+   - Go to the [Vercel Dashboard](https://vercel.com/dashboard)
+   - Click "New Project" or "Add New..." -> "Project"
+   - Import your GitHub repository
+   - Configure environment variables:
+     - Add `BLOB_READ_WRITE_TOKEN` with your token value
+     - Add `NEXT_PUBLIC_APP_URL` with your production URL (once deployed)
+   - Click "Deploy"
+
+### 3. Deploy with Vercel CLI
 
 ```bash
 # Install Vercel CLI if you haven't already
@@ -73,22 +87,20 @@ npm install -g vercel
 # Login to Vercel
 vercel login
 
-# Deploy the project
+# Deploy the project (follow the interactive prompts)
 vercel
 ```
 
-### 3. Deploy via Vercel Dashboard
+### 4. Update Environment Variables (After First Deployment)
 
-1. Push your code to a GitHub repository
-2. Import the project into Vercel:
-   - Go to the [Vercel Dashboard](https://vercel.com/dashboard)
-   - Click "New Project"
-   - Import your GitHub repository
-   - Configure environment variables:
-     - Add `BLOB_READ_WRITE_TOKEN` with your token value
-   - Click "Deploy"
+After your first deployment, you'll need to update the `NEXT_PUBLIC_APP_URL` environment variable with your actual deployment URL:
 
-### 4. Verify Deployment
+1. Go to your project settings in the Vercel Dashboard
+2. Navigate to "Environment Variables"
+3. Add or update `NEXT_PUBLIC_APP_URL` with your deployment URL (e.g., `https://your-project.vercel.app`)
+4. Click "Save" and redeploy if necessary
+
+### 5. Verify Deployment
 
 - Once deployed, verify that all features work correctly:
   - Image uploads and cropping

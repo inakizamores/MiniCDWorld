@@ -49,20 +49,22 @@ export default function Preview() {
         }
 
         // Generate PDF
-        const pdfBlobUrl = await generatePDFBlob({
+        const pdfBlob = await generatePDFBlob({
           albumTitle: albumTitle || 'Untitled Album',
           artistName: artistName || 'Unknown Artist',
-          releaseYear,
-          frenteAfuera,
-          frenteDentro,
-          disco,
-          traseraAfueraLeft,
-          traseraAfueraRight,
-          traseraDentroLeft,
-          traseraDentroRight,
+          releaseYear: releaseYear || undefined,
+          frenteAfuera: frenteAfuera || undefined,
+          frenteDentro: frenteDentro || undefined,
+          disco: disco || undefined,
+          traseraAfueraLeft: traseraAfueraLeft || undefined,
+          traseraAfueraRight: traseraAfueraRight || undefined,
+          traseraDentroLeft: traseraDentroLeft || undefined,
+          traseraDentroRight: traseraDentroRight || undefined,
           numCDsPerPage,
         });
         
+        // Convert Blob to URL
+        const pdfBlobUrl = URL.createObjectURL(pdfBlob);
         setPdfUrl(pdfBlobUrl);
         setLoading(false);
       } catch (err) {

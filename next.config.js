@@ -3,10 +3,27 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     domains: ['cdn.vercel-blob.com'], // Allow images from Vercel Blob
+    unoptimized: process.env.NODE_ENV === 'development', // Only optimize in production
   },
-  // Configure environment variables if needed
+  // Configure environment variables
   env: {
-    // Add your environment variables here once you have them
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    MAX_UPLOAD_SIZE: process.env.MAX_UPLOAD_SIZE || 5 * 1024 * 1024, // 5MB default
+  },
+  // Production optimizations
+  swcMinify: true,
+  poweredByHeader: false,
+  // Handle trailing slashes consistently
+  trailingSlash: false,
+  // TypeScript checking is now enabled
+  typescript: {
+    // Only warning for type errors, not failing build
+    ignoreBuildErrors: false, 
+  },
+  // ESLint is now enabled
+  eslint: {
+    // Only warning for linting errors, not failing build
+    ignoreDuringBuilds: false,
   },
 };
 
