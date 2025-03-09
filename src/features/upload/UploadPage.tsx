@@ -56,6 +56,14 @@ const UploadPage: React.FC = () => {
     images.traseraDentro.main?.croppedImage &&
     images.traseraDentro.side?.croppedImage
   
+  // Function to create description with recommended resolution
+  const createDescription = (mainText: string, resolution: string) => (
+    <>
+      <p>{mainText}</p>
+      <p className="text-secondary-400 mt-1">{resolution}</p>
+    </>
+  )
+  
   // Section component for better organization
   const Section = ({ title, children }: { title: string, children: React.ReactNode }) => (
     <div className="mb-10">
@@ -82,7 +90,10 @@ const UploadPage: React.FC = () => {
       <Section title="Front Cover Components">
         <ImageUploadSection
           title="Front Cover (Outside)"
-          description="This will be the front cover of your CD booklet. Recommended resolution: 410 pixels × 410 pixels."
+          description={createDescription(
+            "This will be the front cover of your CD booklet.",
+            "Recommended resolution: 410 pixels × 410 pixels"
+          )}
           dimensions={`${DIMENSIONS.FRENTE_AFUERA.width}mm × ${DIMENSIONS.FRENTE_AFUERA.height}mm`}
           aspectRatio={ASPECT_RATIOS.FRENTE}
           currentImage={images.frenteAfuera}
@@ -91,7 +102,10 @@ const UploadPage: React.FC = () => {
         
         <ImageUploadSection
           title="Front Cover (Inside)"
-          description="This will be inside of the front cover. Recommended resolution: 410 pixels × 410 pixels."
+          description={createDescription(
+            "This will be inside of the front cover.",
+            "Recommended resolution: 410 pixels × 410 pixels"
+          )}
           dimensions={`${DIMENSIONS.FRENTE_DENTRO.width}mm × ${DIMENSIONS.FRENTE_DENTRO.height}mm`}
           aspectRatio={ASPECT_RATIOS.FRENTE}
           currentImage={images.frenteDentro}
@@ -103,7 +117,10 @@ const UploadPage: React.FC = () => {
       <Section title="Back Cover Components">
         <ImageUploadSection
           title="Back Cover (Outside Main)"
-          description="The main part of the back cover. Recommended resolution: 500 pixels × 380 pixels."
+          description={createDescription(
+            "The main part of the back cover.",
+            "Recommended resolution: 500 pixels × 380 pixels"
+          )}
           dimensions={`${DIMENSIONS.TRASERA_AFUERA.main.width}mm × ${DIMENSIONS.TRASERA_AFUERA.main.height}mm`}
           aspectRatio={ASPECT_RATIOS.TRASERA_MAIN}
           currentImage={images.traseraAfuera.main}
@@ -112,7 +129,10 @@ const UploadPage: React.FC = () => {
         
         <ImageUploadSection
           title="Back Cover (Outside Side)"
-          description="The side part of the back cover. Recommended resolution: 40 pixels × 380 pixels."
+          description={createDescription(
+            "The side part of the back cover.",
+            "Recommended resolution: 40 pixels × 380 pixels"
+          )}
           dimensions={`${DIMENSIONS.TRASERA_AFUERA.side.width}mm × ${DIMENSIONS.TRASERA_AFUERA.side.height}mm`}
           aspectRatio={ASPECT_RATIOS.TRASERA_SIDE}
           currentImage={images.traseraAfuera.side}
@@ -124,7 +144,10 @@ const UploadPage: React.FC = () => {
       <Section title="Inside Components">
         <ImageUploadSection
           title="Back Cover (Inside Main)"
-          description="The main part of the inside back cover. Recommended resolution: 500 pixels × 380 pixels."
+          description={createDescription(
+            "The main part of the inside back cover.",
+            "Recommended resolution: 500 pixels × 380 pixels"
+          )}
           dimensions={`${DIMENSIONS.TRASERA_DENTRO.main.width}mm × ${DIMENSIONS.TRASERA_DENTRO.main.height}mm`}
           aspectRatio={ASPECT_RATIOS.TRASERA_MAIN}
           currentImage={images.traseraDentro.main}
@@ -133,7 +156,10 @@ const UploadPage: React.FC = () => {
         
         <ImageUploadSection
           title="Back Cover (Inside Side)"
-          description="The side part of the inside back cover. Recommended resolution: 40 pixels × 380 pixels."
+          description={createDescription(
+            "The side part of the inside back cover.",
+            "Recommended resolution: 40 pixels × 380 pixels"
+          )}
           dimensions={`${DIMENSIONS.TRASERA_DENTRO.side.width}mm × ${DIMENSIONS.TRASERA_DENTRO.side.height}mm`}
           aspectRatio={ASPECT_RATIOS.TRASERA_SIDE}
           currentImage={images.traseraDentro.side}
@@ -145,7 +171,10 @@ const UploadPage: React.FC = () => {
       <Section title="CD Disc">
         <ImageUploadSection
           title="CD Disc"
-          description="This will be printed on the CD itself. Recommended resolution: 400 pixels diameter with 60 pixels center hole."
+          description={createDescription(
+            "This will be printed on the CD itself.",
+            "Recommended resolution: 400 pixels diameter with 60 pixels center hole"
+          )}
           dimensions={`${DIMENSIONS.DISCO.diameter}mm diameter (with ${DIMENSIONS.DISCO.holeSize}mm center hole)`}
           aspectRatio={ASPECT_RATIOS.DISCO}
           currentImage={images.disco}

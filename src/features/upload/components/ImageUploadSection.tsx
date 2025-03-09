@@ -5,7 +5,7 @@ import { ImageSection } from '@features/template/templateSlice'
 
 interface ImageUploadSectionProps {
   title: string;
-  description: string;
+  description: React.ReactNode;
   dimensions: string;
   aspectRatio: number;
   currentImage: ImageSection | null;

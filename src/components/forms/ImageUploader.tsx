@@ -4,7 +4,7 @@ import useImageUpload from '@hooks/useImageUpload'
 
 interface ImageUploaderProps {
   title: string;
-  description: string;
+  description: React.ReactNode;
   dimensions: string;
   onImageSelected: (file: File) => void;
   previewImage?: string | null;
@@ -58,7 +58,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             {isDragActive ? 'Drop the image here' : 'Drag & drop an image here'}
           </p>
           <p className="text-center text-secondary-500 text-sm">or click to browse files</p>
-          <p className="text-center text-sm text-secondary-500 mt-2 max-w-xs mx-auto">{description}</p>
+          <div className="text-center text-sm mt-3 max-w-xs mx-auto">{description}</div>
           
           {error && (
             <div className="mt-3 text-sm text-red-600 bg-red-50 px-3 py-2 rounded border border-red-100 w-full">
