@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
 import ImageUploader from '@components/forms/ImageUploader'
 import ImageCropper from '@components/forms/ImageCropper'
-import { ASPECT_RATIOS, DIMENSIONS } from '@constants/dimensions'
 import { ImageSection } from '@features/template/templateSlice'
 
 interface ImageUploadSectionProps {

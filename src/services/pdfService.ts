@@ -2,6 +2,13 @@ import { jsPDF } from 'jspdf'
 import { TemplateState } from '@features/template/templateSlice'
 import { DIMENSIONS, mmToPixels, pixelsToMm } from '@constants/dimensions'
 
+// This augments the jsPDF type to include the polygon method
+declare module 'jspdf' {
+  interface jsPDF {
+    polygon: (points: number[], style: string) => jsPDF;
+  }
+}
+
 // Convert points to mm (1 pt = 0.3528 mm)
 const ptToMm = (pt: number) => pt * 0.3528
 const mmToPt = (mm: number) => mm / 0.3528
@@ -47,7 +54,6 @@ class PDFService {
     radius: number,
     filled: boolean = false
   ) {
-    const k = 2 * Math.PI / 3
     const pts = []
     const steps = 100 // More steps means smoother circle
     

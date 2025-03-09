@@ -3,6 +3,14 @@ import Cropper from 'react-cropper'
 import 'cropperjs/dist/cropper.css'
 import { FaCheck, FaTimes, FaSync } from 'react-icons/fa'
 
+// Add type definition for the Cropper instance
+interface CropperElement extends HTMLImageElement {
+  cropper: {
+    getCroppedCanvas: (options?: any) => HTMLCanvasElement;
+    reset: () => void;
+  }
+}
+
 interface ImageCropperProps {
   imageUrl: string;
   aspectRatio: number;
@@ -16,18 +24,18 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   onCropComplete,
   onCancel
 }) => {
-  const cropperRef = useRef<HTMLImageElement>(null)
+  const cropperRef = useRef<CropperElement>(null)
   const [isCropping, setIsCropping] = useState(false)
 
   const getCropData = () => {
-    if (!cropperRef.current || !cropperRef.current['cropper']) {
+    if (!cropperRef.current || !cropperRef.current.cropper) {
       return
     }
     
     setIsCropping(true)
     
     try {
-      const cropper = cropperRef.current['cropper']
+      const cropper = cropperRef.current.cropper
       const croppedCanvas = cropper.getCroppedCanvas({
         maxWidth: 1000,
         maxHeight: 1000,
@@ -46,8 +54,8 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   }
 
   const resetCropper = () => {
-    if (cropperRef.current && cropperRef.current['cropper']) {
-      cropperRef.current['cropper'].reset()
+    if (cropperRef.current && cropperRef.current.cropper) {
+      cropperRef.current.cropper.reset()
     }
   }
 
