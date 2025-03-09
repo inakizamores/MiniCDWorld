@@ -223,14 +223,6 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           />
           
           {isDiscCropper && <DiscGuides />}
-          
-          {isDiscCropper && (
-            <div className="absolute bottom-4 left-0 right-0 text-center">
-              <div className="bg-primary-50 inline-block py-2 px-4 rounded-md text-xs text-primary-800 border border-primary-200">
-                <span className="font-bold">Note:</span> The CD will be circular with a center hole, even though the crop area is square
-              </div>
-            </div>
-          )}
         </div>
         
         <div className="flex justify-between mt-4 pt-4 border-t border-secondary-200">

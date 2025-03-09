@@ -143,18 +143,6 @@ const UploadPage: React.FC = () => {
       {/* Inside Section */}
       <Section title="Inside Components">
         <ImageUploadSection
-          title="Back Cover (Inside Main)"
-          description={createDescription(
-            "The main part of the inside back cover.",
-            "Recommended resolution: 500 pixels × 380 pixels"
-          )}
-          dimensions={`${DIMENSIONS.TRASERA_DENTRO.main.width}mm × ${DIMENSIONS.TRASERA_DENTRO.main.height}mm`}
-          aspectRatio={ASPECT_RATIOS.TRASERA_MAIN}
-          currentImage={images.traseraDentro.main}
-          onImageSave={(image) => dispatch(setTraseraDentroMain(image))}
-        />
-        
-        <ImageUploadSection
           title="Back Cover (Inside Side)"
           description={createDescription(
             "The side part of the inside back cover.",
@@ -164,6 +152,18 @@ const UploadPage: React.FC = () => {
           aspectRatio={ASPECT_RATIOS.TRASERA_SIDE}
           currentImage={images.traseraDentro.side}
           onImageSave={(image) => dispatch(setTraseraDentroSide(image))}
+        />
+        
+        <ImageUploadSection
+          title="Back Cover (Inside Main)"
+          description={createDescription(
+            "The main part of the inside back cover.",
+            "Recommended resolution: 500 pixels × 380 pixels"
+          )}
+          dimensions={`${DIMENSIONS.TRASERA_DENTRO.main.width}mm × ${DIMENSIONS.TRASERA_DENTRO.main.height}mm`}
+          aspectRatio={ASPECT_RATIOS.TRASERA_MAIN}
+          currentImage={images.traseraDentro.main}
+          onImageSave={(image) => dispatch(setTraseraDentroMain(image))}
         />
       </Section>
       
