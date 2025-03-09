@@ -133,13 +133,13 @@ class PDFService {
     
     // Left side text: MiniCDWorld US Letter Printable Template
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
+    doc.setFontSize(8)
     doc.setTextColor(0, 0, 0)
     doc.text('MiniCDWorld US Letter Printable Template', x + 5, y + headerHeight/2 + 1)
     
     // Right side text: Album Title - Artist Name
     const rightText = `${albumTitle || 'Untitled Album'} - ${artistName || 'Unknown Artist'}`
-    doc.setFontSize(10)
+    doc.setFontSize(8)
     doc.text(rightText, x + width - 5, y + headerHeight/2 + 1, { align: 'right' })
     
     return headerHeight
@@ -163,7 +163,7 @@ class PDFService {
     doc.setFontSize(8)
     doc.setTextColor(100, 100, 100) // Dark gray
     doc.text('Created with the tool made by Inaki Zamores and findable on: https://mini-cd-world.vercel.app/', 
-      x + width - 5, y + footerHeight/2 + 1, { align: 'right' })
+      x + 5, y + footerHeight/2 + 1, { align: 'left' })
     
     return footerHeight
   }
