@@ -39,7 +39,30 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
     lg: 90, // 100 - (5% * 2)
   }
   
-  const progress = Math.max(0, currentStep - 1) / (steps.length - 1)
+  // Adjusted progress calculations that account for the non-linear spacing on larger screens
+  const getProgressWidth = (screenSize: 'xs' | 'sm' | 'md' | 'lg') => {
+    // Basic progress calculation (0 to 1)
+    const baseProgress = Math.max(0, currentStep - 1) / (steps.length - 1)
+    
+    // For larger viewports, specifically adjust the first segment (between steps 1 and 2)
+    if (screenSize === 'lg' && currentStep === 2) {
+      // Return a smaller percentage for this specific case
+      return (maxWidth[screenSize] * 0.32) + '%'; // ~29% of the total width
+    }
+    
+    // For medium viewports, also adjust the first segment
+    if (screenSize === 'md' && currentStep === 2) {
+      return (maxWidth[screenSize] * 0.33) + '%'; // ~28% of the total width
+    }
+    
+    // For small viewports, slight adjustment
+    if (screenSize === 'sm' && currentStep === 2) {
+      return (maxWidth[screenSize] * 0.34) + '%'; // ~29% of the total width
+    }
+    
+    // Normal calculation for other cases
+    return (baseProgress * maxWidth[screenSize]) + '%';
+  }
   
   return (
     <nav aria-label="Progress" className="w-full my-8">
@@ -52,7 +75,7 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
           className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 top-[1.625rem] transition-all duration-500 ease-in-out"
           style={{
             left: 'calc(12%)',
-            width: `${progress * maxWidth.xs}%`,
+            width: getProgressWidth('xs'),
           }}
         />
         
@@ -61,7 +84,7 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
           className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 top-[1.625rem] transition-all duration-500 ease-in-out hidden sm:block md:hidden"
           style={{
             left: 'calc(8%)',
-            width: `${progress * maxWidth.sm}%`,
+            width: getProgressWidth('sm'),
           }}
         />
         
@@ -70,7 +93,7 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
           className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 top-[1.625rem] transition-all duration-500 ease-in-out hidden md:block lg:hidden"
           style={{
             left: 'calc(7%)',
-            width: `${progress * maxWidth.md}%`,
+            width: getProgressWidth('md'),
           }}
         />
         
@@ -79,7 +102,7 @@ const ProgressStepper: React.FC<ProgressStepperProps> = ({ steps, currentStep })
           className="absolute h-1 bg-gradient-to-r from-primary-600 to-primary-400 top-[1.625rem] transition-all duration-500 ease-in-out hidden lg:block"
           style={{
             left: 'calc(5%)',
-            width: `${progress * maxWidth.lg}%`,
+            width: getProgressWidth('lg'),
           }}
         />
         
