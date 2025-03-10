@@ -286,14 +286,6 @@ const PurchasePage: React.FC = () => {
       <div id="productos" className="mb-16">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold">Nuestros Productos</h2>
-          <a 
-            href="https://listado.mercadolibre.com.mx/_CustId_1293485414"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary-600 hover:text-primary-700 flex items-center font-medium"
-          >
-            Ver todos <FaArrowRight className="ml-2" />
-          </a>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -321,7 +313,6 @@ const PurchasePage: React.FC = () => {
                 
                 <div className="mt-auto">
                   <div className="flex justify-between items-center mb-4">
-                    <span className="font-bold text-lg text-primary-600">{product.price}</span>
                     <span className="text-sm text-green-600">{product.shipping}</span>
                   </div>
                   
@@ -352,12 +343,15 @@ const PurchasePage: React.FC = () => {
       <div className="bg-gradient-to-r from-primary-500 to-primary-700 rounded-xl p-8 md:p-12 text-white mb-16">
         <div className="flex flex-col md:flex-row items-center">
           <div className="md:w-2/3 mb-6 md:mb-0 md:pr-8">
-            <h2 className="text-3xl font-bold mb-4">¿Quieres personalizar tus llaveros?</h2>
+            <h2 className="text-3xl font-bold mb-4 text-white">¿Quieres personalizar tus llaveros?</h2>
             <p className="text-xl opacity-90 mb-6">
               Utiliza nuestro generador de plantillas gratuito para crear diseños personalizados 
               para tus llaveros Mini CD. Solo sube tus imágenes, ajusta el diseño y descarga el PDF listo para imprimir.
             </p>
-            <a href="/" className="btn btn-white inline-flex items-center">
+            <a 
+              href="/" 
+              className="inline-flex items-center px-6 py-3 bg-white text-primary-600 font-medium rounded-lg shadow-lg hover:shadow-xl hover:bg-primary-50 hover:scale-105 transition-all duration-300"
+            >
               Crear plantilla ahora <FaArrowRight className="ml-2" />
             </a>
           </div>
