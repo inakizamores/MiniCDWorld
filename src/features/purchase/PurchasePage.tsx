@@ -54,7 +54,7 @@ const PurchasePage: React.FC = () => {
       price: "$199 MXN",
       url: PACK_5_LLAVEROS,
       badge: "5 Unidades",
-      shipping: "Envío gratis",
+      shipping: "Envío gratis por Mercado Envíos",
       inStock: true,
       imageSrc: "/images/products/pack-5-llaveros.jpg"
     },
@@ -73,7 +73,7 @@ const PurchasePage: React.FC = () => {
       price: "$349 MXN",
       url: PACK_5_LLAVEROS_NFC,
       badge: "5 Unidades + NFC",
-      shipping: "Envío gratis",
+      shipping: "Envío gratis por Mercado Envíos",
       inStock: true,
       imageSrc: "/images/products/pack-5-llaveros-nfc.jpg"
     },
@@ -92,7 +92,7 @@ const PurchasePage: React.FC = () => {
       price: "$799 MXN",
       url: PACK_25_LLAVEROS,
       badge: "25 Unidades",
-      shipping: "Envío gratis",
+      shipping: "Envío gratis por Mercado Envíos",
       inStock: true,
       imageSrc: "/images/products/pack-25-llaveros.jpg"
     },
@@ -111,7 +111,7 @@ const PurchasePage: React.FC = () => {
       price: "$1,499 MXN",
       url: PACK_50_LLAVEROS,
       badge: "50 Unidades",
-      shipping: "Envío gratis",
+      shipping: "Envío gratis por Mercado Envíos",
       inStock: true,
       imageSrc: "/images/products/pack-50-llaveros.jpg"
     }
@@ -211,7 +211,7 @@ const PurchasePage: React.FC = () => {
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center py-3 px-6 bg-[#F2D900] text-black font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-300"
               >
-                <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" /> Comprar ahora
+                <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" /> Comprar ahora en Mercado Libre
               </a>
               
               <div className="mt-6 pt-6 border-t border-secondary-200">
@@ -235,10 +235,11 @@ const PurchasePage: React.FC = () => {
     <div className="container mx-auto px-4 py-16">
       {/* Hero Section */}
       <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6">Productos Mini CD World</h1>
+        <h1 className="text-4xl md:text-5xl font-bold mb-6">Productos Mini CD World <span className="text-xl md:text-2xl text-secondary-600 block mt-2">Disponibles exclusivamente en Mercado Libre</span></h1>
         <p className="text-xl text-secondary-600 max-w-3xl mx-auto mb-8">
           Descubre nuestra colección de llaveros Mini CD, el regalo perfecto para amantes de la música.
-          Personalízalos con tus diseños favoritos o aprovecha nuestra tecnología NFC.
+          Personalízalos con tus diseños favoritos o aprovecha nuestra tecnología NFC. 
+          <span className="block mt-2 font-medium">Todas las compras se realizan de forma segura a través de Mercado Libre.</span>
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <a href="#productos" className="btn btn-primary">
@@ -279,6 +280,7 @@ const PurchasePage: React.FC = () => {
           <h3 className="text-xl font-bold mb-2">Compra Segura</h3>
           <p className="text-secondary-600">
             Realiza tu compra con confianza a través de Mercado Libre con múltiples métodos de pago.
+            Todas las transacciones son procesadas por Mercado Libre.
           </p>
         </div>
       </div>
@@ -286,7 +288,7 @@ const PurchasePage: React.FC = () => {
       {/* Productos */}
       <div id="productos" className="mb-16">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold">Nuestros Productos</h2>
+          <h2 className="text-3xl font-bold">Nuestros Productos <span className="text-xl font-normal text-secondary-600 ml-2">| Compra segura por Mercado Libre</span></h2>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
