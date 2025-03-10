@@ -1,4 +1,4 @@
-import { FaHeart, FaGithub, FaTwitter } from 'react-icons/fa'
+import { FaHeart } from 'react-icons/fa'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -13,27 +13,6 @@ const Footer = () => {
               Create stunning, print-ready CD templates with precise measurements.
               Upload your artwork, customize your design, and download a professional PDF.
             </p>
-            
-            <div className="mt-4 flex space-x-4">
-              <a 
-                href="https://github.com/inakizamores/MiniCDWorld"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-secondary-300 hover:text-white transition-colors"
-                aria-label="GitHub"
-              >
-                <FaGithub className="text-xl" />
-              </a>
-              <a 
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-secondary-300 hover:text-white transition-colors"
-                aria-label="Twitter"
-              >
-                <FaTwitter className="text-xl" />
-              </a>
-            </div>
           </div>
           
           <div className="text-center md:text-right">

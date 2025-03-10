@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { FaCompactDisc } from 'react-icons/fa'
+import { FaCompactDisc, FaShoppingCart } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
 
@@ -36,12 +36,10 @@ const Header = () => {
               </li>
               <li className="hidden md:block">
                 <a 
-                  href="https://github.com/inakizamores/MiniCDWorld" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-secondary-600 hover:text-primary-600 transition-colors font-medium"
+                  href="/#shop-products" 
+                  className="text-secondary-600 hover:text-primary-600 transition-colors font-medium flex items-center"
                 >
-                  GitHub
+                  Shop <FaShoppingCart className="ml-2 text-sm" />
                 </a>
               </li>
               <li>
