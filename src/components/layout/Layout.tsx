@@ -19,12 +19,17 @@ const Layout = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-grow relative z-0 pt-4">
-        <div className="container mx-auto px-4 py-4">
-          <ProgressStepper steps={steps} currentStep={step} />
-          
-          <div className="mt-6 mb-32">
-            <Outlet />
+      <main className="flex-grow relative z-0 pt-4" style={{ paddingTop: 'calc(1rem * var(--spacing-scale))' }}>
+        <div className="container mx-auto">
+          <div style={{ padding: 'calc(1rem * var(--spacing-scale))' }}>
+            <ProgressStepper steps={steps} currentStep={step} />
+            
+            <div className="mt-6" style={{ 
+              marginTop: 'calc(1.5rem * var(--spacing-scale))',
+              marginBottom: 'calc(8rem * var(--spacing-scale))'
+            }}>
+              <Outlet />
+            </div>
           </div>
         </div>
       </main>

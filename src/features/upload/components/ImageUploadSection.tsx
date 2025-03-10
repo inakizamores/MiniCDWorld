@@ -65,7 +65,7 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
   }
   
   return (
-    <div className="flex flex-col h-full min-h-[350px]">
+    <div className="flex flex-col h-full" style={{ minHeight: 'calc(350px * var(--ui-scale))' }}>
       <ImageUploader
         title={title}
         description={description}
