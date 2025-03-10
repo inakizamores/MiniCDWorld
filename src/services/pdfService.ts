@@ -135,10 +135,10 @@ class PDFService {
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(8)
     doc.setTextColor(0, 0, 0)
-    doc.text('MiniCDWorld US Letter Printable Template', x + 5, y + headerHeight/2 + 1)
+    doc.text('MiniCDWorld Plantilla Imprimible Carta', x + 5, y + headerHeight/2 + 1)
     
     // Right side text: Album Title - Artist Name
-    const rightText = `${albumTitle || 'Untitled Album'} - ${artistName || 'Unknown Artist'}`
+    const rightText = `${albumTitle || 'Álbum sin título'} - ${artistName || 'Artista desconocido'}`
     doc.setFontSize(8)
     doc.text(rightText, x + width - 5, y + headerHeight/2 + 1, { align: 'right' })
     
@@ -162,7 +162,7 @@ class PDFService {
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
     doc.setTextColor(100, 100, 100) // Dark gray
-    doc.text('Created with the tool made by Inaki Zamores and findable on: https://mini-cd-world.vercel.app/', 
+    doc.text('Creado con la herramienta hecha por Iñaki Zamores y disponible en: https://mini-cd-world.vercel.app/', 
       x + 5, y + footerHeight/2 + 1, { align: 'left' })
     
     return footerHeight
@@ -197,7 +197,7 @@ class PDFService {
     // FRONT COVER COMPONENTS (LEFT SIDE)
     const frontSectionWidth = blockWidth * 0.6 // 60% of block width for front covers
     
-    doc.text('Front Cover Components', x + sectionPadding, currentY)
+    doc.text('Componentes de Portada', x + sectionPadding, currentY)
     currentY += 4
     
     // Position the front covers
@@ -232,7 +232,7 @@ class PDFService {
     const discSectionX = x + frontSectionWidth + sectionPadding
     const discSectionWidth = blockWidth - frontSectionWidth - sectionPadding * 2
     
-    doc.text('CD Disc', discSectionX, y + sectionPadding)
+    doc.text('Disco CD', discSectionX, y + sectionPadding)
     
     // Center the disc in its section
     if (images.disco?.croppedImage) {
@@ -254,7 +254,7 @@ class PDFService {
     // Move to back cover components section (below front covers and disc)
     currentY += Math.max(DIMENSIONS.FRENTE_AFUERA.height, DIMENSIONS.DISCO.diameter) + sectionPadding
     
-    doc.text('Back Cover Components', x + sectionPadding, currentY)
+    doc.text('Componentes de Contraportada', x + sectionPadding, currentY)
     currentY += 4
     
     // Center the back covers in the full width
