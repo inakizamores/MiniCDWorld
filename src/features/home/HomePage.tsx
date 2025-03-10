@@ -39,19 +39,21 @@ const HomePage = () => {
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
               </button>
               <a 
-                href="https://articulo.mercadolibre.com.mx/MLM-3387017600-pack-5-llaveros-en-blanco-mini-cd-disco-album-musical-_JM"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-secondary text-lg px-8 py-3 flex items-center justify-center gap-2"
-              >
-                Compra los llaveros en blanco
-                <FaShoppingCart className="ml-2" />
-              </a>
-              <a 
                 href="#how-it-works" 
                 className="btn btn-outline text-lg px-8 py-3"
               >
                 Learn More
+              </a>
+            </div>
+            <div className="mt-4">
+              <a 
+                href="https://articulo.mercadolibre.com.mx/MLM-3387017600-pack-5-llaveros-en-blanco-mini-cd-disco-album-musical-_JM"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary text-lg px-8 py-3 flex items-center justify-center gap-2 inline-flex"
+              >
+                Compra los llaveros en blanco
+                <FaShoppingCart className="ml-2" />
               </a>
             </div>
           </div>
