@@ -50,7 +50,7 @@ const HomePage = () => {
       </section>
       
       {/* How It Works with hover effects */}
-      <section id="how-it-works" className="py-16 bg-gradient-to-b from-white to-primary-50 rounded-none md:rounded-3xl">
+      <section id="how-it-works" className="py-16 bg-gradient-to-b from-white to-primary-50 rounded-none md:rounded-xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">How It Works</h2>
           <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
@@ -94,7 +94,7 @@ const HomePage = () => {
       </section>
       
       {/* Features Section with cards */}
-      <section className="py-16 bg-secondary-50 mx-0 md:mx-4 px-4 rounded-none md:rounded-3xl">
+      <section className="py-16 bg-secondary-50 mx-0 md:mx-4 px-4 rounded-none md:rounded-xl">
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Features</h2>
@@ -156,7 +156,7 @@ const HomePage = () => {
       </section>
       
       {/* CTA Section with gradient background */}
-      <section className="py-16 text-center bg-gradient-to-r from-primary-600 to-primary-700 text-white mx-0 md:mx-4 px-4 shadow-lg rounded-none md:rounded-3xl">
+      <section className="py-16 text-center bg-gradient-to-r from-primary-600 to-primary-700 text-white mx-0 md:mx-4 px-4 shadow-lg rounded-none md:rounded-xl">
         <div className="container mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Ready to Create Your CD Template?</h2>
           <p className="text-xl text-primary-100 max-w-2xl mx-auto mb-10 leading-relaxed">
