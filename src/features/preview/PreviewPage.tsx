@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { 
@@ -14,6 +14,23 @@ const PreviewPage: React.FC = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { images, albumTitle, artistName, cdsPerPage } = useSelector(selectTemplateState)
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+  });
+  
+  // Add resize listener to update preview when window size changes
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Navigation handlers
   const handleBack = () => {
@@ -60,6 +77,20 @@ const PreviewPage: React.FC = () => {
   
   // Helper function to render a CD block
   const renderCDBlock = () => {
+    // Calculate scaling factor based on viewport size
+    const getScalingFactor = () => {
+      if (typeof window !== 'undefined') {
+        // Use smaller divisor (= larger preview) on larger screens
+        if (window.innerWidth >= 3840) return 2; // 4K - larger preview
+        if (window.innerWidth >= 2560) return 2.5; // 1440p
+        if (window.innerWidth >= 1920) return 3; // 1080p
+        return 3.5; // Smaller screens - smaller preview
+      }
+      return 3; // Default fallback
+    };
+    
+    const scalingDivisor = getScalingFactor();
+    
     return (
       <div className="bg-white border border-secondary-200 rounded-lg p-4 mb-4 relative">
         {/* Block outline */}
@@ -76,8 +107,8 @@ const PreviewPage: React.FC = () => {
                       src={images.frenteAfuera.croppedImage}
                       alt="Front Cover Outside"
                       style={{ 
-                        width: mmToPixels(DIMENSIONS.FRENTE_AFUERA.width) / 3,
-                        height: mmToPixels(DIMENSIONS.FRENTE_AFUERA.height) / 3
+                        width: mmToPixels(DIMENSIONS.FRENTE_AFUERA.width) / scalingDivisor,
+                        height: mmToPixels(DIMENSIONS.FRENTE_AFUERA.height) / scalingDivisor
                       }}
                     />
                   </div>
@@ -89,8 +120,8 @@ const PreviewPage: React.FC = () => {
                       src={images.frenteDentro.croppedImage}
                       alt="Front Cover Inside"
                       style={{ 
-                        width: mmToPixels(DIMENSIONS.FRENTE_DENTRO.width) / 3,
-                        height: mmToPixels(DIMENSIONS.FRENTE_DENTRO.height) / 3
+                        width: mmToPixels(DIMENSIONS.FRENTE_DENTRO.width) / scalingDivisor,
+                        height: mmToPixels(DIMENSIONS.FRENTE_DENTRO.height) / scalingDivisor
                       }}
                     />
                   </div>
@@ -109,8 +140,8 @@ const PreviewPage: React.FC = () => {
                         src={images.disco.croppedImage}
                         alt="CD Disc"
                         style={{ 
-                          width: mmToPixels(DIMENSIONS.DISCO.diameter) / 3,
-                          height: mmToPixels(DIMENSIONS.DISCO.diameter) / 3,
+                          width: mmToPixels(DIMENSIONS.DISCO.diameter) / scalingDivisor,
+                          height: mmToPixels(DIMENSIONS.DISCO.diameter) / scalingDivisor,
                         }}
                       />
                     </div>
@@ -118,8 +149,8 @@ const PreviewPage: React.FC = () => {
                     <div 
                       className="absolute bg-black rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                       style={{ 
-                        width: mmToPixels(DIMENSIONS.DISCO.holeSize) / 3,
-                        height: mmToPixels(DIMENSIONS.DISCO.holeSize) / 3,
+                        width: mmToPixels(DIMENSIONS.DISCO.holeSize) / scalingDivisor,
+                        height: mmToPixels(DIMENSIONS.DISCO.holeSize) / scalingDivisor,
                       }}
                     />
                   </div>
@@ -139,8 +170,8 @@ const PreviewPage: React.FC = () => {
                     src={images.traseraAfuera.main.croppedImage}
                     alt="Back Cover Outside Main"
                     style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.width) / 3,
-                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.height) / 3
+                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.width) / scalingDivisor,
+                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.main.height) / scalingDivisor
                     }}
                   />
                 </div>
@@ -153,8 +184,8 @@ const PreviewPage: React.FC = () => {
                     src={images.traseraAfuera.side.croppedImage}
                     alt="Back Cover Outside Side"
                     style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.width) / 3,
-                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.height) / 3
+                      width: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.width) / scalingDivisor,
+                      height: mmToPixels(DIMENSIONS.TRASERA_AFUERA.side.height) / scalingDivisor
                     }}
                   />
                 </div>
@@ -167,8 +198,8 @@ const PreviewPage: React.FC = () => {
                     src={images.traseraDentro.side.croppedImage}
                     alt="Back Cover Inside Side"
                     style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.width) / 3,
-                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.height) / 3
+                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.width) / scalingDivisor,
+                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.side.height) / scalingDivisor
                     }}
                   />
                 </div>
@@ -181,8 +212,8 @@ const PreviewPage: React.FC = () => {
                     src={images.traseraDentro.main.croppedImage}
                     alt="Back Cover Inside Main"
                     style={{ 
-                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.width) / 3,
-                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.height) / 3
+                      width: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.width) / scalingDivisor,
+                      height: mmToPixels(DIMENSIONS.TRASERA_DENTRO.main.height) / scalingDivisor
                     }}
                   />
                 </div>
@@ -277,7 +308,15 @@ const PreviewPage: React.FC = () => {
               </h2>
               
               <div className="bg-secondary-100 border border-secondary-300 rounded-lg p-4 overflow-auto">
-                <div className="relative bg-white shadow-lg rounded border border-secondary-200 max-w-lg mx-auto transform transition-transform hover:scale-[1.01]" style={{ width: '400px' }}>
+                <div 
+                  className="relative bg-white shadow-lg rounded border border-secondary-200 mx-auto transform transition-transform hover:scale-[1.01]" 
+                  style={{ 
+                    width: windowSize.width >= 1920 ? '500px' : 
+                           windowSize.width >= 1440 ? '400px' : 
+                           windowSize.width >= 768 ? '360px' : '90%',
+                    maxWidth: '100%'
+                  }}
+                >
                   {/* Header */}
                   <div className="border-b border-secondary-200 p-3 flex justify-between items-center">
                     <div className="text-xs font-bold truncate max-w-[180px]">MiniCDWorld US Letter Printable Template</div>
