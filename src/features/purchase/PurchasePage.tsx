@@ -209,7 +209,7 @@ const PurchasePage: React.FC = () => {
                 href={product.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center py-3 px-6 bg-[#F2D900] text-black font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:shadow-[0_0_15px_rgba(242,217,0,0.6)]"
+                className="w-full flex items-center justify-center py-3 px-6 bg-[#F2D900] text-black font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:shadow-[0_0_18px_rgba(242,217,0,0.7)] hover:scale-[1.03]"
               >
                 <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" /> Comprar ahora en Mercado Libre
               </a>
@@ -330,7 +330,7 @@ const PurchasePage: React.FC = () => {
                       href={product.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-[#F2D900] text-black px-4 py-2 rounded flex-1 text-sm flex items-center justify-center font-medium hover:shadow-[0_0_10px_rgba(242,217,0,0.5)] transition-all duration-300"
+                      className="bg-[#F2D900] text-black px-4 py-2 rounded flex-1 text-sm flex items-center justify-center font-medium hover:shadow-[0_0_12px_rgba(242,217,0,0.65)] transition-all duration-300 hover:scale-[1.02]"
                     >
                       <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-6 h-6 mr-1" /> Comprar
                     </a>
