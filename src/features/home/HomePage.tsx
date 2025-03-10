@@ -39,6 +39,13 @@ const HomePage = () => {
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
               </button>
               <a 
+                href="#shop-products"
+                className="btn btn-secondary text-lg px-8 py-3 flex items-center justify-center gap-2"
+              >
+                Compra los llaveros en blanco
+                <FaShoppingCart className="ml-2" />
+              </a>
+              <a 
                 href="#how-it-works" 
                 className="btn btn-outline text-lg px-8 py-3"
               >
@@ -94,7 +101,7 @@ const HomePage = () => {
       </section>
       
       {/* Mercado Libre E-commerce Section */}
-      <section className="py-16 bg-secondary-50 mx-0 md:mx-4 px-4 rounded-none md:rounded-xl">
+      <section id="shop-products" className="py-16 bg-secondary-50 mx-0 md:mx-4 px-4 rounded-none md:rounded-xl">
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Shop Mini CD World Products</h2>
