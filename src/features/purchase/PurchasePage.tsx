@@ -4,7 +4,6 @@ import {
   FaTag, 
   FaExternalLinkAlt, 
   FaCheckCircle, 
-  FaInfoCircle, 
   FaCreditCard, 
   FaTruck, 
   FaQuestionCircle,

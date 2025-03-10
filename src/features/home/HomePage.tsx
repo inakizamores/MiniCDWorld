@@ -1,5 +1,5 @@
 import { useNavigate, Link } from 'react-router-dom'
-import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaExternalLinkAlt } from 'react-icons/fa'
+import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
 
