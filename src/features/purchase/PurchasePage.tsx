@@ -156,10 +156,10 @@ const PurchasePage: React.FC = () => {
     
     return (
       <div className="fixed inset-0 z-[9999] modal-overlay flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fadeIn">
-        <div className="relative bg-secondary-50 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn">
+        <div className="relative bg-secondary-50 rounded-xl shadow-2xl max-w-4xl w-full max-h-[85vh] md:max-h-[90vh] overflow-y-auto animate-scaleIn">
           <button 
             onClick={closeProductModal}
-            className="absolute top-4 right-4 text-secondary-400 hover:text-secondary-600 z-10"
+            className="absolute top-3 right-3 md:top-4 md:right-4 text-secondary-400 hover:text-secondary-600 z-10"
             aria-label="Cerrar"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -169,7 +169,7 @@ const PurchasePage: React.FC = () => {
           
           <div className="flex flex-col md:flex-row">
             {/* Imagen del producto */}
-            <div className="md:w-2/5 bg-secondary-100 p-8 flex items-center justify-center rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
+            <div className="md:w-2/5 bg-secondary-100 p-5 md:p-8 flex items-center justify-center rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
               <img 
                 src={product.imageSrc} 
                 alt={product.title} 
@@ -178,8 +178,8 @@ const PurchasePage: React.FC = () => {
             </div>
             
             {/* Detalles del producto */}
-            <div className="md:w-3/5 p-8">
-              <div className="mb-4">
+            <div className="md:w-3/5 p-6 md:p-8">
+              <div className="mb-3 md:mb-4">
                 <span className="inline-block bg-primary-100 text-primary-800 text-xs font-semibold px-3 py-1 rounded-full">
                   {product.badge}
                 </span>
@@ -190,12 +190,12 @@ const PurchasePage: React.FC = () => {
                 )}
               </div>
               
-              <h2 className="text-3xl font-bold mb-4">{product.title}</h2>
-              <p className="text-secondary-600 mb-6">{product.detailedDescription}</p>
+              <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">{product.title}</h2>
+              <p className="text-secondary-600 mb-4 md:mb-6 text-sm md:text-base">{product.detailedDescription}</p>
               
-              <div className="mb-6">
-                <h3 className="font-bold text-lg mb-3">Características:</h3>
-                <ul className="space-y-2">
+              <div className="mb-4 md:mb-6">
+                <h3 className="font-bold text-base md:text-lg mb-2 md:mb-3">Características:</h3>
+                <ul className="space-y-1 md:space-y-2 text-sm md:text-base">
                   {product.features.map((feature, index) => (
                     <li key={index} className="flex items-start">
                       <FaCheckCircle className="text-green-500 mt-1 mr-2 flex-shrink-0" />
@@ -209,18 +209,18 @@ const PurchasePage: React.FC = () => {
                 href={product.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center py-3 px-6 bg-[#F2D900] text-black font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:shadow-[0_0_18px_rgba(242,217,0,0.7)] hover:scale-[1.03]"
+                className="w-full flex items-center justify-center py-2 md:py-3 px-4 md:px-6 bg-[#F2D900] text-black font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:shadow-[0_0_18px_rgba(242,217,0,0.7)] hover:scale-[1.03]"
               >
-                <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" /> Comprar ahora en Mercado Libre
+                <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-6 h-6 md:w-7 md:h-7 mr-2" /> Comprar ahora en Mercado Libre
               </a>
               
-              <div className="mt-6 pt-6 border-t border-secondary-200">
-                <div className="flex items-center text-secondary-600 mb-2">
-                  <FaTruck className="mr-2 text-primary-500" />
+              <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-secondary-200">
+                <div className="flex items-center text-secondary-600 mb-1 md:mb-2 text-sm md:text-base">
+                  <FaTruck className="mr-2 text-primary-500 flex-shrink-0" />
                   <span>{product.shipping}</span>
                 </div>
-                <div className="flex items-center text-secondary-600">
-                  <FaCreditCard className="mr-2 text-primary-500" />
+                <div className="flex items-center text-secondary-600 text-sm md:text-base">
+                  <FaCreditCard className="mr-2 text-primary-500 flex-shrink-0" />
                   <span>Múltiples métodos de pago disponibles</span>
                 </div>
               </div>
