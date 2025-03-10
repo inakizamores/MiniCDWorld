@@ -123,18 +123,12 @@ const PurchasePage: React.FC = () => {
   const openProductModal = (productId: number) => {
     setSelectedProduct(productId);
     document.body.style.overflow = 'hidden'; // Evitar scroll cuando el modal está abierto
-    
-    // Agregar una clase al body para oscurecer el header
-    document.body.classList.add('modal-open');
   };
   
   // Función para cerrar el modal
   const closeProductModal = () => {
     setSelectedProduct(null);
     document.body.style.overflow = 'auto'; // Restaurar scroll
-    
-    // Quitar la clase del body
-    document.body.classList.remove('modal-open');
   };
   
   // Renderizado del modal de producto
@@ -145,85 +139,90 @@ const PurchasePage: React.FC = () => {
     if (!product) return null;
     
     return (
-      <>
-        {/* Overlay que cubre toda la página, incluyendo el header */}
-        <div className="fixed inset-0 bg-black bg-opacity-70 z-[90]" onClick={closeProductModal}></div>
-        
-        {/* Modal */}
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn pointer-events-none">
-          <div className="relative bg-secondary-50 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn pointer-events-auto">
-            <button 
-              onClick={closeProductModal}
-              className="absolute top-4 right-4 text-secondary-400 hover:text-secondary-600 z-10"
-              aria-label="Cerrar"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 animate-fadeIn">
+        <div className="relative bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn">
+          <button 
+            onClick={closeProductModal}
+            className="absolute top-4 right-4 text-secondary-400 hover:text-secondary-600 z-10"
+            aria-label="Cerrar"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          
+          <div className="flex flex-col md:flex-row">
+            {/* Imagen del producto */}
+            <div className="md:w-2/5 bg-secondary-50 p-8 flex items-center justify-center rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
+              <img 
+                src={product.imageSrc} 
+                alt={product.title} 
+                className="w-full max-w-xs object-contain"
+              />
+            </div>
             
-            <div className="flex flex-col md:flex-row">
-              {/* Imagen del producto */}
-              <div className="md:w-2/5 bg-secondary-100 p-8 flex items-center justify-center rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
-                <img 
-                  src={product.imageSrc} 
-                  alt={product.title} 
-                  className="w-full max-w-xs object-contain"
-                />
+            {/* Detalles del producto */}
+            <div className="md:w-3/5 p-8">
+              <div className="mb-4">
+                <span className="inline-block bg-primary-100 text-primary-800 text-xs font-semibold px-3 py-1 rounded-full">
+                  {product.badge}
+                </span>
+                {product.inStock && (
+                  <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full ml-2">
+                    En stock
+                  </span>
+                )}
               </div>
               
-              {/* Detalles del producto */}
-              <div className="md:w-3/5 p-8">
-                <div className="mb-4">
-                  <span className="inline-block bg-primary-100 text-primary-800 text-xs font-semibold px-3 py-1 rounded-full">
-                    {product.badge}
-                  </span>
-                  {product.inStock && (
-                    <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full ml-2">
-                      En stock
-                    </span>
-                  )}
-                </div>
-                
-                <h2 className="text-3xl font-bold mb-4">{product.title}</h2>
-                <p className="text-secondary-600 mb-6">{product.detailedDescription}</p>
-                
-                <div className="mb-6">
-                  <h3 className="font-bold text-lg mb-3">Características:</h3>
-                  <ul className="space-y-2">
-                    {product.features.map((feature, index) => (
-                      <li key={index} className="flex items-start">
-                        <FaCheckCircle className="text-green-500 mt-1 mr-2 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
+              <h2 className="text-3xl font-bold mb-2">{product.title}</h2>
+              <p className="text-2xl font-bold text-primary-600 mb-4">{product.price}</p>
+              <p className="text-secondary-600 mb-6">{product.detailedDescription}</p>
+              
+              <div className="mb-6">
+                <h3 className="font-bold text-lg mb-3">Características:</h3>
+                <ul className="space-y-2">
+                  {product.features.map((feature, index) => (
+                    <li key={index} className="flex items-start">
+                      <FaCheckCircle className="text-green-500 mt-1 mr-2 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
                 <a 
                   href={product.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center px-6 py-3 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium shadow-md hover:shadow-lg transition-all duration-300"
+                  className="btn btn-primary flex-1 flex items-center justify-center"
                 >
-                  <FaShoppingCart className="mr-2" /> Comprar ahora en Mercado Libre <FaExternalLinkAlt className="ml-2" />
+                  <FaShoppingCart className="mr-2" /> Comprar ahora
                 </a>
-                
-                <div className="mt-6 pt-6 border-t border-secondary-200">
-                  <div className="flex items-center text-secondary-600 mb-2">
-                    <FaTruck className="mr-2 text-primary-500" />
-                    <span>Envío gratis por Mercado Envíos</span>
-                  </div>
-                  <div className="flex items-center text-secondary-600">
-                    <FaCreditCard className="mr-2 text-primary-500" />
-                    <span>Haz tu pago directo en Mercado Libre</span>
-                  </div>
+                <a 
+                  href={product.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-outline flex-1 flex items-center justify-center"
+                >
+                  Ver en Mercado Libre <FaExternalLinkAlt className="ml-2" />
+                </a>
+              </div>
+              
+              <div className="mt-6 pt-6 border-t border-secondary-200">
+                <div className="flex items-center text-secondary-600 mb-2">
+                  <FaTruck className="mr-2 text-primary-500" />
+                  <span>{product.shipping}</span>
+                </div>
+                <div className="flex items-center text-secondary-600">
+                  <FaCreditCard className="mr-2 text-primary-500" />
+                  <span>Múltiples métodos de pago disponibles</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </>
+      </div>
     );
   };
   
