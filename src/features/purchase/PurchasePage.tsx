@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FaShoppingCart, 
   FaTag, 
@@ -17,6 +17,25 @@ const PurchasePage: React.FC = () => {
   
   // Estado para el producto seleccionado para el modal
   const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
+  
+  // Efecto para agregar/quitar la clase al body cuando el modal está abierto/cerrado
+  useEffect(() => {
+    if (selectedProduct !== null) {
+      // Cuando se abre el modal
+      document.body.classList.add('modal-open');
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Cuando se cierra el modal
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+    }
+    
+    // Limpieza cuando el componente se desmonta
+    return () => {
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+    };
+  }, [selectedProduct]);
   
   // Lista de productos
   const products = [
@@ -121,13 +140,11 @@ const PurchasePage: React.FC = () => {
   // Función para abrir el modal del producto
   const openProductModal = (productId: number) => {
     setSelectedProduct(productId);
-    document.body.style.overflow = 'hidden'; // Evitar scroll cuando el modal está abierto
   };
   
   // Función para cerrar el modal
   const closeProductModal = () => {
     setSelectedProduct(null);
-    document.body.style.overflow = 'auto'; // Restaurar scroll
   };
   
   // Renderizado del modal de producto
@@ -138,7 +155,7 @@ const PurchasePage: React.FC = () => {
     if (!product) return null;
     
     return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fadeIn">
+      <div className="fixed inset-0 z-[9999] modal-overlay flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fadeIn">
         <div className="relative bg-secondary-50 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn">
           <button 
             onClick={closeProductModal}
