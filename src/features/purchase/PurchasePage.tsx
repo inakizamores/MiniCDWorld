@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { 
   FaShoppingCart, 
   FaTag, 
-  FaExternalLinkAlt, 
   FaCheckCircle, 
   FaCreditCard, 
   FaTruck, 
