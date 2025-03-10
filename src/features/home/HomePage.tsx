@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaExternalLinkAlt } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
@@ -46,15 +46,13 @@ const HomePage = () => {
               </a>
             </div>
             <div className="mt-4">
-              <a 
-                href="https://articulo.mercadolibre.com.mx/MLM-3387017600-pack-5-llaveros-en-blanco-mini-cd-disco-album-musical-_JM"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/purchase"
                 className="btn btn-secondary text-lg px-8 py-3 flex items-center justify-center gap-2 inline-flex"
               >
                 Compra los llaveros en blanco
                 <FaShoppingCart className="ml-2" />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -109,17 +107,21 @@ const HomePage = () => {
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Compra Productos Mini CD World</h2>
-            <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
+            <p className="text-xl text-secondary-600 max-w-2xl mx-auto mb-6">
               Adquiere nuestros llaveros Mini CD oficiales desde nuestra tienda en Mercado Libre
             </p>
+            <Link 
+              to="/purchase" 
+              className="btn btn-primary inline-flex items-center px-6 py-3"
+            >
+              Ver todos los productos <FaArrowRight className="ml-2" />
+            </Link>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Product 1: Pack 5 Llaveros En Blanco */}
-            <a 
-              href="https://articulo.mercadolibre.com.mx/MLM-3387017600-pack-5-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <Link 
+              to="/purchase#productos" 
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
             >
               <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
@@ -135,16 +137,14 @@ const HomePage = () => {
                   Llaveros Mini CD en formato en blanco. Perfectos para personalización.
                 </p>
                 <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
-                  Comprar en Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
+                  Ver detalles <FaArrowRight className="ml-2 text-sm" />
                 </div>
               </div>
-            </a>
+            </Link>
             
             {/* Product 2: Pack 5 Llaveros NFC En Blanco */}
-            <a 
-              href="https://www.mercadolibre.com.mx/pack-5-llaveros-nfc-en-blanco--mini-cd-disco-album-musical/up/MLMU3045065414" 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <Link 
+              to="/purchase#productos" 
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
             >
               <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
@@ -160,16 +160,14 @@ const HomePage = () => {
                   Llaveros Mini CD con tecnología NFC. Vincula digitalmente a tu música.
                 </p>
                 <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
-                  Comprar en Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
+                  Ver detalles <FaArrowRight className="ml-2 text-sm" />
                 </div>
               </div>
-            </a>
+            </Link>
             
             {/* Product 3: Pack 25 Llaveros En Blanco */}
-            <a 
-              href="https://articulo.mercadolibre.com.mx/MLM-3529953576-pack-25-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <Link 
+              to="/purchase#productos" 
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
             >
               <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
@@ -185,16 +183,14 @@ const HomePage = () => {
                   Pack de 25 llaveros Mini CD en blanco. Ideal para eventos y promociones.
                 </p>
                 <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
-                  Comprar en Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
+                  Ver detalles <FaArrowRight className="ml-2 text-sm" />
                 </div>
               </div>
-            </a>
+            </Link>
             
             {/* Product 4: Pack 50 Llaveros En Blanco */}
-            <a 
-              href="https://articulo.mercadolibre.com.mx/MLM-2215776613-pack-50-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <Link 
+              to="/purchase#productos" 
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
             >
               <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
@@ -210,10 +206,10 @@ const HomePage = () => {
                   Pack mayorista de 50 llaveros Mini CD en blanco. El mejor valor para pedidos grandes.
                 </p>
                 <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
-                  Comprar en Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
+                  Ver detalles <FaArrowRight className="ml-2 text-sm" />
                 </div>
               </div>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
