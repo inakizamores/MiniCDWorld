@@ -154,8 +154,19 @@ const PurchasePage: React.FC = () => {
     const product = products.find(p => p.id === selectedProduct);
     if (!product) return null;
     
+    // Función para manejar clics en el overlay (área fuera del modal)
+    const handleOverlayClick = (e: React.MouseEvent) => {
+      // Si el elemento clickeado es el overlay mismo, cerrar el modal
+      if (e.target === e.currentTarget) {
+        closeProductModal();
+      }
+    };
+    
     return (
-      <div className="fixed inset-0 z-[9999] modal-overlay flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fadeIn">
+      <div 
+        className="fixed inset-0 z-[9999] modal-overlay flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fadeIn" 
+        onClick={handleOverlayClick}
+      >
         <div className="relative bg-secondary-50 rounded-xl shadow-2xl max-w-4xl w-full max-h-[85vh] md:max-h-[90vh] overflow-y-auto animate-scaleIn">
           <button 
             onClick={closeProductModal}
