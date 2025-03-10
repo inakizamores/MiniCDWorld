@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaCheck, FaCompactDisc } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
-import { useEffect, useState, useRef, ReactElement } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 // Helper function to check if element is in viewport
 const useInViewport = (ref: React.RefObject<HTMLElement>) => {
