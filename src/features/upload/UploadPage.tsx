@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { 
@@ -16,11 +16,60 @@ import {
 import { ASPECT_RATIOS, DIMENSIONS } from '@constants/dimensions'
 import ImageUploadSection from './components/ImageUploadSection'
 import InfoForm from './components/InfoForm'
+import { FaArrowRight } from 'react-icons/fa'
+
+// Define animation styles
+const animationStyles = `
+  @keyframes pulse-subtle {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s infinite;
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 1s ease-in;
+  }
+`;
 
 const UploadPage: React.FC = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { step, images } = useSelector(selectTemplateState)
+  const [isPulsing, setIsPulsing] = useState(false)
+  
+  // Add animation styles to document
+  useEffect(() => {
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = animationStyles;
+    document.head.appendChild(styleElement);
+    
+    return () => {
+      if (document.head.contains(styleElement)) {
+        document.head.removeChild(styleElement);
+      }
+    };
+  }, []);
+  
+  // Set pulsing when all required images are uploaded
+  useEffect(() => {
+    if (hasAllRequiredImages) {
+      const timer = setTimeout(() => {
+        setIsPulsing(true);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    } else {
+      setIsPulsing(false);
+    }
+  }, [images]);
   
   // If we're on step 1, show the info form
   if (step === 1) {
@@ -182,21 +231,31 @@ const UploadPage: React.FC = () => {
         />
       </Section>
       
-      <div className="flex justify-between mt-8">
+      <div className="flex flex-col md:flex-row justify-between mt-8 items-center">
         <button 
-          className="btn btn-outline"
+          className="btn btn-outline mb-4 md:mb-0"
           onClick={handleBack}
         >
           Back
         </button>
         
-        <button
-          className="btn btn-primary"
-          onClick={handleContinue}
-          disabled={!hasAllRequiredImages}
-        >
-          {!hasAllRequiredImages ? 'Upload All Required Images' : 'Continue to Preview'}
-        </button>
+        <div className="flex flex-col items-center">
+          <button
+            className={`btn btn-primary px-8 py-3 flex items-center text-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 ${
+              hasAllRequiredImages && isPulsing ? 'animate-pulse-subtle hover:animate-none' : ''
+            }`}
+            onClick={handleContinue}
+            disabled={!hasAllRequiredImages}
+          >
+            {!hasAllRequiredImages ? 'Upload All Required Images' : 'Continue to Preview'} <FaArrowRight className="ml-2" />
+          </button>
+          
+          {hasAllRequiredImages && isPulsing && (
+            <p className="text-primary-600 text-sm mt-3 animate-fade-in">
+              All set! Click to continue to the preview.
+            </p>
+          )}
+        </div>
       </div>
     </div>
   )

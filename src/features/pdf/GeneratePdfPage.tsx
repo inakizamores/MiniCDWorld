@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { 
@@ -9,6 +9,40 @@ import {
 import PDFService from '@services/pdfService'
 import { FaFilePdf, FaSpinner, FaArrowLeft, FaCheckCircle, FaRedo, FaDownload, FaPrint, FaInfoCircle } from 'react-icons/fa'
 
+// Define animation styles
+const animationStyles = `
+  @keyframes pulse-subtle {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s infinite;
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 1s ease-in;
+  }
+  
+  .animate-bounce-subtle {
+    animation: bounce 1.5s infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+`;
+
 const GeneratePdfPage: React.FC = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -17,6 +51,31 @@ const GeneratePdfPage: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [isPulsing, setIsPulsing] = useState(false)
+  
+  // Add animation styles to document
+  useEffect(() => {
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = animationStyles;
+    document.head.appendChild(styleElement);
+    
+    return () => {
+      if (document.head.contains(styleElement)) {
+        document.head.removeChild(styleElement);
+      }
+    };
+  }, []);
+  
+  // Start pulsing animation after a delay if PDF not generated yet
+  useEffect(() => {
+    if (!pdfUrl) {
+      const timer = setTimeout(() => {
+        setIsPulsing(true);
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [pdfUrl]);
   
   const handleBack = () => {
     dispatch(prevStep())
@@ -27,6 +86,7 @@ const GeneratePdfPage: React.FC = () => {
     try {
       setIsGenerating(true)
       setError(null)
+      setIsPulsing(false)
       
       // Generate the PDF
       const pdfBlob = await PDFService.generatePDF(templateData)
@@ -98,31 +158,48 @@ const GeneratePdfPage: React.FC = () => {
             </div>
           </div>
           
-          {!pdfUrl ? (
-            <button
-              className="btn btn-primary flex items-center mt-4 md:mt-0 px-6 py-3"
-              onClick={handleGeneratePdf}
-              disabled={isGenerating}
-            >
-              {isGenerating ? (
-                <>
-                  <FaSpinner className="animate-spin mr-2" /> Generating PDF...
-                </>
-              ) : (
-                <>
-                  <FaFilePdf className="mr-2" /> Generate PDF
-                </>
-              )}
-            </button>
-          ) : (
-            <a
-              href={pdfUrl}
-              download={downloadFileName}
-              className="btn btn-primary flex items-center mt-4 md:mt-0 px-6 py-3 bg-green-600 hover:bg-green-700"
-            >
-              <FaDownload className="mr-2" /> Download PDF
-            </a>
-          )}
+          <div className="flex flex-col items-center">
+            {!pdfUrl ? (
+              <>
+                <button
+                  className={`btn btn-primary flex items-center mt-4 md:mt-0 px-8 py-3 text-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                    isPulsing && !isGenerating ? 'animate-pulse-subtle hover:animate-none' : ''
+                  }`}
+                  onClick={handleGeneratePdf}
+                  disabled={isGenerating}
+                >
+                  {isGenerating ? (
+                    <>
+                      <FaSpinner className="animate-spin mr-2" /> Generating PDF...
+                    </>
+                  ) : (
+                    <>
+                      <FaFilePdf className="mr-2" /> Generate PDF
+                    </>
+                  )}
+                </button>
+                
+                {isPulsing && !isGenerating && (
+                  <p className="text-primary-600 text-sm mt-3 animate-fade-in">
+                    Click to create your printable template!
+                  </p>
+                )}
+              </>
+            ) : (
+              <>
+                <a
+                  href={pdfUrl}
+                  download={downloadFileName}
+                  className="btn btn-primary flex items-center mt-4 md:mt-0 px-8 py-3 text-lg bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-bounce-subtle hover:animate-none"
+                >
+                  <FaDownload className="mr-2" /> Download PDF
+                </a>
+                <p className="text-green-600 text-sm mt-3 animate-fade-in">
+                  Your template is ready to download!
+                </p>
+              </>
+            )}
+          </div>
         </div>
         
         {error && (
