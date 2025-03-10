@@ -136,7 +136,8 @@ const HomePage = () => {
                 <p className="text-secondary-600 text-center mb-4 flex-grow">
                   Llaveros Mini CD en formato en blanco. Perfectos para personalización.
                 </p>
-                <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
+                <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium">
+                  <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-5 h-5 mr-2" />
                   Ver detalles <FaArrowRight className="ml-2 text-sm" />
                 </div>
               </div>
@@ -159,7 +160,8 @@ const HomePage = () => {
                 <p className="text-secondary-600 text-center mb-4 flex-grow">
                   Llaveros Mini CD con tecnología NFC. Vincula digitalmente a tu música.
                 </p>
-                <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
+                <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium">
+                  <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-5 h-5 mr-2" />
                   Ver detalles <FaArrowRight className="ml-2 text-sm" />
                 </div>
               </div>
@@ -182,7 +184,8 @@ const HomePage = () => {
                 <p className="text-secondary-600 text-center mb-4 flex-grow">
                   Pack de 25 llaveros Mini CD en blanco. Ideal para eventos y promociones.
                 </p>
-                <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
+                <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium">
+                  <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-5 h-5 mr-2" />
                   Ver detalles <FaArrowRight className="ml-2 text-sm" />
                 </div>
               </div>
@@ -205,7 +208,8 @@ const HomePage = () => {
                 <p className="text-secondary-600 text-center mb-4 flex-grow">
                   Pack mayorista de 50 llaveros Mini CD en blanco. El mejor valor para pedidos grandes.
                 </p>
-                <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
+                <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium">
+                  <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-5 h-5 mr-2" />
                   Ver detalles <FaArrowRight className="ml-2 text-sm" />
                 </div>
               </div>
