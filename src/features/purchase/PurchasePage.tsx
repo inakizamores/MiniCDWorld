@@ -114,12 +114,8 @@ const PurchasePage: React.FC = () => {
       answer: "Los llaveros con NFC contienen un chip que puede ser programado para abrir un enlace web cuando se escanea con un smartphone compatible. Puedes vincularlos a playlists de Spotify, perfiles de artistas, páginas web, o cualquier contenido digital que desees."
     },
     {
-      question: "¿Cuánto tiempo tarda el envío?",
-      answer: "Todos nuestros productos se envían desde la Ciudad de México. El tiempo de entrega varía según tu ubicación, pero generalmente toma entre 3-7 días hábiles. Todos los pedidos incluyen número de seguimiento."
-    },
-    {
-      question: "¿Ofrecen descuentos para pedidos mayoristas?",
-      answer: "Sí, ofrecemos descuentos especiales para pedidos al mayoreo. Si necesitas más de 50 unidades, contáctanos directamente a través de Mercado Libre o envía un correo a contacto@minicdworld.com para recibir una cotización personalizada."
+      question: "¿Cómo configuro un llavero con NFC?",
+      answer: "Para configurar tu llavero NFC, necesitarás la aplicación NFC Tools disponible tanto para Android como iOS. En Android: 1) Descarga NFC Tools desde Google Play Store. 2) Abre la app y toca 'Escribir'. 3) Selecciona el tipo de contenido (URL, texto, redes sociales, etc.). 4) Ingresa la información deseada. 5) Toca 'Escribir' y acerca el llavero a la parte trasera de tu teléfono hasta que se confirme la escritura. En iOS (iPhone 7 o posterior): 1) Descarga NFC Tools desde la App Store. 2) Abre la app y selecciona 'Escribir'. 3) Elige el tipo de datos. 4) Completa la información. 5) Toca 'Escribir etiqueta' y acerca el llavero a la parte superior del iPhone. Nota: Los llaveros NFC son reprogramables, por lo que puedes cambiar su contenido cuando quieras."
     }
   ];
   
