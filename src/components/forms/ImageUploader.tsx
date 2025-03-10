@@ -52,9 +52,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           )}
           
           <p className="text-center text-secondary-700 font-medium mb-1">
-            {isDragActive ? 'Drop the image here' : 'Drag & drop an image here'}
+            {isDragActive ? 'Suelta la imagen aquí' : 'Arrastra y suelta una imagen aquí'}
           </p>
-          <p className="text-center text-secondary-500 text-sm">or click to browse files</p>
+          <p className="text-center text-secondary-500 text-sm">o haz clic para buscar archivos</p>
           <div className="text-center text-sm mt-3 max-w-xs mx-auto">{description}</div>
           
           {error && (
@@ -69,7 +69,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           <div className="w-full relative pb-[75%] overflow-hidden rounded-lg bg-secondary-50">
             <img
               src={previewImage}
-              alt={`Preview for ${title}`}
+              alt={`Vista previa para ${title}`}
               className="absolute inset-0 w-full h-full object-contain rounded-lg"
             />
           </div>
@@ -79,7 +79,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               className="absolute top-2 right-2 bg-white p-1.5 rounded-full shadow-md hover:bg-secondary-100 transition-colors"
               onClick={onRemove}
               type="button"
-              aria-label="Remove image"
+              aria-label="Eliminar imagen"
             >
               <FaTimesCircle className="text-red-500 text-lg" />
             </button>

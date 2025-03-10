@@ -28,16 +28,16 @@ export default function useImageUpload({
         const file = acceptedFiles[0]
         
         if (!acceptedFileTypes.includes(file.type)) {
-          throw new Error(`File type must be ${acceptedFileTypes.join(', ')}`)
+          throw new Error(`El tipo de archivo debe ser ${acceptedFileTypes.join(', ')}`)
         }
         
         if (file.size > maxSize) {
-          throw new Error(`File size must be less than ${Math.round(maxSize / 1024 / 1024)}MB`)
+          throw new Error(`El tamaño del archivo debe ser menor a ${Math.round(maxSize / 1024 / 1024)}MB`)
         }
         
         onImageSelected(file)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred')
+        setError(err instanceof Error ? err.message : 'Ocurrió un error desconocido')
       } finally {
         setIsLoading(false)
       }

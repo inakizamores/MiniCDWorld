@@ -24,25 +24,25 @@ const HomePage = () => {
         <div className="relative">
           <div className="animate-fade-in-up">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 mt-8">
-              Create Professional <span className="gradient-text">CD Templates</span>
+              Crea Plantillas de <span className="gradient-text">CD Profesionales</span>
             </h1>
             <p className="text-xl text-secondary-600 max-w-3xl mx-auto mb-10 leading-relaxed">
-              Generate high-quality, printable CD templates with precise measurements. 
-              Upload your artwork, customize your design, and download a print-ready PDF.
+              Genera plantillas de CD de alta calidad listas para imprimir con medidas precisas. 
+              Sube tu arte, personaliza tu diseño y descarga un PDF listo para imprimir.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <button 
                 onClick={handleCreateTemplate}
                 className="btn btn-primary text-lg px-8 py-3 flex items-center justify-center gap-2 group"
               >
-                Create Your Template
+                Crear Tu Plantilla
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
               </button>
               <a 
                 href="#how-it-works" 
                 className="btn btn-outline text-lg px-8 py-3"
               >
-                Learn More
+                Saber Más
               </a>
             </div>
             <div className="mt-4">
@@ -63,9 +63,9 @@ const HomePage = () => {
       {/* How It Works with hover effects */}
       <section id="how-it-works" className="py-16 bg-gradient-to-b from-white to-primary-50 rounded-none md:rounded-xl">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold mb-4">How It Works</h2>
+          <h2 className="text-3xl font-bold mb-4">¿Cómo Funciona?</h2>
           <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
-            Create your custom CD template in just a few simple steps
+            Crea tu plantilla de CD personalizada en solo unos sencillos pasos
           </p>
         </div>
         
@@ -75,9 +75,9 @@ const HomePage = () => {
               <div className="bg-primary-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
                 <FaUpload className="text-3xl text-primary-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3">1. Upload Your Artwork</h3>
+              <h3 className="text-xl font-bold mb-3">1. Sube Tu Arte</h3>
               <p className="text-secondary-600 leading-relaxed">
-                Upload your images for the CD cover, back, and the CD itself. Our tool supports all common image formats.
+                Sube tus imágenes para la portada del CD, la contraportada y el disco. Nuestra herramienta admite todos los formatos comunes de imagen.
               </p>
             </div>
             
@@ -85,9 +85,9 @@ const HomePage = () => {
               <div className="bg-primary-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
                 <FaCrop className="text-3xl text-primary-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3">2. Crop & Position</h3>
+              <h3 className="text-xl font-bold mb-3">2. Recorta y Posiciona</h3>
               <p className="text-secondary-600 leading-relaxed">
-                Adjust your images to fit perfectly within the CD template dimensions. Our smart cropping tools make it easy.
+                Ajusta tus imágenes para que encajen perfectamente dentro de las dimensiones de la plantilla de CD. Nuestras herramientas de recorte inteligente lo hacen fácil.
               </p>
             </div>
             
@@ -95,9 +95,9 @@ const HomePage = () => {
               <div className="bg-primary-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
                 <FaFilePdf className="text-3xl text-primary-600" />
               </div>
-              <h3 className="text-xl font-bold mb-3">3. Generate & Print</h3>
+              <h3 className="text-xl font-bold mb-3">3. Genera e Imprime</h3>
               <p className="text-secondary-600 leading-relaxed">
-                Download your PDF template, ready for printing on US Letter paper. High-quality output every time.
+                Descarga tu plantilla en PDF, lista para imprimir en papel tamaño carta. Resultados de alta calidad en cada impresión.
               </p>
             </div>
           </div>
@@ -108,9 +108,9 @@ const HomePage = () => {
       <section id="shop-products" className="py-16 bg-secondary-50 mx-0 md:mx-4 px-4 rounded-none md:rounded-xl">
         <div className="container mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Shop Mini CD World Products</h2>
+            <h2 className="text-3xl font-bold mb-4">Compra Productos Mini CD World</h2>
             <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
-              Purchase our official Mini CD keychains from our Mercado Libre store
+              Adquiere nuestros llaveros Mini CD oficiales desde nuestra tienda en Mercado Libre
             </p>
           </div>
           
@@ -123,7 +123,7 @@ const HomePage = () => {
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
             >
               <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
-                <span>5 Units</span>
+                <span>5 Unidades</span>
                 <FaTag />
               </div>
               <div className="p-6 flex flex-col flex-grow">
@@ -132,10 +132,10 @@ const HomePage = () => {
                 </div>
                 <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros En Blanco</h3>
                 <p className="text-secondary-600 text-center mb-4 flex-grow">
-                  Mini CD keychains in blank format. Perfect for customization.
+                  Llaveros Mini CD en formato en blanco. Perfectos para personalización.
                 </p>
                 <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
-                  Shop on Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
+                  Comprar en Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
                 </div>
               </div>
             </a>
@@ -148,7 +148,7 @@ const HomePage = () => {
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
             >
               <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
-                <span>5 Units + NFC</span>
+                <span>5 Unidades + NFC</span>
                 <FaTag />
               </div>
               <div className="p-6 flex flex-col flex-grow">
@@ -157,10 +157,10 @@ const HomePage = () => {
                 </div>
                 <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros NFC En Blanco</h3>
                 <p className="text-secondary-600 text-center mb-4 flex-grow">
-                  Mini CD keychains with NFC technology. Link to your music digitally.
+                  Llaveros Mini CD con tecnología NFC. Vincula digitalmente a tu música.
                 </p>
                 <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
-                  Shop on Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
+                  Comprar en Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
                 </div>
               </div>
             </a>
@@ -173,7 +173,7 @@ const HomePage = () => {
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
             >
               <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
-                <span>25 Units</span>
+                <span>25 Unidades</span>
                 <FaTag />
               </div>
               <div className="p-6 flex flex-col flex-grow">
@@ -182,10 +182,10 @@ const HomePage = () => {
                 </div>
                 <h3 className="text-lg font-bold text-center mb-2">Pack 25 Llaveros En Blanco</h3>
                 <p className="text-secondary-600 text-center mb-4 flex-grow">
-                  Bulk pack of 25 blank Mini CD keychains. Great for events and promotions.
+                  Pack de 25 llaveros Mini CD en blanco. Ideal para eventos y promociones.
                 </p>
                 <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
-                  Shop on Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
+                  Comprar en Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
                 </div>
               </div>
             </a>
@@ -198,7 +198,7 @@ const HomePage = () => {
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
             >
               <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
-                <span>50 Units</span>
+                <span>50 Unidades</span>
                 <FaTag />
               </div>
               <div className="p-6 flex flex-col flex-grow">
@@ -207,10 +207,10 @@ const HomePage = () => {
                 </div>
                 <h3 className="text-lg font-bold text-center mb-2">Pack 50 Llaveros En Blanco</h3>
                 <p className="text-secondary-600 text-center mb-4 flex-grow">
-                  Wholesale pack of 50 blank Mini CD keychains. Best value for large orders.
+                  Pack mayorista de 50 llaveros Mini CD en blanco. El mejor valor para pedidos grandes.
                 </p>
                 <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
-                  Shop on Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
+                  Comprar en Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
                 </div>
               </div>
             </a>
@@ -221,15 +221,15 @@ const HomePage = () => {
       {/* CTA Section with gradient background */}
       <section className="py-16 text-center bg-gradient-to-r from-primary-600 to-primary-700 text-white mx-0 md:mx-4 px-4 shadow-lg rounded-none md:rounded-xl">
         <div className="container mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Ready to Create Your CD Template?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">¿Listo para Crear tu Plantilla de CD?</h2>
           <p className="text-xl text-primary-100 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Start designing your custom CD templates today with our easy-to-use tool
+            Comienza a diseñar tus plantillas de CD personalizadas hoy con nuestra herramienta fácil de usar
           </p>
           <button 
             onClick={handleCreateTemplate}
             className="btn bg-white text-primary-700 hover:bg-primary-50 text-lg px-10 py-3 shadow-lg hover:shadow-xl transition-all"
           >
-            Get Started Now
+            Empezar Ahora
           </button>
         </div>
       </section>

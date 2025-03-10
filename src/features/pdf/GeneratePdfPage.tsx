@@ -36,7 +36,7 @@ const GeneratePdfPage: React.FC = () => {
       setPdfUrl(url)
     } catch (err) {
       console.error('Error generating PDF:', err)
-      setError('There was an error generating your PDF. Please try again.')
+      setError('Hubo un error al generar tu PDF. Por favor, intenta de nuevo.')
     } finally {
       setIsGenerating(false)
     }
@@ -64,16 +64,16 @@ const GeneratePdfPage: React.FC = () => {
         <div className="bg-red-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
           <FaInfoCircle className="text-3xl text-red-500" />
         </div>
-        <h1 className="text-3xl font-bold mb-4">Missing Required Images</h1>
+        <h1 className="text-3xl font-bold mb-4">Imágenes Requeridas Faltantes</h1>
         <p className="text-secondary-600 mb-8 max-w-lg mx-auto">
-          You need to upload all required images before generating a PDF.
-          Please go back and complete the uploads.
+          Necesitas subir todas las imágenes requeridas antes de generar un PDF.
+          Por favor, regresa y completa las cargas.
         </p>
         <button
           className="btn btn-primary"
           onClick={() => navigate('/upload')}
         >
-          Return to Upload Page
+          Volver a Subir Imágenes
         </button>
       </div>
     )
@@ -82,19 +82,19 @@ const GeneratePdfPage: React.FC = () => {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold mb-4">Generate PDF Template</h1>
+        <h1 className="text-3xl font-bold mb-4">Generar Plantilla PDF</h1>
         <p className="text-secondary-600">
-          Your CD template is ready! Generate a PDF to download and print.
+          ¡Tu plantilla de CD está lista! Genera un PDF para descargar e imprimir.
         </p>
       </div>
       
       <div className="card mb-10">
         <div className="flex flex-col md:flex-row items-center justify-between mb-8 bg-gradient-to-r from-primary-50 to-primary-100 -m-6 mb-6 p-6 rounded-t-lg border-b border-primary-200">
           <div>
-            <h2 className="text-xl font-bold gradient-text">{templateData.albumTitle || 'Untitled Album'}</h2>
-            <p className="text-secondary-600">{templateData.artistName || 'Unknown Artist'}</p>
+            <h2 className="text-xl font-bold gradient-text">{templateData.albumTitle || 'Álbum sin título'}</h2>
+            <p className="text-secondary-600">{templateData.artistName || 'Artista desconocido'}</p>
             <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-              {templateData.cdsPerPage} {templateData.cdsPerPage === 1 ? 'CD' : 'CDs'} per page
+              {templateData.cdsPerPage} {templateData.cdsPerPage === 1 ? 'CD' : 'CDs'} por página
             </div>
           </div>
           
@@ -106,11 +106,11 @@ const GeneratePdfPage: React.FC = () => {
             >
               {isGenerating ? (
                 <>
-                  <FaSpinner className="animate-spin mr-2" /> Generating PDF...
+                  <FaSpinner className="animate-spin mr-2" /> Generando PDF...
                 </>
               ) : (
                 <>
-                  <FaFilePdf className="mr-2" /> Generate PDF
+                  <FaFilePdf className="mr-2" /> Generar PDF
                 </>
               )}
             </button>
@@ -120,7 +120,7 @@ const GeneratePdfPage: React.FC = () => {
               download={downloadFileName}
               className="btn btn-primary flex items-center mt-4 md:mt-0 px-6 py-3 bg-green-600 hover:bg-green-700"
             >
-              <FaDownload className="mr-2" /> Download PDF
+              <FaDownload className="mr-2" /> Descargar PDF
             </a>
           )}
         </div>
@@ -130,7 +130,7 @@ const GeneratePdfPage: React.FC = () => {
             <FaInfoCircle className="text-red-500 mr-3 mt-1 flex-shrink-0" />
             <div>
               <p className="font-medium">{error}</p>
-              <p className="text-sm mt-1">Please try again or check your images.</p>
+              <p className="text-sm mt-1">Por favor, intenta de nuevo o verifica tus imágenes.</p>
             </div>
           </div>
         )}
@@ -139,8 +139,8 @@ const GeneratePdfPage: React.FC = () => {
           <div className="bg-green-50 border border-green-200 p-4 rounded-lg flex items-center mb-8 animate-fade-in">
             <FaCheckCircle className="text-green-500 mr-3 text-xl flex-shrink-0" />
             <div>
-              <p className="text-green-800 font-medium">PDF generated successfully!</p>
-              <p className="text-green-700 text-sm mt-1">Your PDF is ready to download and print.</p>
+              <p className="text-green-800 font-medium">¡PDF generado exitosamente!</p>
+              <p className="text-green-700 text-sm mt-1">Tu PDF está listo para descargar e imprimir.</p>
             </div>
           </div>
         )}
@@ -148,17 +148,17 @@ const GeneratePdfPage: React.FC = () => {
         <div className="bg-secondary-50 border border-secondary-200 rounded-lg p-6">
           <h3 className="font-bold mb-4 flex items-center text-lg">
             <FaPrint className="mr-2 text-secondary-600" /> 
-            Printing Instructions
+            Instrucciones de Impresión
           </h3>
           <ul className="space-y-3">
             {[
-              'Print on US Letter size paper (8.5" × 11")',
-              'Select "Actual size" in printer settings (not "Fit to page")',
-              'Use high-quality paper for best results',
-              'Cut along the dotted lines for all components',
-              'For the CD disc, carefully cut out the center hole',
-              'Each block contains an identical complete CD template',
-              'If you need more than 2 CDs, simply print the PDF multiple times'
+              'Imprimir en papel tamaño Carta (8.5" × 11")',
+              'Seleccionar "Tamaño real" en configuración de impresora (no "Ajustar a página")',
+              'Usar papel de alta calidad para mejores resultados',
+              'Cortar a lo largo de las líneas punteadas para todos los componentes',
+              'Para el disco CD, recortar cuidadosamente el orificio central',
+              'Cada bloque contiene una plantilla de CD completa idéntica',
+              'Si necesitas más de 2 CDs, simplemente imprime el PDF varias veces'
             ].map((instruction, index) => (
               <li key={index} className="flex items-start">
                 <div className="bg-primary-100 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">
@@ -176,14 +176,14 @@ const GeneratePdfPage: React.FC = () => {
           className="btn btn-outline flex items-center justify-center mt-4 sm:mt-0"
           onClick={handleBack}
         >
-          <FaArrowLeft className="mr-2" /> Back to Preview
+          <FaArrowLeft className="mr-2" /> Volver a Vista Previa
         </button>
         
         <button
           className="btn btn-secondary flex items-center justify-center"
           onClick={handleStartOver}
         >
-          <FaRedo className="mr-2" /> Create Another Template
+          <FaRedo className="mr-2" /> Crear Otra Plantilla
         </button>
       </div>
     </div>

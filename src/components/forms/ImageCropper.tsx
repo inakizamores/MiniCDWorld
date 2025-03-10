@@ -174,7 +174,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           
           {/* Helpful text */}
           <div className="absolute -top-8 left-0 w-full text-center text-xs text-primary-700 bg-white/80 py-1 px-2 rounded-md">
-            Align your image with the circular guides
+            Alinea tu imagen con las guías circulares
           </div>
         </div>
       );
@@ -190,11 +190,11 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold">{isDiscCropper ? "Crop CD Disc Image" : "Crop Image"}</h3>
+          <h3 className="text-xl font-bold">{isDiscCropper ? "Recortar Imagen del Disco CD" : "Recortar Imagen"}</h3>
           <button 
             onClick={onCancel}
             className="text-secondary-500 hover:text-secondary-700"
-            aria-label="Close"
+            aria-label="Cerrar"
           >
             <FaTimes className="text-xl" />
           </button>
@@ -232,14 +232,14 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
               className="btn btn-secondary mr-2"
               disabled={isCropping}
             >
-              <FaSync className="mr-2" /> Reset
+              <FaSync className="mr-2" /> Restablecer
             </button>
             <button
               onClick={onCancel}
               className="btn btn-outline"
               disabled={isCropping}
             >
-              <FaTimes className="mr-2" /> Cancel
+              <FaTimes className="mr-2" /> Cancelar
             </button>
           </div>
           
@@ -250,11 +250,11 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           >
             {isCropping ? (
               <>
-                <span className="animate-spin mr-2">⏳</span> Processing...
+                <span className="animate-spin mr-2">⏳</span> Procesando...
               </>
             ) : (
               <>
-                <FaCheck className="mr-2" /> Apply Crop
+                <FaCheck className="mr-2" /> Aplicar Recorte
               </>
             )}
           </button>

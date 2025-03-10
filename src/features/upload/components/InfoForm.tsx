@@ -66,16 +66,16 @@ const InfoForm: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-4">Enter CD Information</h1>
+        <h1 className="text-3xl font-bold mb-4">Ingresa la Información del CD</h1>
         <p className="text-secondary-600">
-          Start by providing basic information about your CD
+          Comienza proporcionando información básica sobre tu CD
         </p>
       </div>
       
       <form onSubmit={handleSubmit} className="card">
         <div className="mb-6">
           <label htmlFor="albumTitle" className="block text-secondary-700 font-medium mb-2">
-            Album Title
+            Título del Álbum
           </label>
           <input
             type="text"
@@ -83,14 +83,14 @@ const InfoForm: React.FC = () => {
             value={albumTitle}
             onChange={(e) => dispatch(setAlbumTitle(e.target.value))}
             className="input"
-            placeholder="Enter album title"
+            placeholder="Ingresa el título del álbum"
             required
           />
         </div>
         
         <div className="mb-6">
           <label htmlFor="artistName" className="block text-secondary-700 font-medium mb-2">
-            Artist Name
+            Nombre del Artista
           </label>
           <input
             type="text"
@@ -98,7 +98,7 @@ const InfoForm: React.FC = () => {
             value={artistName}
             onChange={(e) => dispatch(setArtistName(e.target.value))}
             className="input"
-            placeholder="Enter artist name"
+            placeholder="Ingresa el nombre del artista"
             required
           />
         </div>
@@ -110,12 +110,12 @@ const InfoForm: React.FC = () => {
               isPulsing ? 'animate-pulse-subtle hover:animate-none' : ''
             }`}
           >
-            Continue to Uploads <FaArrowRight className="ml-2" />
+            Continuar a Subir Imágenes <FaArrowRight className="ml-2" />
           </button>
           
           {isPulsing && (
             <p className="text-primary-600 text-sm mt-3 animate-fade-in">
-              Ready to proceed! Click the button to continue.
+              ¡Listo para continuar! Haz clic en el botón para seguir.
             </p>
           )}
         </div>

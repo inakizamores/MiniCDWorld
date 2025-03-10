@@ -31,7 +31,7 @@ const Header = () => {
                   to="/" 
                   className="text-secondary-600 hover:text-primary-600 transition-colors font-medium"
                 >
-                  Home
+                  Inicio
                 </Link>
               </li>
               <li className="hidden md:block">
@@ -39,7 +39,7 @@ const Header = () => {
                   href="/#shop-products" 
                   className="text-secondary-600 hover:text-primary-600 transition-colors font-medium flex items-center"
                 >
-                  Shop <FaShoppingCart className="ml-2 text-sm" />
+                  Tienda <FaShoppingCart className="ml-2 text-sm" />
                 </a>
               </li>
               <li>
@@ -47,7 +47,7 @@ const Header = () => {
                   onClick={handleCreateTemplate}
                   className="btn btn-primary flex items-center"
                 >
-                  Create Template
+                  Crear Plantilla
                 </button>
               </li>
             </ul>

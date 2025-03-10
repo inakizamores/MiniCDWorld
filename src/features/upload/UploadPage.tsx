@@ -79,20 +79,20 @@ const UploadPage: React.FC = () => {
   return (
     <div>
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-4">Upload CD Artwork</h1>
+        <h1 className="text-3xl font-bold mb-4">Subir Imágenes del CD</h1>
         <p className="text-secondary-600 max-w-2xl mx-auto">
-          Upload and crop your images for each part of the CD template.
-          All images are required to proceed.
+          Sube y recorta tus imágenes para cada parte de la plantilla del CD.
+          Todas las imágenes son necesarias para continuar.
         </p>
       </div>
       
       {/* Front Cover Section */}
-      <Section title="Front Cover Components">
+      <Section title="Componentes de Portada">
         <ImageUploadSection
-          title="Front Cover (Outside)"
+          title="Portada (Exterior)"
           description={createDescription(
-            "This will be the front cover of your CD booklet.",
-            "Recommended resolution: 410 pixels × 410 pixels"
+            "Esta será la portada frontal de tu folleto de CD.",
+            "Resolución recomendada: 410 píxeles × 410 píxeles"
           )}
           dimensions={`${DIMENSIONS.FRENTE_AFUERA.width}mm × ${DIMENSIONS.FRENTE_AFUERA.height}mm`}
           aspectRatio={ASPECT_RATIOS.FRENTE}
@@ -101,10 +101,10 @@ const UploadPage: React.FC = () => {
         />
         
         <ImageUploadSection
-          title="Front Cover (Inside)"
+          title="Portada (Interior)"
           description={createDescription(
-            "This will be inside of the front cover.",
-            "Recommended resolution: 410 pixels × 410 pixels"
+            "Este será el interior de la portada frontal.",
+            "Resolución recomendada: 410 píxeles × 410 píxeles"
           )}
           dimensions={`${DIMENSIONS.FRENTE_DENTRO.width}mm × ${DIMENSIONS.FRENTE_DENTRO.height}mm`}
           aspectRatio={ASPECT_RATIOS.FRENTE}
@@ -114,12 +114,12 @@ const UploadPage: React.FC = () => {
       </Section>
       
       {/* Back Cover Section */}
-      <Section title="Back Cover Components">
+      <Section title="Componentes de Contraportada">
         <ImageUploadSection
-          title="Back Cover (Outside Main)"
+          title="Contraportada (Exterior Principal)"
           description={createDescription(
-            "The main part of the back cover.",
-            "Recommended resolution: 500 pixels × 380 pixels"
+            "La parte principal de la contraportada.",
+            "Resolución recomendada: 500 píxeles × 380 píxeles"
           )}
           dimensions={`${DIMENSIONS.TRASERA_AFUERA.main.width}mm × ${DIMENSIONS.TRASERA_AFUERA.main.height}mm`}
           aspectRatio={ASPECT_RATIOS.TRASERA_MAIN}
@@ -128,10 +128,10 @@ const UploadPage: React.FC = () => {
         />
         
         <ImageUploadSection
-          title="Back Cover (Outside Side)"
+          title="Contraportada (Exterior Lateral)"
           description={createDescription(
-            "The side part of the back cover.",
-            "Recommended resolution: 40 pixels × 380 pixels"
+            "La parte lateral de la contraportada.",
+            "Resolución recomendada: 40 píxeles × 380 píxeles"
           )}
           dimensions={`${DIMENSIONS.TRASERA_AFUERA.side.width}mm × ${DIMENSIONS.TRASERA_AFUERA.side.height}mm`}
           aspectRatio={ASPECT_RATIOS.TRASERA_SIDE}
@@ -141,12 +141,12 @@ const UploadPage: React.FC = () => {
       </Section>
       
       {/* Inside Section */}
-      <Section title="Inside Components">
+      <Section title="Componentes Interiores">
         <ImageUploadSection
-          title="Back Cover (Inside Side)"
+          title="Contraportada (Interior Lateral)"
           description={createDescription(
-            "The side part of the inside back cover.",
-            "Recommended resolution: 40 pixels × 380 pixels"
+            "La parte lateral del interior de la contraportada.",
+            "Resolución recomendada: 40 píxeles × 380 píxeles"
           )}
           dimensions={`${DIMENSIONS.TRASERA_DENTRO.side.width}mm × ${DIMENSIONS.TRASERA_DENTRO.side.height}mm`}
           aspectRatio={ASPECT_RATIOS.TRASERA_SIDE}
@@ -155,10 +155,10 @@ const UploadPage: React.FC = () => {
         />
         
         <ImageUploadSection
-          title="Back Cover (Inside Main)"
+          title="Contraportada (Interior Principal)"
           description={createDescription(
-            "The main part of the inside back cover.",
-            "Recommended resolution: 500 pixels × 380 pixels"
+            "La parte principal del interior de la contraportada.",
+            "Resolución recomendada: 500 píxeles × 380 píxeles"
           )}
           dimensions={`${DIMENSIONS.TRASERA_DENTRO.main.width}mm × ${DIMENSIONS.TRASERA_DENTRO.main.height}mm`}
           aspectRatio={ASPECT_RATIOS.TRASERA_MAIN}
@@ -168,14 +168,14 @@ const UploadPage: React.FC = () => {
       </Section>
       
       {/* CD Disc Section */}
-      <Section title="CD Disc">
+      <Section title="Disco CD">
         <ImageUploadSection
-          title="CD Disc"
+          title="Disco CD"
           description={createDescription(
-            "This will be printed on the CD itself.",
-            "Recommended resolution: 400 pixels diameter with 60 pixels center hole"
+            "Esto se imprimirá en el propio CD.",
+            "Resolución recomendada: 400 píxeles de diámetro con 60 píxeles de orificio central"
           )}
-          dimensions={`${DIMENSIONS.DISCO.diameter}mm diameter (with ${DIMENSIONS.DISCO.holeSize}mm center hole)`}
+          dimensions={`${DIMENSIONS.DISCO.diameter}mm de diámetro (con ${DIMENSIONS.DISCO.holeSize}mm de orificio central)`}
           aspectRatio={ASPECT_RATIOS.DISCO}
           currentImage={images.disco}
           onImageSave={(image) => dispatch(setDisco(image))}
@@ -187,7 +187,7 @@ const UploadPage: React.FC = () => {
           className="btn btn-outline"
           onClick={handleBack}
         >
-          Back
+          Atrás
         </button>
         
         <button
@@ -195,7 +195,7 @@ const UploadPage: React.FC = () => {
           onClick={handleContinue}
           disabled={!hasAllRequiredImages}
         >
-          {!hasAllRequiredImages ? 'Upload All Required Images' : 'Continue to Preview'}
+          {!hasAllRequiredImages ? 'Sube Todas las Imágenes Requeridas' : 'Continuar a Vista Previa'}
         </button>
       </div>
     </div>

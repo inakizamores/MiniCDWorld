@@ -6,13 +6,13 @@ const NotFoundPage = () => {
     <div className="py-16 text-center">
       <FaExclamationTriangle className="mx-auto text-6xl text-yellow-500 mb-6" />
       
-      <h1 className="text-4xl font-bold mb-4">Page Not Found</h1>
+      <h1 className="text-4xl font-bold mb-4">Página No Encontrada</h1>
       <p className="text-xl text-secondary-600 mb-8">
-        Sorry, we couldn't find the page you're looking for.
+        Lo sentimos, no pudimos encontrar la página que estás buscando.
       </p>
       
       <Link to="/" className="btn btn-primary">
-        Go back home
+        Volver al inicio
       </Link>
     </div>
   )
