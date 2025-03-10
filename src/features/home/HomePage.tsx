@@ -155,6 +155,36 @@ const HomePage = () => {
         </div>
       </section>
       
+      {/* Purchase Section with links to Mercado Libre */}
+      <section className="py-16 bg-secondary-50 mx-0 md:mx-4 px-4 rounded-none md:rounded-xl">
+        <div className="container mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">Purchase from our official ecommerce channel Mercado Libre</h2>
+            <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
+              Explore our products available on Mercado Libre and make your purchase today.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-10">
+            <a href="https://www.mercadolibre.com.mx/pack-5-llaveros-nfc-en-blanco--mini-cd-disco-album-musical/up/MLMU3045065414" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold mb-2">Pack 5 Llaveros NFC En Blanco</h3>
+              <p className="text-secondary-600 leading-relaxed">Purchase this pack of 5 blank NFC keychains with a mini CD design.</p>
+            </a>
+            <a href="https://articulo.mercadolibre.com.mx/MLM-2215776613-pack-50-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold mb-2">Pack 50 Llaveros En Blanco</h3>
+              <p className="text-secondary-600 leading-relaxed">Get a pack of 50 blank keychains with a mini CD design.</p>
+            </a>
+            <a href="https://articulo.mercadolibre.com.mx/MLM-3529953576-pack-25-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold mb-2">Pack 25 Llaveros En Blanco</h3>
+              <p className="text-secondary-600 leading-relaxed">Order this pack of 25 blank keychains with a mini CD design.</p>
+            </a>
+            <a href="https://articulo.mercadolibre.com.mx/MLM-3387017600-pack-5-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold mb-2">Pack 5 Llaveros En Blanco</h3>
+              <p className="text-secondary-600 leading-relaxed">Purchase this pack of 5 blank keychains with a mini CD design.</p>
+            </a>
+          </div>
+        </div>
+      </section>
+      
       {/* CTA Section with gradient background */}
       <section className="py-16 text-center bg-gradient-to-r from-primary-600 to-primary-700 text-white mx-0 md:mx-4 px-4 shadow-lg rounded-none md:rounded-xl">
         <div className="container mx-auto">
