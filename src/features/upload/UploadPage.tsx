@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { 
@@ -16,45 +16,11 @@ import {
 import { ASPECT_RATIOS, DIMENSIONS } from '@constants/dimensions'
 import ImageUploadSection from './components/ImageUploadSection'
 import InfoForm from './components/InfoForm'
-import { FaArrowRight } from 'react-icons/fa'
-
-// Define the animations as CSS classes
-const animationStyles = `
-  @keyframes pulse-subtle {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-  
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  .animate-pulse-subtle {
-    animation: pulse-subtle 2s infinite;
-  }
-  
-  .animate-fade-in {
-    animation: fade-in 1s ease-in;
-  }
-`;
 
 const UploadPage: React.FC = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { step, images } = useSelector(selectTemplateState)
-  const [isPulsing, setIsPulsing] = useState(false)
-  
-  // Add animation styles to the document head
-  useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.innerHTML = animationStyles;
-    document.head.appendChild(styleElement);
-    
-    return () => {
-      document.head.removeChild(styleElement);
-    };
-  }, []);
   
   // If we're on step 1, show the info form
   if (step === 1) {
@@ -89,19 +55,6 @@ const UploadPage: React.FC = () => {
     images.traseraAfuera.side?.croppedImage &&
     images.traseraDentro.main?.croppedImage &&
     images.traseraDentro.side?.croppedImage
-  
-  // Start pulsing animation when all images are uploaded
-  useEffect(() => {
-    if (hasAllRequiredImages) {
-      const timer = setTimeout(() => {
-        setIsPulsing(true);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    } else {
-      setIsPulsing(false);
-    }
-  }, [hasAllRequiredImages]);
   
   // Function to create description with recommended resolution
   const createDescription = (mainText: string, resolution: string) => (
@@ -229,29 +182,20 @@ const UploadPage: React.FC = () => {
         />
       </Section>
       
-      <div className="flex flex-col items-center mt-12">
-        <button
-          className={`btn btn-primary px-8 py-3 flex items-center text-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg ${
-            hasAllRequiredImages && isPulsing ? 'animate-pulse-subtle hover:animate-none' : ''
-          }`}
-          onClick={handleContinue}
-          disabled={!hasAllRequiredImages}
-        >
-          {!hasAllRequiredImages ? 'Upload All Required Images' : 'Continue to Preview'} 
-          {hasAllRequiredImages && <FaArrowRight className="ml-2" />}
-        </button>
-        
-        {hasAllRequiredImages && isPulsing && (
-          <p className="text-primary-600 text-sm mt-3 animate-fade-in">
-            All images uploaded! Click to continue.
-          </p>
-        )}
-        
+      <div className="flex justify-between mt-8">
         <button 
-          className="btn btn-outline mt-4"
+          className="btn btn-outline"
           onClick={handleBack}
         >
           Back
+        </button>
+        
+        <button
+          className="btn btn-primary"
+          onClick={handleContinue}
+          disabled={!hasAllRequiredImages}
+        >
+          {!hasAllRequiredImages ? 'Upload All Required Images' : 'Continue to Preview'}
         </button>
       </div>
     </div>

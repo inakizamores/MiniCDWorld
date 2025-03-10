@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { 
@@ -10,49 +10,10 @@ import {
 import { DIMENSIONS, mmToPixels } from '@constants/dimensions'
 import { FaArrowLeft, FaArrowRight, FaEye, FaFileAlt, FaPrint } from 'react-icons/fa'
 
-// Define the animations as CSS classes
-const animationStyles = `
-  @keyframes pulse-subtle {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-  
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  .animate-pulse-subtle {
-    animation: pulse-subtle 2s infinite;
-  }
-  
-  .animate-fade-in {
-    animation: fade-in 1s ease-in;
-  }
-`;
-
 const PreviewPage: React.FC = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { images, albumTitle, artistName, cdsPerPage } = useSelector(selectTemplateState)
-  const [isPulsing, setIsPulsing] = useState(false)
-  
-  // Add animation styles to the document head
-  useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.innerHTML = animationStyles;
-    document.head.appendChild(styleElement);
-    
-    // Start pulsing animation after a short delay
-    const timer = setTimeout(() => {
-      setIsPulsing(true);
-    }, 1500);
-    
-    return () => {
-      document.head.removeChild(styleElement);
-      clearTimeout(timer);
-    };
-  }, []);
   
   // Navigation handlers
   const handleBack = () => {
@@ -353,27 +314,19 @@ const PreviewPage: React.FC = () => {
         </div>
       </div>
       
-      <div className="flex flex-col items-center mt-12">
+      <div className="flex flex-col sm:flex-row justify-between">
         <button
-          className={`btn btn-primary px-8 py-3 flex items-center text-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg ${
-            isPulsing ? 'animate-pulse-subtle hover:animate-none' : ''
-          }`}
-          onClick={handleContinue}
-        >
-          Continue to Download <FaArrowRight className="ml-2" />
-        </button>
-        
-        {isPulsing && (
-          <p className="text-primary-600 text-sm mt-3 animate-fade-in">
-            Preview looks good? Click to generate your PDF!
-          </p>
-        )}
-        
-        <button
-          className="btn btn-outline flex items-center justify-center mt-4"
+          className="btn btn-outline flex items-center justify-center mb-4 sm:mb-0"
           onClick={handleBack}
         >
           <FaArrowLeft className="mr-2" /> Back to Upload
+        </button>
+        
+        <button
+          className="btn btn-primary flex items-center justify-center"
+          onClick={handleContinue}
+        >
+          Continue to Download <FaArrowRight className="ml-2" />
         </button>
       </div>
     </div>
