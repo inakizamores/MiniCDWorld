@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FaShoppingCart, 
   FaTag, 
@@ -137,101 +137,80 @@ const PurchasePage: React.FC = () => {
     const product = products.find(p => p.id === selectedProduct);
     if (!product) return null;
     
-    // Cuando el modal está abierto, también añadimos una clase al body
-    React.useEffect(() => {
-      // Añadir clase al body cuando el modal está abierto
-      document.body.style.overflow = 'hidden';
-      
-      // Limpiar cuando se desmonta
-      return () => {
-        document.body.style.overflow = '';
-      };
-    }, []);
-    
     return (
-      <>
-        {/* Overlay opaco que cubre toda la página, incluyendo el header */}
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-80 z-[9999]" 
-          onClick={closeProductModal}
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
-        />
-        
-        {/* Contenedor del modal */}
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 animate-fadeIn" style={{ position: 'fixed' }}>
-          <div className="relative bg-secondary-50 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn">
-            <button 
-              onClick={closeProductModal}
-              className="absolute top-4 right-4 text-secondary-400 hover:text-secondary-600 z-10"
-              aria-label="Cerrar"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fadeIn">
+        <div className="relative bg-secondary-50 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn">
+          <button 
+            onClick={closeProductModal}
+            className="absolute top-4 right-4 text-secondary-400 hover:text-secondary-600 z-10"
+            aria-label="Cerrar"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          
+          <div className="flex flex-col md:flex-row">
+            {/* Imagen del producto */}
+            <div className="md:w-2/5 bg-secondary-100 p-8 flex items-center justify-center rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
+              <img 
+                src={product.imageSrc} 
+                alt={product.title} 
+                className="w-full max-w-xs object-contain"
+              />
+            </div>
             
-            <div className="flex flex-col md:flex-row">
-              {/* Imagen del producto */}
-              <div className="md:w-2/5 bg-secondary-100 p-8 flex items-center justify-center rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
-                <img 
-                  src={product.imageSrc} 
-                  alt={product.title} 
-                  className="w-full max-w-xs object-contain"
-                />
+            {/* Detalles del producto */}
+            <div className="md:w-3/5 p-8">
+              <div className="mb-4">
+                <span className="inline-block bg-primary-100 text-primary-800 text-xs font-semibold px-3 py-1 rounded-full">
+                  {product.badge}
+                </span>
+                {product.inStock && (
+                  <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full ml-2">
+                    En stock
+                  </span>
+                )}
               </div>
               
-              {/* Detalles del producto */}
-              <div className="md:w-3/5 p-8">
-                <div className="mb-4">
-                  <span className="inline-block bg-primary-100 text-primary-800 text-xs font-semibold px-3 py-1 rounded-full">
-                    {product.badge}
-                  </span>
-                  {product.inStock && (
-                    <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full ml-2">
-                      En stock
-                    </span>
-                  )}
+              <h2 className="text-3xl font-bold mb-4">{product.title}</h2>
+              <p className="text-secondary-600 mb-6">{product.detailedDescription}</p>
+              
+              <div className="mb-6">
+                <h3 className="font-bold text-lg mb-3">Características:</h3>
+                <ul className="space-y-2">
+                  {product.features.map((feature, index) => (
+                    <li key={index} className="flex items-start">
+                      <FaCheckCircle className="text-green-500 mt-1 mr-2 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <a 
+                href={product.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center py-3 px-6 bg-[#FFE600] hover:bg-[#F2D900] text-gray-800 font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-300"
+              >
+                <FaShoppingCart className="mr-2" /> Comprar ahora en Mercado Libre
+              </a>
+              
+              <div className="mt-6 pt-6 border-t border-secondary-200">
+                <div className="flex items-center text-secondary-600 mb-2">
+                  <FaTruck className="mr-2 text-primary-500" />
+                  <span>{product.shipping}</span>
                 </div>
-                
-                <h2 className="text-3xl font-bold mb-4">{product.title}</h2>
-                <p className="text-secondary-600 mb-6">{product.detailedDescription}</p>
-                
-                <div className="mb-6">
-                  <h3 className="font-bold text-lg mb-3">Características:</h3>
-                  <ul className="space-y-2">
-                    {product.features.map((feature, index) => (
-                      <li key={index} className="flex items-start">
-                        <FaCheckCircle className="text-green-500 mt-1 mr-2 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <a 
-                  href={product.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center py-3 px-6 bg-[#FFE600] hover:bg-[#F2D900] text-gray-800 font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-300"
-                >
-                  <FaShoppingCart className="mr-2" /> Comprar ahora en Mercado Libre
-                </a>
-                
-                <div className="mt-6 pt-6 border-t border-secondary-200">
-                  <div className="flex items-center text-secondary-600 mb-2">
-                    <FaTruck className="mr-2 text-primary-500" />
-                    <span>{product.shipping}</span>
-                  </div>
-                  <div className="flex items-center text-secondary-600">
-                    <FaCreditCard className="mr-2 text-primary-500" />
-                    <span>Múltiples métodos de pago disponibles</span>
-                  </div>
+                <div className="flex items-center text-secondary-600">
+                  <FaCreditCard className="mr-2 text-primary-500" />
+                  <span>Múltiples métodos de pago disponibles</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </>
+      </div>
     );
   };
   

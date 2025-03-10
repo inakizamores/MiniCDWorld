@@ -14,7 +14,7 @@ const Header = () => {
   }
   
   return (
-    <header className="bg-white backdrop-blur-sm bg-opacity-90 shadow-md sticky top-0 z-50 border-b border-secondary-100">
+    <header className="bg-white backdrop-blur-sm bg-opacity-90 shadow-md sticky top-0 z-40 border-b border-secondary-100">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 text-primary-700 hover:text-primary-600 transition-colors">
