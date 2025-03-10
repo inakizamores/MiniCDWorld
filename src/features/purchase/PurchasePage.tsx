@@ -139,7 +139,7 @@ const PurchasePage: React.FC = () => {
     if (!product) return null;
     
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 animate-fadeIn">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black bg-opacity-70 animate-fadeIn">
         <div className="relative bg-secondary-50 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn">
           <button 
             onClick={closeProductModal}
@@ -201,11 +201,11 @@ const PurchasePage: React.FC = () => {
               <div className="mt-6 pt-6 border-t border-secondary-200">
                 <div className="flex items-center text-secondary-600 mb-2">
                   <FaTruck className="mr-2 text-primary-500" />
-                  <span>{product.shipping}</span>
+                  <span>Envío gratis por Mercado Envíos</span>
                 </div>
                 <div className="flex items-center text-secondary-600">
                   <FaCreditCard className="mr-2 text-primary-500" />
-                  <span>Múltiples métodos de pago disponibles</span>
+                  <span>Haz tu pago directo en Mercado Libre</span>
                 </div>
               </div>
             </div>
