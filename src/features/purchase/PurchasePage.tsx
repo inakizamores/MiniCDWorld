@@ -139,8 +139,8 @@ const PurchasePage: React.FC = () => {
     if (!product) return null;
     
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 animate-fadeIn">
-        <div className="relative bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fadeIn">
+        <div className="relative bg-secondary-50 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn">
           <button 
             onClick={closeProductModal}
             className="absolute top-4 right-4 text-secondary-400 hover:text-secondary-600 z-10"
@@ -153,7 +153,7 @@ const PurchasePage: React.FC = () => {
           
           <div className="flex flex-col md:flex-row">
             {/* Imagen del producto */}
-            <div className="md:w-2/5 bg-secondary-50 p-8 flex items-center justify-center rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
+            <div className="md:w-2/5 bg-secondary-100 p-8 flex items-center justify-center rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
               <img 
                 src={product.imageSrc} 
                 alt={product.title} 
@@ -174,8 +174,7 @@ const PurchasePage: React.FC = () => {
                 )}
               </div>
               
-              <h2 className="text-3xl font-bold mb-2">{product.title}</h2>
-              <p className="text-2xl font-bold text-primary-600 mb-4">{product.price}</p>
+              <h2 className="text-3xl font-bold mb-4">{product.title}</h2>
               <p className="text-secondary-600 mb-6">{product.detailedDescription}</p>
               
               <div className="mb-6">
@@ -190,24 +189,14 @@ const PurchasePage: React.FC = () => {
                 </ul>
               </div>
               
-              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-                <a 
-                  href={product.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary flex-1 flex items-center justify-center"
-                >
-                  <FaShoppingCart className="mr-2" /> Comprar ahora
-                </a>
-                <a 
-                  href={product.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline flex-1 flex items-center justify-center"
-                >
-                  Ver en Mercado Libre <FaExternalLinkAlt className="ml-2" />
-                </a>
-              </div>
+              <a 
+                href={product.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center py-3 px-6 bg-[#FFE600] hover:bg-[#F2D900] text-gray-800 font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-300"
+              >
+                <FaShoppingCart className="mr-2" /> Comprar ahora en Mercado Libre
+              </a>
               
               <div className="mt-6 pt-6 border-t border-secondary-200">
                 <div className="flex items-center text-secondary-600 mb-2">
