@@ -9,7 +9,7 @@ import {
 import PDFService from '@services/pdfService'
 import { FaFilePdf, FaSpinner, FaArrowLeft, FaCheckCircle, FaRedo, FaDownload, FaPrint, FaInfoCircle } from 'react-icons/fa'
 
-// Define animation styles
+// Define the animations as CSS classes
 const animationStyles = `
   @keyframes pulse-subtle {
     0%, 100% { transform: scale(1); }
@@ -28,19 +28,6 @@ const animationStyles = `
   .animate-fade-in {
     animation: fade-in 1s ease-in;
   }
-  
-  .animate-bounce-subtle {
-    animation: bounce 1.5s infinite;
-  }
-  
-  @keyframes bounce {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-4px);
-    }
-  }
 `;
 
 const GeneratePdfPage: React.FC = () => {
@@ -52,26 +39,31 @@ const GeneratePdfPage: React.FC = () => {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isPulsing, setIsPulsing] = useState(false)
+  const [isDownloadPulsing, setIsDownloadPulsing] = useState(false)
   
-  // Add animation styles to document
+  // Add animation styles to the document head
   useEffect(() => {
     const styleElement = document.createElement('style');
     styleElement.innerHTML = animationStyles;
     document.head.appendChild(styleElement);
     
+    // Start pulsing animation for Generate button after a short delay
+    const timer = setTimeout(() => {
+      setIsPulsing(true);
+    }, 1000);
+    
     return () => {
-      if (document.head.contains(styleElement)) {
-        document.head.removeChild(styleElement);
-      }
+      document.head.removeChild(styleElement);
+      clearTimeout(timer);
     };
   }, []);
   
-  // Start pulsing animation after a delay if PDF not generated yet
+  // Start pulsing the Download button after PDF is generated
   useEffect(() => {
-    if (!pdfUrl) {
+    if (pdfUrl) {
       const timer = setTimeout(() => {
-        setIsPulsing(true);
-      }, 1500);
+        setIsDownloadPulsing(true);
+      }, 500);
       
       return () => clearTimeout(timer);
     }
@@ -162,7 +154,7 @@ const GeneratePdfPage: React.FC = () => {
             {!pdfUrl ? (
               <>
                 <button
-                  className={`btn btn-primary flex items-center mt-4 md:mt-0 px-8 py-3 text-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 ${
+                  className={`btn btn-primary flex items-center mt-4 md:mt-0 px-8 py-3 text-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg ${
                     isPulsing && !isGenerating ? 'animate-pulse-subtle hover:animate-none' : ''
                   }`}
                   onClick={handleGeneratePdf}
@@ -178,10 +170,9 @@ const GeneratePdfPage: React.FC = () => {
                     </>
                   )}
                 </button>
-                
                 {isPulsing && !isGenerating && (
-                  <p className="text-primary-600 text-sm mt-3 animate-fade-in">
-                    Click to create your printable template!
+                  <p className="text-primary-600 text-sm mt-2 animate-fade-in">
+                    Click to create your printable CD template!
                   </p>
                 )}
               </>
@@ -190,13 +181,17 @@ const GeneratePdfPage: React.FC = () => {
                 <a
                   href={pdfUrl}
                   download={downloadFileName}
-                  className="btn btn-primary flex items-center mt-4 md:mt-0 px-8 py-3 text-lg bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-bounce-subtle hover:animate-none"
+                  className={`btn btn-primary flex items-center mt-4 md:mt-0 px-8 py-3 text-lg bg-green-600 hover:bg-green-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg ${
+                    isDownloadPulsing ? 'animate-pulse-subtle hover:animate-none' : ''
+                  }`}
                 >
                   <FaDownload className="mr-2" /> Download PDF
                 </a>
-                <p className="text-green-600 text-sm mt-3 animate-fade-in">
-                  Your template is ready to download!
-                </p>
+                {isDownloadPulsing && (
+                  <p className="text-green-600 text-sm mt-2 animate-fade-in">
+                    Your PDF is ready! Click to download.
+                  </p>
+                )}
               </>
             )}
           </div>

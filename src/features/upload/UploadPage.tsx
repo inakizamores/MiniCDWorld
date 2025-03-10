@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { 
@@ -18,7 +18,7 @@ import ImageUploadSection from './components/ImageUploadSection'
 import InfoForm from './components/InfoForm'
 import { FaArrowRight } from 'react-icons/fa'
 
-// Define animation styles
+// Define the animations as CSS classes
 const animationStyles = `
   @keyframes pulse-subtle {
     0%, 100% { transform: scale(1); }
@@ -45,31 +45,16 @@ const UploadPage: React.FC = () => {
   const { step, images } = useSelector(selectTemplateState)
   const [isPulsing, setIsPulsing] = useState(false)
   
-  // Add animation styles to document
+  // Add animation styles to the document head
   useEffect(() => {
     const styleElement = document.createElement('style');
     styleElement.innerHTML = animationStyles;
     document.head.appendChild(styleElement);
     
     return () => {
-      if (document.head.contains(styleElement)) {
-        document.head.removeChild(styleElement);
-      }
+      document.head.removeChild(styleElement);
     };
   }, []);
-  
-  // Set pulsing when all required images are uploaded
-  useEffect(() => {
-    if (hasAllRequiredImages) {
-      const timer = setTimeout(() => {
-        setIsPulsing(true);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    } else {
-      setIsPulsing(false);
-    }
-  }, [images]);
   
   // If we're on step 1, show the info form
   if (step === 1) {
@@ -104,6 +89,19 @@ const UploadPage: React.FC = () => {
     images.traseraAfuera.side?.croppedImage &&
     images.traseraDentro.main?.croppedImage &&
     images.traseraDentro.side?.croppedImage
+  
+  // Start pulsing animation when all images are uploaded
+  useEffect(() => {
+    if (hasAllRequiredImages) {
+      const timer = setTimeout(() => {
+        setIsPulsing(true);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    } else {
+      setIsPulsing(false);
+    }
+  }, [hasAllRequiredImages]);
   
   // Function to create description with recommended resolution
   const createDescription = (mainText: string, resolution: string) => (
@@ -231,31 +229,30 @@ const UploadPage: React.FC = () => {
         />
       </Section>
       
-      <div className="flex flex-col md:flex-row justify-between mt-8 items-center">
+      <div className="flex flex-col items-center mt-12">
+        <button
+          className={`btn btn-primary px-8 py-3 flex items-center text-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg ${
+            hasAllRequiredImages && isPulsing ? 'animate-pulse-subtle hover:animate-none' : ''
+          }`}
+          onClick={handleContinue}
+          disabled={!hasAllRequiredImages}
+        >
+          {!hasAllRequiredImages ? 'Upload All Required Images' : 'Continue to Preview'} 
+          {hasAllRequiredImages && <FaArrowRight className="ml-2" />}
+        </button>
+        
+        {hasAllRequiredImages && isPulsing && (
+          <p className="text-primary-600 text-sm mt-3 animate-fade-in">
+            All images uploaded! Click to continue.
+          </p>
+        )}
+        
         <button 
-          className="btn btn-outline mb-4 md:mb-0"
+          className="btn btn-outline mt-4"
           onClick={handleBack}
         >
           Back
         </button>
-        
-        <div className="flex flex-col items-center">
-          <button
-            className={`btn btn-primary px-8 py-3 flex items-center text-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 ${
-              hasAllRequiredImages && isPulsing ? 'animate-pulse-subtle hover:animate-none' : ''
-            }`}
-            onClick={handleContinue}
-            disabled={!hasAllRequiredImages}
-          >
-            {!hasAllRequiredImages ? 'Upload All Required Images' : 'Continue to Preview'} <FaArrowRight className="ml-2" />
-          </button>
-          
-          {hasAllRequiredImages && isPulsing && (
-            <p className="text-primary-600 text-sm mt-3 animate-fade-in">
-              All set! Click to continue to the preview.
-            </p>
-          )}
-        </div>
       </div>
     </div>
   )

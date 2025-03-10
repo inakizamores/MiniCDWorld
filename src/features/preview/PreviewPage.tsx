@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { 
@@ -10,7 +10,7 @@ import {
 import { DIMENSIONS, mmToPixels } from '@constants/dimensions'
 import { FaArrowLeft, FaArrowRight, FaEye, FaFileAlt, FaPrint } from 'react-icons/fa'
 
-// Define animation styles
+// Define the animations as CSS classes
 const animationStyles = `
   @keyframes pulse-subtle {
     0%, 100% { transform: scale(1); }
@@ -37,26 +37,21 @@ const PreviewPage: React.FC = () => {
   const { images, albumTitle, artistName, cdsPerPage } = useSelector(selectTemplateState)
   const [isPulsing, setIsPulsing] = useState(false)
   
-  // Add animation styles to document
+  // Add animation styles to the document head
   useEffect(() => {
     const styleElement = document.createElement('style');
     styleElement.innerHTML = animationStyles;
     document.head.appendChild(styleElement);
     
-    return () => {
-      if (document.head.contains(styleElement)) {
-        document.head.removeChild(styleElement);
-      }
-    };
-  }, []);
-  
-  // Start pulsing animation after a delay
-  useEffect(() => {
+    // Start pulsing animation after a short delay
     const timer = setTimeout(() => {
       setIsPulsing(true);
-    }, 2000);
+    }, 1500);
     
-    return () => clearTimeout(timer);
+    return () => {
+      document.head.removeChild(styleElement);
+      clearTimeout(timer);
+    };
   }, []);
   
   // Navigation handlers
@@ -358,30 +353,28 @@ const PreviewPage: React.FC = () => {
         </div>
       </div>
       
-      <div className="flex flex-col sm:flex-row justify-between items-center">
+      <div className="flex flex-col items-center mt-12">
         <button
-          className="btn btn-outline flex items-center justify-center mb-4 sm:mb-0"
+          className={`btn btn-primary px-8 py-3 flex items-center text-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg ${
+            isPulsing ? 'animate-pulse-subtle hover:animate-none' : ''
+          }`}
+          onClick={handleContinue}
+        >
+          Continue to Download <FaArrowRight className="ml-2" />
+        </button>
+        
+        {isPulsing && (
+          <p className="text-primary-600 text-sm mt-3 animate-fade-in">
+            Preview looks good? Click to generate your PDF!
+          </p>
+        )}
+        
+        <button
+          className="btn btn-outline flex items-center justify-center mt-4"
           onClick={handleBack}
         >
           <FaArrowLeft className="mr-2" /> Back to Upload
         </button>
-        
-        <div className="flex flex-col items-center">
-          <button
-            className={`btn btn-primary px-8 py-3 flex items-center text-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 ${
-              isPulsing ? 'animate-pulse-subtle hover:animate-none' : ''
-            }`}
-            onClick={handleContinue}
-          >
-            Continue to Download <FaArrowRight className="ml-2" />
-          </button>
-          
-          {isPulsing && (
-            <p className="text-primary-600 text-sm mt-3 animate-fade-in">
-              Ready to generate your PDF!
-            </p>
-          )}
-        </div>
       </div>
     </div>
   )
