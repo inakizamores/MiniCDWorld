@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { FaCompactDisc, FaShoppingCart } from 'react-icons/fa'
+import { FaCompactDisc } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
 
@@ -37,9 +37,9 @@ const Header = () => {
               <li className="hidden md:block">
                 <a 
                   href="/#shop-products" 
-                  className="text-secondary-600 hover:text-primary-600 transition-colors font-medium flex items-center"
+                  className="text-secondary-600 hover:text-primary-600 transition-colors font-medium"
                 >
-                  Tienda <FaShoppingCart className="ml-2 text-sm" />
+                  Comprar
                 </a>
               </li>
               <li>
