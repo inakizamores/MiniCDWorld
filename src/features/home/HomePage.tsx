@@ -39,7 +39,9 @@ const HomePage = () => {
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
               </button>
               <a 
-                href="#shop-products"
+                href="https://articulo.mercadolibre.com.mx/MLM-3387017600-pack-5-llaveros-en-blanco-mini-cd-disco-album-musical-_JM"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn btn-secondary text-lg px-8 py-3 flex items-center justify-center gap-2"
               >
                 Compra los llaveros en blanco
