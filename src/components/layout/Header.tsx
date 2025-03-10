@@ -35,12 +35,12 @@ const Header = () => {
                 </Link>
               </li>
               <li className="hidden md:block">
-                <a 
-                  href="/#shop-products" 
+                <Link 
+                  to="/purchase" 
                   className="text-secondary-600 hover:text-primary-600 transition-colors font-medium"
                 >
                   Comprar
-                </a>
+                </Link>
               </li>
               <li>
                 <button
