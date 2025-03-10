@@ -9,10 +9,10 @@ const Layout = () => {
   const { step } = useSelector(selectTemplateState)
   
   const steps = [
-    { name: 'Information', description: 'Album details' },
-    { name: 'Upload', description: 'Upload images' },
-    { name: 'Preview', description: 'Review template' },
-    { name: 'Generate', description: 'Download PDF' },
+    { name: 'Información', description: 'Detalles del álbum' },
+    { name: 'Subir', description: 'Subir imágenes' },
+    { name: 'Vista Previa', description: 'Revisar plantilla' },
+    { name: 'Generar', description: 'Descargar PDF' },
   ]
 
   return (
