@@ -10,6 +10,7 @@ import {
   FaPlus,
   FaArrowRight
 } from 'react-icons/fa';
+import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS } from '../../constants/productLinks';
 
 const PurchasePage: React.FC = () => {
   // Estado para las preguntas frecuentes expandidas
@@ -52,7 +53,7 @@ const PurchasePage: React.FC = () => {
         "Compatible con nuestras plantillas"
       ],
       price: "$199 MXN",
-      url: "https://articulo.mercadolibre.com.mx/MLM-3387017600-pack-5-llaveros-en-blanco-mini-cd-disco-album-musical-_JM",
+      url: PACK_5_LLAVEROS,
       badge: "5 Unidades",
       shipping: "Envío gratis",
       inStock: true,
@@ -71,7 +72,7 @@ const PurchasePage: React.FC = () => {
         "Incluye guía de programación"
       ],
       price: "$349 MXN",
-      url: "https://www.mercadolibre.com.mx/pack-5-llaveros-nfc-en-blanco--mini-cd-disco-album-musical/up/MLMU3045065414",
+      url: PACK_5_LLAVEROS_NFC,
       badge: "5 Unidades + NFC",
       shipping: "Envío gratis",
       inStock: true,
@@ -90,7 +91,7 @@ const PurchasePage: React.FC = () => {
         "Ideal para merchandising"
       ],
       price: "$799 MXN",
-      url: "https://articulo.mercadolibre.com.mx/MLM-3529953576-pack-25-llaveros-en-blanco-mini-cd-disco-album-musical-_JM",
+      url: PACK_25_LLAVEROS,
       badge: "25 Unidades",
       shipping: "Envío gratis",
       inStock: true,
@@ -109,7 +110,7 @@ const PurchasePage: React.FC = () => {
         "Ideal para producciones a gran escala"
       ],
       price: "$1,499 MXN",
-      url: "https://articulo.mercadolibre.com.mx/MLM-2215776613-pack-50-llaveros-en-blanco-mini-cd-disco-album-musical-_JM",
+      url: PACK_50_LLAVEROS,
       badge: "50 Unidades",
       shipping: "Envío gratis",
       inStock: true,
@@ -209,9 +210,9 @@ const PurchasePage: React.FC = () => {
                 href={product.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center py-3 px-6 bg-[#FFE600] hover:bg-[#F2D900] text-gray-800 font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-300"
+                className="w-full flex items-center justify-center py-3 px-6 bg-[#F2D900] text-black font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-300"
               >
-                <FaShoppingCart className="mr-2" /> Comprar ahora en Mercado Libre
+                <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" /> Comprar ahora
               </a>
               
               <div className="mt-6 pt-6 border-t border-secondary-200">
@@ -328,9 +329,9 @@ const PurchasePage: React.FC = () => {
                       href={product.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn btn-primary flex-1 text-sm flex items-center justify-center"
+                      className="bg-[#F2D900] text-black px-4 py-2 rounded flex-1 text-sm flex items-center justify-center font-medium"
                     >
-                      <FaShoppingCart className="mr-1" /> Comprar
+                      <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-6 h-6 mr-1" /> Comprar
                     </a>
                   </div>
                 </div>
