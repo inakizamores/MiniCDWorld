@@ -412,56 +412,6 @@ const PurchasePage: React.FC = () => {
         </div>
       </div>
       
-      {/* Sección de contacto */}
-      <div className="bg-secondary-50 rounded-xl p-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-4">¿Necesitas ayuda?</h2>
-          <p className="text-secondary-600 max-w-2xl mx-auto">
-            Si tienes alguna pregunta sobre nuestros productos o necesitas asistencia con tu pedido,
-            no dudes en contactarnos.
-          </p>
-        </div>
-        
-        <div className="flex flex-col md:flex-row justify-center gap-6 max-w-4xl mx-auto">
-          <a 
-            href="https://www.mercadolibre.com.mx/perfil/MINICDWORLD"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-white rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-all flex-1 flex flex-col items-center"
-          >
-            <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
-              <FaTag className="text-2xl text-yellow-500" />
-            </div>
-            <h3 className="text-lg font-bold mb-2">Contacto por Mercado Libre</h3>
-            <p className="text-secondary-600 mb-4">
-              Contáctanos directamente a través de la mensajería de Mercado Libre.
-            </p>
-            <span className="text-primary-600 font-medium mt-auto flex items-center">
-              Ir a la tienda <FaExternalLinkAlt className="ml-2 text-sm" />
-            </span>
-          </a>
-          
-          <a 
-            href="mailto:contacto@minicdworld.com"
-            className="bg-white rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-all flex-1 flex flex-col items-center"
-          >
-            <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-primary-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold mb-2">Correo Electrónico</h3>
-            <p className="text-secondary-600 mb-4">
-              Envíanos un correo y te responderemos lo antes posible.
-            </p>
-            <span className="text-primary-600 font-medium mt-auto">
-              contacto@minicdworld.com
-            </span>
-          </a>
-        </div>
-      </div>
-      
       {/* Renderizar modal de producto si está abierto */}
       {renderProductModal()}
     </div>
