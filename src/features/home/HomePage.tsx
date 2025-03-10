@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaCheck } from 'react-icons/fa'
+import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaCheck, FaShoppingCart, FaTag, FaExternalLinkAlt } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
 
@@ -93,93 +93,115 @@ const HomePage = () => {
         </div>
       </section>
       
-      {/* Features Section with cards */}
+      {/* Mercado Libre E-commerce Section */}
       <section className="py-16 bg-secondary-50 mx-0 md:mx-4 px-4 rounded-none md:rounded-xl">
         <div className="container mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Features</h2>
+            <h2 className="text-3xl font-bold mb-4">Shop Mini CD World Products</h2>
             <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
-              Everything you need to create professional CD templates
+              Purchase our official Mini CD keychains from our Mercado Libre store
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-10">
-            <div className="flex bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-              <div className="mr-5 text-primary-600">
-                <div className="bg-primary-100 rounded-full p-3 flex items-center justify-center">
-                  <FaCheck className="text-xl" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Product 1: Pack 5 Llaveros En Blanco */}
+            <a 
+              href="https://articulo.mercadolibre.com.mx/MLM-3387017600-pack-5-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
+            >
+              <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                <span>5 Units</span>
+                <FaTag />
+              </div>
+              <div className="p-6 flex flex-col flex-grow">
+                <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaShoppingCart className="text-2xl text-primary-500" />
+                </div>
+                <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros En Blanco</h3>
+                <p className="text-secondary-600 text-center mb-4 flex-grow">
+                  Mini CD keychains in blank format. Perfect for customization.
+                </p>
+                <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
+                  Shop on Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
                 </div>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Precise Measurements</h3>
-                <p className="text-secondary-600 leading-relaxed">All templates follow industry standard measurements for CD packaging, ensuring perfect results every time.</p>
-              </div>
-            </div>
-            
-            <div className="flex bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-              <div className="mr-5 text-primary-600">
-                <div className="bg-primary-100 rounded-full p-3 flex items-center justify-center">
-                  <FaCheck className="text-xl" />
-                </div>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Advanced Image Cropping</h3>
-                <p className="text-secondary-600 leading-relaxed">Intelligent cropping tools that help ensure your artwork fits perfectly within the required dimensions.</p>
-              </div>
-            </div>
-            
-            <div className="flex bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-              <div className="mr-5 text-primary-600">
-                <div className="bg-primary-100 rounded-full p-3 flex items-center justify-center">
-                  <FaCheck className="text-xl" />
-                </div>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Print-Ready PDFs</h3>
-                <p className="text-secondary-600 leading-relaxed">Download high-quality, print-ready PDF files optimized for US Letter paper with cutting guides included.</p>
-              </div>
-            </div>
-            
-            <div className="flex bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-              <div className="mr-5 text-primary-600">
-                <div className="bg-primary-100 rounded-full p-3 flex items-center justify-center">
-                  <FaCheck className="text-xl" />
-                </div>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Multiple CDs Per Page</h3>
-                <p className="text-secondary-600 leading-relaxed">Choose to print 1-3 CDs per page to save paper and reduce waste. Perfect for small batches.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Purchase Section with links to Mercado Libre */}
-      <section className="py-16 bg-gradient-to-b from-secondary-50 to-secondary-100 mx-0 md:mx-4 px-4 rounded-none md:rounded-xl shadow-lg">
-        <div className="container mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4 text-primary-700">Purchase from our official ecommerce channel Mercado Libre</h2>
-            <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
-              Explore our products available on Mercado Libre and make your purchase today.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-10">
-            <a href="https://www.mercadolibre.com.mx/pack-5-llaveros-nfc-en-blanco--mini-cd-disco-album-musical/up/MLMU3045065414" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow transform hover:-translate-y-1">
-              <h3 className="text-lg font-semibold mb-2">Pack 5 Llaveros En Blanco</h3>
-              <p className="text-secondary-600 leading-relaxed">Purchase this pack of 5 blank keychains with a mini CD design.</p>
             </a>
-            <a href="https://articulo.mercadolibre.com.mx/MLM-3387017600-pack-5-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow transform hover:-translate-y-1">
-              <h3 className="text-lg font-semibold mb-2">Pack 5 Llaveros NFC En Blanco</h3>
-              <p className="text-secondary-600 leading-relaxed">Purchase this pack of 5 blank NFC keychains with a mini CD design.</p>
+            
+            {/* Product 2: Pack 5 Llaveros NFC En Blanco */}
+            <a 
+              href="https://www.mercadolibre.com.mx/pack-5-llaveros-nfc-en-blanco--mini-cd-disco-album-musical/up/MLMU3045065414" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
+            >
+              <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                <span>5 Units + NFC</span>
+                <FaTag />
+              </div>
+              <div className="p-6 flex flex-col flex-grow">
+                <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaShoppingCart className="text-2xl text-primary-500" />
+                </div>
+                <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros NFC En Blanco</h3>
+                <p className="text-secondary-600 text-center mb-4 flex-grow">
+                  Mini CD keychains with NFC technology. Link to your music digitally.
+                </p>
+                <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
+                  Shop on Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
+                </div>
+              </div>
             </a>
-            <a href="https://articulo.mercadolibre.com.mx/MLM-3529953576-pack-25-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow transform hover:-translate-y-1">
-              <h3 className="text-lg font-semibold mb-2">Pack 25 Llaveros En Blanco</h3>
-              <p className="text-secondary-600 leading-relaxed">Order this pack of 25 blank keychains with a mini CD design.</p>
+            
+            {/* Product 3: Pack 25 Llaveros En Blanco */}
+            <a 
+              href="https://articulo.mercadolibre.com.mx/MLM-3529953576-pack-25-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
+            >
+              <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                <span>25 Units</span>
+                <FaTag />
+              </div>
+              <div className="p-6 flex flex-col flex-grow">
+                <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaShoppingCart className="text-2xl text-primary-500" />
+                </div>
+                <h3 className="text-lg font-bold text-center mb-2">Pack 25 Llaveros En Blanco</h3>
+                <p className="text-secondary-600 text-center mb-4 flex-grow">
+                  Bulk pack of 25 blank Mini CD keychains. Great for events and promotions.
+                </p>
+                <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
+                  Shop on Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
+                </div>
+              </div>
             </a>
-            <a href="https://articulo.mercadolibre.com.mx/MLM-2215776613-pack-50-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" className="block bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow transform hover:-translate-y-1">
-              <h3 className="text-lg font-semibold mb-2">Pack 50 Llaveros En Blanco</h3>
-              <p className="text-secondary-600 leading-relaxed">Get a pack of 50 blank keychains with a mini CD design.</p>
+            
+            {/* Product 4: Pack 50 Llaveros En Blanco */}
+            <a 
+              href="https://articulo.mercadolibre.com.mx/MLM-2215776613-pack-50-llaveros-en-blanco-mini-cd-disco-album-musical-_JM" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
+            >
+              <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                <span>50 Units</span>
+                <FaTag />
+              </div>
+              <div className="p-6 flex flex-col flex-grow">
+                <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaShoppingCart className="text-2xl text-primary-500" />
+                </div>
+                <h3 className="text-lg font-bold text-center mb-2">Pack 50 Llaveros En Blanco</h3>
+                <p className="text-secondary-600 text-center mb-4 flex-grow">
+                  Wholesale pack of 50 blank Mini CD keychains. Best value for large orders.
+                </p>
+                <div className="flex items-center justify-center mt-auto text-primary-600 font-medium group-hover:text-primary-700">
+                  Shop on Mercado Libre <FaExternalLinkAlt className="ml-2 text-sm" />
+                </div>
+              </div>
             </a>
           </div>
         </div>
