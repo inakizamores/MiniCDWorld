@@ -135,7 +135,7 @@ class PDFService {
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(8)
     doc.setTextColor(0, 0, 0)
-    doc.text('MiniCDWorld Plantilla Imprimible Carta', x + 5, y + headerHeight/2 + 1)
+    doc.text('MiniCDWorld Plantilla Imprimible Tamaño Carta', x + 5, y + headerHeight/2 + 1)
     
     // Right side text: Album Title - Artist Name
     const rightText = `${albumTitle || 'Álbum sin título'} - ${artistName || 'Artista desconocido'}`

@@ -48,7 +48,7 @@ const GeneratePdfPage: React.FC = () => {
   }
   
   const downloadFileName = templateData.albumTitle
-    ? `${templateData.albumTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_MiniCDWorld_Plantilla.pdf`
+    ? `${templateData.albumTitle.replace(/[^a-zA-Z0-9]/gi, '_')}_MiniCDWorld_Plantilla.pdf`
     : 'MiniCDWorld_Plantilla.pdf'
   
   // Check if required images are available
