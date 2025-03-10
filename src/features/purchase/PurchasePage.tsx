@@ -38,7 +38,7 @@ const PurchasePage: React.FC = () => {
       badge: "5 Unidades",
       shipping: "Envío gratis",
       inStock: true,
-      imageSrc: "https://via.placeholder.com/300x300?text=Pack+5+Llaveros"
+      imageSrc: "/images/products/pack-5-llaveros.jpg"
     },
     {
       id: 2,
@@ -57,7 +57,7 @@ const PurchasePage: React.FC = () => {
       badge: "5 Unidades + NFC",
       shipping: "Envío gratis",
       inStock: true,
-      imageSrc: "https://via.placeholder.com/300x300?text=Pack+5+NFC"
+      imageSrc: "/images/products/pack-5-llaveros-nfc.jpg"
     },
     {
       id: 3,
@@ -76,7 +76,7 @@ const PurchasePage: React.FC = () => {
       badge: "25 Unidades",
       shipping: "Envío gratis",
       inStock: true,
-      imageSrc: "https://via.placeholder.com/300x300?text=Pack+25+Llaveros"
+      imageSrc: "/images/products/pack-25-llaveros.jpg"
     },
     {
       id: 4,
@@ -95,7 +95,7 @@ const PurchasePage: React.FC = () => {
       badge: "50 Unidades",
       shipping: "Envío gratis",
       inStock: true,
-      imageSrc: "https://via.placeholder.com/300x300?text=Pack+50+Llaveros"
+      imageSrc: "/images/products/pack-50-llaveros.jpg"
     }
   ];
   
@@ -364,8 +364,8 @@ const PurchasePage: React.FC = () => {
           <div className="md:w-1/3 flex justify-center">
             <div className="bg-white p-2 rounded-lg transform rotate-3 shadow-xl">
               <img 
-                src="https://via.placeholder.com/300x300?text=Template+Example" 
-                alt="Ejemplo de plantilla"
+                src="/images/products/pack-5-llaveros.jpg" 
+                alt="Ejemplo de llaveros Mini CD"
                 className="rounded w-full max-w-xs"
               />
             </div>
