@@ -16,5 +16,24 @@ export default defineConfig({
       '@constants': path.resolve(__dirname, './src/constants'),
       '@assets': path.resolve(__dirname, './src/assets'),
     }
+  },
+  build: {
+    // Minify output
+    minify: 'terser',
+    // Split chunks for better caching
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          redux: ['@reduxjs/toolkit', 'react-redux'],
+          vendors: ['html2canvas', 'jspdf', 'react-cropper', 'react-dropzone'],
+        },
+        // Add cache busting
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash].[ext]'
+      }
+    }
   }
 }) 
