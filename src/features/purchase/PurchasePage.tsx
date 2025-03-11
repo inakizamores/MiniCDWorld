@@ -373,7 +373,7 @@ const PurchasePage: React.FC = () => {
             <a href="/" className="group block cursor-pointer">
               <div className="bg-white p-2 rounded-lg shadow-xl transform rotate-3 transition-all duration-500 group-hover:rotate-[10deg] group-hover:scale-105 group-hover:shadow-2xl">
                 <img 
-                  src="/images/ejemplo1.jpg" 
+                  src="/images/products/ejemplo1.jpg" 
                   alt="Ejemplo de llaveros Mini CD personalizados"
                   className="rounded w-full max-w-xs"
                 />
