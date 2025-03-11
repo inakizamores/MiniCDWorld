@@ -370,13 +370,15 @@ const PurchasePage: React.FC = () => {
             </a>
           </div>
           <div className="md:w-1/3 flex justify-center">
-            <div className="bg-white p-2 rounded-lg transform rotate-3 shadow-xl">
-              <img 
-                src="/images/products/pack-5-llaveros.jpg" 
-                alt="Ejemplo de llaveros Mini CD"
-                className="rounded w-full max-w-xs"
-              />
-            </div>
+            <a href="/" className="group block cursor-pointer">
+              <div className="bg-white p-2 rounded-lg shadow-xl transform rotate-3 transition-all duration-500 group-hover:rotate-[10deg] group-hover:scale-105 group-hover:shadow-2xl">
+                <img 
+                  src="/images/ejemplo1.jpg" 
+                  alt="Ejemplo de llaveros Mini CD personalizados"
+                  className="rounded w-full max-w-xs"
+                />
+              </div>
+            </a>
           </div>
         </div>
       </div>
