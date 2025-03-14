@@ -7,7 +7,7 @@ import {
   resetTemplate
 } from '@features/template/templateSlice'
 import PDFService from '@services/pdfService'
-import { FaFilePdf, FaSpinner, FaArrowLeft, FaCheckCircle, FaRedo, FaDownload, FaPrint, FaInfoCircle } from 'react-icons/fa'
+import { FaFilePdf, FaSpinner, FaArrowLeft, FaCheckCircle, FaRedo, FaDownload, FaPrint, FaInfoCircle, FaShoppingCart } from 'react-icons/fa'
 
 const GeneratePdfPage: React.FC = () => {
   const dispatch = useDispatch()
@@ -45,6 +45,10 @@ const GeneratePdfPage: React.FC = () => {
   const handleStartOver = () => {
     dispatch(resetTemplate())
     navigate('/upload')
+  }
+  
+  const handlePurchase = () => {
+    window.open('https://mini-cd-world.vercel.app/purchase', '_blank')
   }
   
   const downloadFileName = templateData.albumTitle
@@ -145,7 +149,7 @@ const GeneratePdfPage: React.FC = () => {
           </div>
         )}
         
-        <div className="bg-secondary-50 border border-secondary-200 rounded-lg p-6">
+        <div className="bg-secondary-50 border border-secondary-200 rounded-lg p-6 mb-6">
           <h3 className="font-bold mb-4 flex items-center text-lg">
             <FaPrint className="mr-2 text-secondary-600" /> 
             Instrucciones de Impresión
@@ -168,6 +172,22 @@ const GeneratePdfPage: React.FC = () => {
               </li>
             ))}
           </ul>
+        </div>
+        
+        <div className="bg-primary-50 border border-primary-200 rounded-lg p-6 text-center">
+          <h3 className="font-bold mb-2 flex items-center text-lg justify-center">
+            <FaShoppingCart className="mr-2 text-primary-600" /> 
+            ¿Quieres mini CDs reales?
+          </h3>
+          <p className="text-secondary-700 mb-4">
+            Consigue mini CDs físicos y más productos para tus proyectos musicales en nuestra tienda.
+          </p>
+          <button
+            className="btn btn-primary flex items-center mx-auto"
+            onClick={handlePurchase}
+          >
+            <FaShoppingCart className="mr-2" /> Ir a la Tienda
+          </button>
         </div>
       </div>
       
