@@ -177,16 +177,17 @@ const GeneratePdfPage: React.FC = () => {
         <div className="bg-primary-50 border border-primary-200 rounded-lg p-6 text-center">
           <h3 className="font-bold mb-2 flex items-center text-lg justify-center">
             <FaShoppingCart className="mr-2 text-primary-600" /> 
-            ¿Quieres mini CDs reales?
+            ¿Ya tienes tus llaveros para mini CD?
           </h3>
           <p className="text-secondary-700 mb-4">
-            Consigue mini CDs físicos y más productos para tus proyectos musicales en nuestra tienda.
+            Coloca tus diseños impresos en nuestros llaveros para mini CD y productos exclusivos.
+            ¡Haz tu pedido por MercadoLibre con envío a todo México!
           </p>
           <button
             className="btn btn-primary flex items-center mx-auto"
             onClick={handlePurchase}
           >
-            <FaShoppingCart className="mr-2" /> Ir a la Tienda
+            <FaShoppingCart className="mr-2" /> Ver todas nuestras ofertas
           </button>
         </div>
       </div>
