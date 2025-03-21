@@ -263,7 +263,7 @@ const HomePage = () => {
           </button>
           
           <div className="mt-10 border-t border-primary-400 pt-8">
-            <h3 className="text-2xl font-bold mb-3">¿Prefieres hacerlo tú mismo?</h3>
+            <h3 className="text-2xl font-bold mb-3 text-white">¿Prefieres hacerlo tú mismo?</h3>
             <p className="text-lg text-primary-100 max-w-2xl mx-auto mb-6">
               También tenemos una versión en blanco de la plantilla para que puedas personalizarla completamente por tu cuenta
             </p>

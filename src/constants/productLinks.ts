@@ -5,7 +5,7 @@
 
 export const MERCADO_LIBRE_LINKS = {
   // Pack 5 Llaveros En Blanco
-  PACK_5_LLAVEROS: "https://articulo.mercadolibre.com.mx/MLM-3387017600-pack-5-llaveros-en-blanco-mini-cd-disco-album-musical-_JM",
+  PACK_5_LLAVEROS: "https://articulo.mercadolibre.com.mx/MLM-2157742683-pack-5-llaveros-en-blanco-mini-cd-caja-disco-album-musical-_JM",
   
   // Pack 5 Llaveros NFC En Blanco
   PACK_5_LLAVEROS_NFC: "https://www.mercadolibre.com.mx/pack-5-llaveros-nfc-en-blanco--mini-cd-disco-album-musical/up/MLMU3045065414",
