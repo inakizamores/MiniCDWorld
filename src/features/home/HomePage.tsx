@@ -1,17 +1,38 @@
 import { useNavigate, Link } from 'react-router-dom'
-import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag } from 'react-icons/fa'
+import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaDownload } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
 import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS } from '../../constants/productLinks'
+import { useState } from 'react'
 
 const HomePage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [blankTemplateModalOpen, setBlankTemplateModalOpen] = useState(false)
   
   // Handler to reset template state and navigate to upload page
   const handleCreateTemplate = () => {
     dispatch(resetTemplate())
     navigate('/upload')
+  }
+
+  // Handler to open the blank template modal
+  const openBlankTemplateModal = () => {
+    setBlankTemplateModalOpen(true)
+    document.body.classList.add('modal-open')
+  }
+
+  // Handler to close the blank template modal
+  const closeBlankTemplateModal = () => {
+    setBlankTemplateModalOpen(false)
+    document.body.classList.remove('modal-open')
+  }
+
+  // Handler for overlay clicks
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      closeBlankTemplateModal()
+    }
   }
   
   return (
@@ -240,8 +261,113 @@ const HomePage = () => {
           >
             Empezar Ahora
           </button>
+          
+          <div className="mt-10 border-t border-primary-400 pt-8">
+            <h3 className="text-2xl font-bold mb-3">¿Prefieres hacerlo tú mismo?</h3>
+            <p className="text-lg text-primary-100 max-w-2xl mx-auto mb-6">
+              También tenemos una versión en blanco de la plantilla para que puedas personalizarla completamente por tu cuenta
+            </p>
+            <button 
+              onClick={openBlankTemplateModal}
+              className="btn bg-primary-50 text-primary-700 hover:bg-white text-lg px-8 py-3 shadow-md hover:shadow-lg transition-all"
+            >
+              Ver Plantilla en Blanco <FaDownload className="ml-2 inline-block" />
+            </button>
+          </div>
         </div>
       </section>
+
+      {/* Blank Template Modal */}
+      {blankTemplateModalOpen && (
+        <div 
+          className="fixed inset-0 z-[9999] modal-overlay flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fadeIn"
+          onClick={handleOverlayClick}
+        >
+          <div className="relative bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-y-auto animate-scaleIn">
+            <button 
+              onClick={closeBlankTemplateModal}
+              className="absolute top-4 right-4 text-secondary-400 hover:text-secondary-600 z-10"
+              aria-label="Cerrar"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div className="p-6 md:p-8">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary-700">Plantilla Mini CD en Blanco</h2>
+              <p className="text-lg text-secondary-600 mb-6">
+                Descarga nuestra plantilla completamente en blanco con las medidas exactas para crear tus propios diseños de Mini CD desde cero.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div className="aspect-w-4 aspect-h-3 rounded-lg overflow-hidden shadow-md">
+                  <img 
+                    src="/images/templates/MCDK_BLANK_TEMPLATE.png" 
+                    alt="Vista previa de plantilla en blanco" 
+                    className="object-contain w-full h-full"
+                  />
+                </div>
+                <div className="flex flex-col justify-center space-y-6">
+                  <div>
+                    <h3 className="text-xl font-bold mb-2">Características:</h3>
+                    <ul className="space-y-2">
+                      <li className="flex items-start">
+                        <svg className="w-5 h-5 text-green-500 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Medidas exactas para impresión perfecta
+                      </li>
+                      <li className="flex items-start">
+                        <svg className="w-5 h-5 text-green-500 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Formato US Letter (tamaño carta)
+                      </li>
+                      <li className="flex items-start">
+                        <svg className="w-5 h-5 text-green-500 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Guías de recorte incluidas
+                      </li>
+                      <li className="flex items-start">
+                        <svg className="w-5 h-5 text-green-500 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Compatible con cualquier software de edición
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                    <a 
+                      href="/images/templates/MCDK_BLANK_TEMPLATE.pdf" 
+                      download="MCDK_BLANK_TEMPLATE.pdf"
+                      className="btn btn-primary py-3 px-6 flex items-center justify-center"
+                    >
+                      <FaFilePdf className="mr-2" /> Descargar PDF
+                    </a>
+                    <a 
+                      href="/images/templates/MCDK_BLANK_TEMPLATE.png" 
+                      download="MCDK_BLANK_TEMPLATE.png"
+                      className="btn btn-secondary py-3 px-6 flex items-center justify-center"
+                    >
+                      <FaDownload className="mr-2" /> Descargar PNG
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-secondary-50 p-4 rounded-lg border border-secondary-200">
+                <h4 className="font-bold text-secondary-800 mb-2">Consejo para la impresión:</h4>
+                <p className="text-secondary-600">
+                  Para mejores resultados, imprima en papel fotográfico o papel de alta calidad a tamaño real (100%), sin ajustar a la página.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
