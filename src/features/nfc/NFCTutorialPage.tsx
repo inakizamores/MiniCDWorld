@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaArrowRight, FaDownload, FaTag, FaCheckCircle, FaMobileAlt, FaLink } from 'react-icons/fa';
+import { FaArrowRight, FaDownload, FaCheckCircle, FaMobileAlt, FaLink } from 'react-icons/fa';
 
 const NFCTutorialPage: React.FC = () => {
   return (
