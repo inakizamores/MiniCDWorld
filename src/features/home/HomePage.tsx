@@ -56,10 +56,10 @@ const HomePage = () => {
     
     return (
       <div 
-        className="fixed inset-0 z-[9999] modal-overlay flex items-center justify-center p-4 bg-black bg-opacity-80 animate-fadeIn" 
+        className="fixed inset-0 z-[9999] flex items-center justify-center p-4" 
         onClick={handleOverlayClick}
       >
-        <div className="relative bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-y-auto animate-scaleIn">
+        <div className="relative bg-white rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] max-w-4xl w-full max-h-[85vh] overflow-y-auto animate-scaleIn">
           <button 
             onClick={closeBlankTemplateModal}
             className="absolute top-3 right-3 md:top-4 md:right-4 text-secondary-400 hover:text-secondary-600 z-10"
