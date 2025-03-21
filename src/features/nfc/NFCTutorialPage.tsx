@@ -49,7 +49,7 @@ const NFCTutorialPage: React.FC = () => {
       {/* Tutorial Section */}
       <div className="max-w-4xl mx-auto mb-16 bg-white rounded-xl shadow-md overflow-hidden">
         <div className="bg-primary-600 text-white px-6 py-4">
-          <h2 className="text-2xl font-bold">Guía para programar una etiqueta NFC para reproducir música en streaming</h2>
+          <h2 className="text-2xl font-bold text-white">Guía para programar una etiqueta NFC para reproducir música en streaming</h2>
         </div>
         
         <div className="p-6 md:p-8">
