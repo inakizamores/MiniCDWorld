@@ -5,6 +5,7 @@ import UploadPage from '@features/upload/UploadPage'
 import PreviewPage from '@features/preview/PreviewPage'
 import GeneratePdfPage from '@features/pdf/GeneratePdfPage'
 import PurchasePage from '@features/purchase/PurchasePage'
+import NFCTutorialPage from '@features/nfc/NFCTutorialPage'
 import NotFoundPage from '@components/ui/NotFoundPage'
 import ScrollToTop from '@components/ui/ScrollToTop'
 
@@ -19,6 +20,7 @@ function App() {
           <Route path="preview" element={<PreviewPage />} />
           <Route path="generate" element={<GeneratePdfPage />} />
           <Route path="purchase" element={<PurchasePage />} />
+          <Route path="nfc-tutorial" element={<NFCTutorialPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

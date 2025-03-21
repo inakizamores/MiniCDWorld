@@ -10,6 +10,7 @@ import {
   FaArrowRight
 } from 'react-icons/fa';
 import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS } from '../../constants/productLinks';
+import { Link } from 'react-router-dom';
 
 const PurchasePage: React.FC = () => {
   // Estado para las preguntas frecuentes expandidas
@@ -131,11 +132,15 @@ const PurchasePage: React.FC = () => {
     },
     {
       question: "¿Cómo funcionan los llaveros con NFC?",
-      answer: "Los llaveros con NFC contienen un chip que puede ser programado para abrir un enlace web cuando se escanea con un smartphone compatible. Puedes vincularlos a playlists de Spotify, perfiles de artistas, páginas web, o cualquier contenido digital que desees."
+      answer: "Los llaveros con NFC contienen un chip que puede ser programado para abrir un enlace web cuando se escanea con un smartphone compatible. Puedes vincularlos a playlists de Spotify, perfiles de artistas, páginas web, o cualquier contenido digital que desees.",
+      linkTo: "/nfc-tutorial",
+      linkText: "Ver tutorial completo"
     },
     {
       question: "¿Cómo configuro un llavero con NFC?",
-      answer: "Para configurar tu llavero NFC, necesitarás la aplicación NFC Tools disponible tanto para Android como iOS. En Android: 1) Descarga NFC Tools desde Google Play Store. 2) Abre la app y toca 'Escribir'. 3) Selecciona el tipo de contenido (URL, texto, redes sociales, etc.). 4) Ingresa la información deseada. 5) Toca 'Escribir' y acerca el llavero a la parte trasera de tu teléfono hasta que se confirme la escritura. En iOS (iPhone 7 o posterior): 1) Descarga NFC Tools desde la App Store. 2) Abre la app y selecciona 'Escribir'. 3) Elige el tipo de datos. 4) Completa la información. 5) Toca 'Escribir etiqueta' y acerca el llavero a la parte superior del iPhone. Nota: Los llaveros NFC son reprogramables, por lo que puedes cambiar su contenido cuando quieras."
+      answer: "Para configurar tu llavero NFC, necesitarás la aplicación NFC Tools disponible tanto para Android como iOS. Hemos creado un tutorial paso a paso que puedes encontrar en nuestra sección de Tutorial NFC. Allí explicamos todo el proceso de forma detallada con enlaces a las aplicaciones necesarias.",
+      linkTo: "/nfc-tutorial",
+      linkText: "Ver tutorial completo"
     }
   ];
   
@@ -217,6 +222,20 @@ const PurchasePage: React.FC = () => {
                   ))}
                 </ul>
               </div>
+              
+              {product.title.includes("NFC") && (
+                <div className="bg-primary-50 p-4 rounded-lg mb-4 border border-primary-100">
+                  <p className="text-primary-800 text-sm">
+                    <strong>¿Cómo programar el chip NFC?</strong> Aprende a vincular música, playlists o cualquier contenido digital a tus llaveros.
+                  </p>
+                  <Link 
+                    to="/nfc-tutorial"
+                    className="text-primary-600 hover:text-primary-700 text-sm font-medium mt-2 inline-flex items-center"
+                  >
+                    Ver tutorial completo <FaArrowRight className="ml-1 text-xs" />
+                  </Link>
+                </div>
+              )}
               
               <a 
                 href={product.url}
@@ -417,6 +436,14 @@ const PurchasePage: React.FC = () => {
               >
                 <div className="p-4 bg-secondary-50 border-t border-secondary-200">
                   <p className="text-secondary-700">{faq.answer}</p>
+                  {faq.linkTo && (
+                    <Link
+                      to={faq.linkTo}
+                      className="text-primary-600 hover:text-primary-700 font-medium mt-3 inline-flex items-center"
+                    >
+                      {faq.linkText} <FaArrowRight className="ml-1 text-xs" />
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,5 +1,5 @@
 import { useNavigate, Link } from 'react-router-dom'
-import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaDownload } from 'react-icons/fa'
+import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaDownload, FaMobileAlt } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
 import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS } from '../../constants/productLinks'
@@ -355,6 +355,34 @@ const HomePage = () => {
                 </div>
               </div>
             </Link>
+          </div>
+        </div>
+      </section>
+      
+      {/* NFC Tutorial CTA */}
+      <section className="py-12 bg-white rounded-none md:rounded-xl">
+        <div className="container mx-auto px-4">
+          <div className="bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl overflow-hidden shadow-md">
+            <div className="flex flex-col md:flex-row items-center">
+              <div className="md:w-3/5 p-8 md:p-12">
+                <h2 className="text-3xl font-bold mb-4 text-primary-700">¿Tienes llaveros con NFC?</h2>
+                <p className="text-xl text-secondary-600 mb-6">
+                  Aprende a programar tus llaveros Mini CD con NFC para vincularlos a tus playlists favoritas, 
+                  perfiles de artistas o cualquier contenido digital.
+                </p>
+                <Link 
+                  to="/nfc-tutorial" 
+                  className="btn btn-primary inline-flex items-center px-6 py-3"
+                >
+                  Ver tutorial NFC <FaArrowRight className="ml-2" />
+                </Link>
+              </div>
+              <div className="md:w-2/5 bg-primary-600 md:h-full p-8 flex items-center justify-center">
+                <div className="bg-white rounded-full w-24 h-24 flex items-center justify-center shadow-lg">
+                  <FaMobileAlt className="text-4xl text-primary-600" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

@@ -42,6 +42,14 @@ const Header = () => {
                   Comprar
                 </Link>
               </li>
+              <li className="hidden md:block">
+                <Link 
+                  to="/nfc-tutorial" 
+                  className="text-secondary-600 hover:text-primary-600 transition-colors font-medium"
+                >
+                  Tutorial NFC
+                </Link>
+              </li>
               <li>
                 <button
                   onClick={handleCreateTemplate}
