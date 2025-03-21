@@ -312,7 +312,7 @@ const HomePage = () => {
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
             >
               <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
-                <span>25 Unidades</span>
+                <span>25 Unidades + NFC</span>
                 <FaTag />
               </div>
               <div className="p-6 flex flex-col flex-grow">
@@ -321,7 +321,7 @@ const HomePage = () => {
                 </div>
                 <h3 className="text-lg font-bold text-center mb-2">Pack 25 Llaveros En Blanco</h3>
                 <p className="text-secondary-600 text-center mb-4 flex-grow">
-                  Pack de 25 llaveros Mini CD en blanco. Ideal para eventos y promociones.
+                  Pack de 25 llaveros Mini CD en blanco con NFC. Ideal para eventos y promociones.
                 </p>
                 <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium group-hover:shadow-[0_0_15px_rgba(242,217,0,0.7)] transition-all duration-300 group-hover:scale-[1.03]">
                   <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" />
@@ -338,7 +338,7 @@ const HomePage = () => {
               className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
             >
               <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
-                <span>50 Unidades</span>
+                <span>50 Unidades + NFC</span>
                 <FaTag />
               </div>
               <div className="p-6 flex flex-col flex-grow">
@@ -347,7 +347,7 @@ const HomePage = () => {
                 </div>
                 <h3 className="text-lg font-bold text-center mb-2">Pack 50 Llaveros En Blanco</h3>
                 <p className="text-secondary-600 text-center mb-4 flex-grow">
-                  Pack mayorista de 50 llaveros Mini CD en blanco. El mejor valor para pedidos grandes.
+                  Pack mayorista de 50 llaveros Mini CD en blanco con NFC. El mejor valor para pedidos grandes.
                 </p>
                 <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium group-hover:shadow-[0_0_15px_rgba(242,217,0,0.7)] transition-all duration-300 group-hover:scale-[1.03]">
                   <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" />
