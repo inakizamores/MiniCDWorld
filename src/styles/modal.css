@@ -2,9 +2,6 @@
 body.modal-open header {
   position: relative;
   z-index: 1; /* Asegurar que el header tenga un z-index bajo cuando el modal está abierto */
-  opacity: 0.2; /* Oscurecer el header */
-  transition: opacity 0.3s ease;
-  pointer-events: none; /* Deshabilitar interacciones con el header cuando el modal está abierto */
 }
 
 /* Asegurar que el modal siempre está por encima */
