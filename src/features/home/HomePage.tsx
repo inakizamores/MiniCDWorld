@@ -1,5 +1,5 @@
 import { useNavigate, Link } from 'react-router-dom'
-import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaDownload, FaMobileAlt } from 'react-icons/fa'
+import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaDownload } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
 import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS } from '../../constants/productLinks'
