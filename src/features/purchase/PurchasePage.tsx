@@ -9,7 +9,7 @@ import {
   FaPlus,
   FaArrowRight
 } from 'react-icons/fa';
-import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS } from '../../constants/productLinks';
+import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS, PRODUCT_INFO, isInStock } from '../../constants/productLinks';
 import { Link } from 'react-router-dom';
 
 const PurchasePage: React.FC = () => {
@@ -56,7 +56,7 @@ const PurchasePage: React.FC = () => {
       url: PACK_5_LLAVEROS,
       badge: "5 Unidades",
       shipping: "Envío gratis por Mercado Envíos",
-      inStock: true,
+      inStock: isInStock('PACK_5_LLAVEROS'),
       imageSrc: "/images/products/pack-5-llaveros.jpg"
     },
     {
@@ -75,7 +75,7 @@ const PurchasePage: React.FC = () => {
       url: PACK_5_LLAVEROS_NFC,
       badge: "5 Unidades + NFC",
       shipping: "Envío gratis por Mercado Envíos",
-      inStock: true,
+      inStock: isInStock('PACK_5_LLAVEROS_NFC'),
       imageSrc: "/images/products/pack-5-llaveros-nfc.jpg"
     },
     {
@@ -95,7 +95,7 @@ const PurchasePage: React.FC = () => {
       url: PACK_25_LLAVEROS,
       badge: "25 Unidades + NFC",
       shipping: "Envío gratis por Mercado Envíos",
-      inStock: true,
+      inStock: isInStock('PACK_25_LLAVEROS'),
       imageSrc: "/images/products/pack-25-llaveros.jpg"
     },
     {
@@ -115,7 +115,7 @@ const PurchasePage: React.FC = () => {
       url: PACK_50_LLAVEROS,
       badge: "50 Unidades + NFC",
       shipping: "Envío gratis por Mercado Envíos",
-      inStock: true,
+      inStock: isInStock('PACK_50_LLAVEROS'),
       imageSrc: "/images/products/pack-50-llaveros.jpg"
     }
   ];
@@ -324,7 +324,7 @@ const PurchasePage: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map(product => (
+          {products.filter(product => product.inStock).map(product => (
             <div 
               key={product.id} 
               className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col"

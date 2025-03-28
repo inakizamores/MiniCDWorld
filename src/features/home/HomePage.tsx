@@ -2,7 +2,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaDownload } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
-import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS } from '../../constants/productLinks'
+import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS, isInStock } from '../../constants/productLinks'
 import { useState, useEffect } from 'react'
 
 const HomePage = () => {
@@ -253,108 +253,204 @@ const HomePage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Product 1: Pack 5 Llaveros En Blanco */}
-            <Link 
-              to={PACK_5_LLAVEROS}
-              target="_blank"
-              rel="noopener noreferrer" 
-              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
-            >
-              <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
-                <span>5 Unidades</span>
-                <FaTag />
-              </div>
-              <div className="p-6 flex flex-col flex-grow">
-                <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FaShoppingCart className="text-2xl text-primary-500" />
+            {isInStock('PACK_5_LLAVEROS') ? (
+              <Link 
+                to={PACK_5_LLAVEROS}
+                target="_blank"
+                rel="noopener noreferrer" 
+                className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
+              >
+                <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                  <span>5 Unidades</span>
+                  <FaTag />
                 </div>
-                <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros En Blanco</h3>
-                <p className="text-secondary-600 text-center mb-4 flex-grow">
-                  Llaveros Mini CD en formato en blanco. Perfectos para personalización.
-                </p>
-                <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium group-hover:shadow-[0_0_15px_rgba(242,217,0,0.7)] transition-all duration-300 group-hover:scale-[1.03]">
-                  <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" />
-                  Comprar ahora
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaShoppingCart className="text-2xl text-primary-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros En Blanco</h3>
+                  <p className="text-secondary-600 text-center mb-4 flex-grow">
+                    Llaveros Mini CD en formato en blanco. Perfectos para personalización.
+                  </p>
+                  <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium group-hover:shadow-[0_0_15px_rgba(242,217,0,0.7)] transition-all duration-300 group-hover:scale-[1.03]">
+                    <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" />
+                    Comprar ahora
+                  </div>
+                </div>
+              </Link>
+            ) : (
+              <div className="bg-white rounded-lg overflow-hidden shadow-md flex flex-col h-full relative">
+                <div className="bg-gray-400 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                  <span>5 Unidades</span>
+                  <FaTag />
+                </div>
+                <div className="p-6 flex flex-col flex-grow opacity-75">
+                  <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaShoppingCart className="text-2xl text-gray-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros En Blanco</h3>
+                  <p className="text-secondary-600 text-center mb-4 flex-grow">
+                    Llaveros Mini CD en formato en blanco. Perfectos para personalización.
+                  </p>
+                  <div className="bg-gray-200 text-gray-600 px-4 py-2 rounded flex items-center justify-center mt-auto font-medium">
+                    Agotado
+                  </div>
+                </div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white py-1 px-4 rounded-full font-bold text-sm rotate-[-15deg] shadow-lg">
+                  Agotado
                 </div>
               </div>
-            </Link>
+            )}
             
             {/* Product 2: Pack 5 Llaveros NFC En Blanco */}
-            <Link 
-              to={PACK_5_LLAVEROS_NFC}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
-            >
-              <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
-                <span>5 Unidades + NFC</span>
-                <FaTag />
-              </div>
-              <div className="p-6 flex flex-col flex-grow">
-                <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FaShoppingCart className="text-2xl text-primary-500" />
+            {isInStock('PACK_5_LLAVEROS_NFC') ? (
+              <Link 
+                to={PACK_5_LLAVEROS_NFC}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
+              >
+                <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                  <span>5 Unidades + NFC</span>
+                  <FaTag />
                 </div>
-                <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros NFC En Blanco</h3>
-                <p className="text-secondary-600 text-center mb-4 flex-grow">
-                  Llaveros Mini CD con tecnología NFC. Vincula digitalmente a tu música.
-                </p>
-                <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium group-hover:shadow-[0_0_15px_rgba(242,217,0,0.7)] transition-all duration-300 group-hover:scale-[1.03]">
-                  <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" />
-                  Comprar ahora
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaShoppingCart className="text-2xl text-primary-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros NFC En Blanco</h3>
+                  <p className="text-secondary-600 text-center mb-4 flex-grow">
+                    Llaveros Mini CD con tecnología NFC. Vincula digitalmente a tu música.
+                  </p>
+                  <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium group-hover:shadow-[0_0_15px_rgba(242,217,0,0.7)] transition-all duration-300 group-hover:scale-[1.03]">
+                    <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" />
+                    Comprar ahora
+                  </div>
+                </div>
+              </Link>
+            ) : (
+              <div className="bg-white rounded-lg overflow-hidden shadow-md flex flex-col h-full relative">
+                <div className="bg-gray-400 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                  <span>5 Unidades + NFC</span>
+                  <FaTag />
+                </div>
+                <div className="p-6 flex flex-col flex-grow opacity-75">
+                  <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaShoppingCart className="text-2xl text-gray-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros NFC En Blanco</h3>
+                  <p className="text-secondary-600 text-center mb-4 flex-grow">
+                    Llaveros Mini CD con tecnología NFC. Vincula digitalmente a tu música.
+                  </p>
+                  <div className="bg-gray-200 text-gray-600 px-4 py-2 rounded flex items-center justify-center mt-auto font-medium">
+                    Agotado
+                  </div>
+                </div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white py-1 px-4 rounded-full font-bold text-sm rotate-[-15deg] shadow-lg">
+                  Agotado
                 </div>
               </div>
-            </Link>
+            )}
             
             {/* Product 3: Pack 25 Llaveros En Blanco */}
-            <Link 
-              to={PACK_25_LLAVEROS}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
-            >
-              <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
-                <span>25 Unidades + NFC</span>
-                <FaTag />
-              </div>
-              <div className="p-6 flex flex-col flex-grow">
-                <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FaShoppingCart className="text-2xl text-primary-500" />
+            {isInStock('PACK_25_LLAVEROS') ? (
+              <Link 
+                to={PACK_25_LLAVEROS}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
+              >
+                <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                  <span>25 Unidades + NFC</span>
+                  <FaTag />
                 </div>
-                <h3 className="text-lg font-bold text-center mb-2">Pack 25 Llaveros En Blanco</h3>
-                <p className="text-secondary-600 text-center mb-4 flex-grow">
-                  Pack de 25 llaveros Mini CD en blanco con NFC. Ideal para eventos y promociones.
-                </p>
-                <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium group-hover:shadow-[0_0_15px_rgba(242,217,0,0.7)] transition-all duration-300 group-hover:scale-[1.03]">
-                  <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" />
-                  Comprar ahora
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaShoppingCart className="text-2xl text-primary-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 25 Llaveros En Blanco</h3>
+                  <p className="text-secondary-600 text-center mb-4 flex-grow">
+                    Pack de 25 llaveros Mini CD en blanco con NFC. Ideal para eventos y promociones.
+                  </p>
+                  <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium group-hover:shadow-[0_0_15px_rgba(242,217,0,0.7)] transition-all duration-300 group-hover:scale-[1.03]">
+                    <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" />
+                    Comprar ahora
+                  </div>
+                </div>
+              </Link>
+            ) : (
+              <div className="bg-white rounded-lg overflow-hidden shadow-md flex flex-col h-full relative">
+                <div className="bg-gray-400 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                  <span>25 Unidades + NFC</span>
+                  <FaTag />
+                </div>
+                <div className="p-6 flex flex-col flex-grow opacity-75">
+                  <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaShoppingCart className="text-2xl text-gray-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 25 Llaveros En Blanco</h3>
+                  <p className="text-secondary-600 text-center mb-4 flex-grow">
+                    Pack de 25 llaveros Mini CD en blanco con NFC. Ideal para eventos y promociones.
+                  </p>
+                  <div className="bg-gray-200 text-gray-600 px-4 py-2 rounded flex items-center justify-center mt-auto font-medium">
+                    Agotado
+                  </div>
+                </div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white py-1 px-4 rounded-full font-bold text-sm rotate-[-15deg] shadow-lg">
+                  Agotado
                 </div>
               </div>
-            </Link>
+            )}
             
             {/* Product 4: Pack 50 Llaveros En Blanco */}
-            <Link 
-              to={PACK_50_LLAVEROS}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
-            >
-              <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
-                <span>50 Unidades + NFC</span>
-                <FaTag />
-              </div>
-              <div className="p-6 flex flex-col flex-grow">
-                <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FaShoppingCart className="text-2xl text-primary-500" />
+            {isInStock('PACK_50_LLAVEROS') ? (
+              <Link 
+                to={PACK_50_LLAVEROS}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
+              >
+                <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                  <span>50 Unidades + NFC</span>
+                  <FaTag />
                 </div>
-                <h3 className="text-lg font-bold text-center mb-2">Pack 50 Llaveros En Blanco</h3>
-                <p className="text-secondary-600 text-center mb-4 flex-grow">
-                  Pack mayorista de 50 llaveros Mini CD en blanco con NFC. El mejor valor para pedidos grandes.
-                </p>
-                <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium group-hover:shadow-[0_0_15px_rgba(242,217,0,0.7)] transition-all duration-300 group-hover:scale-[1.03]">
-                  <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" />
-                  Comprar ahora
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaShoppingCart className="text-2xl text-primary-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 50 Llaveros En Blanco</h3>
+                  <p className="text-secondary-600 text-center mb-4 flex-grow">
+                    Pack mayorista de 50 llaveros Mini CD en blanco con NFC. El mejor valor para pedidos grandes.
+                  </p>
+                  <div className="bg-[#F2D900] text-black px-4 py-2 rounded flex items-center justify-center mt-auto font-medium group-hover:shadow-[0_0_15px_rgba(242,217,0,0.7)] transition-all duration-300 group-hover:scale-[1.03]">
+                    <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-7 h-7 mr-2" />
+                    Comprar ahora
+                  </div>
+                </div>
+              </Link>
+            ) : (
+              <div className="bg-white rounded-lg overflow-hidden shadow-md flex flex-col h-full relative">
+                <div className="bg-gray-400 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
+                  <span>50 Unidades + NFC</span>
+                  <FaTag />
+                </div>
+                <div className="p-6 flex flex-col flex-grow opacity-75">
+                  <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaShoppingCart className="text-2xl text-gray-500" />
+                  </div>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 50 Llaveros En Blanco</h3>
+                  <p className="text-secondary-600 text-center mb-4 flex-grow">
+                    Pack mayorista de 50 llaveros Mini CD en blanco con NFC. El mejor valor para pedidos grandes.
+                  </p>
+                  <div className="bg-gray-200 text-gray-600 px-4 py-2 rounded flex items-center justify-center mt-auto font-medium">
+                    Agotado
+                  </div>
+                </div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white py-1 px-4 rounded-full font-bold text-sm rotate-[-15deg] shadow-lg">
+                  Agotado
                 </div>
               </div>
-            </Link>
+            )}
           </div>
         </div>
       </section>
