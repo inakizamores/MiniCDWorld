@@ -7,7 +7,8 @@ import {
   FaQuestionCircle,
   FaMinus,
   FaPlus,
-  FaArrowRight
+  FaArrowRight,
+  FaBan
 } from 'react-icons/fa';
 import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS, isInStock } from '../../constants/productLinks';
 import { Link } from 'react-router-dom';
@@ -201,9 +202,13 @@ const PurchasePage: React.FC = () => {
                 <span className="inline-block bg-primary-100 text-primary-800 text-xs font-semibold px-3 py-1 rounded-full">
                   {product.badge}
                 </span>
-                {product.inStock && (
+                {product.inStock ? (
                   <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full ml-2">
                     En stock
+                  </span>
+                ) : (
+                  <span className="inline-block bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full flex items-center">
+                    <FaBan className="mr-1 text-xs" /> Agotado
                   </span>
                 )}
               </div>
@@ -237,14 +242,23 @@ const PurchasePage: React.FC = () => {
                 </div>
               )}
               
-              <a 
-                href={product.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center py-2 md:py-3 px-4 md:px-6 bg-[#F2D900] text-black font-medium rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:shadow-[0_0_18px_rgba(242,217,0,0.7)] hover:scale-[1.03]"
-              >
-                <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-6 h-6 md:w-7 md:h-7 mr-2" /> Comprar ahora en Mercado Libre
-              </a>
+              {product.inStock ? (
+                <a
+                  href={product.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center py-2 bg-[#F2D900] text-black font-medium rounded shadow-md hover:shadow-lg transition-all hover:shadow-[0_0_12px_rgba(242,217,0,0.5)] hover:scale-[1.02]"
+                >
+                  <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-6 h-6 mr-2" /> Comprar ahora
+                </a>
+              ) : (
+                <button
+                  disabled
+                  className="w-full flex items-center justify-center py-2 bg-gray-200 text-gray-500 font-medium rounded cursor-not-allowed"
+                >
+                  <FaBan className="mr-2" /> Agotado
+                </button>
+              )}
               
               <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-secondary-200">
                 <div className="flex items-center text-secondary-600 mb-1 md:mb-2 text-sm md:text-base">
@@ -358,14 +372,23 @@ const PurchasePage: React.FC = () => {
                     >
                       Ver detalles
                     </button>
-                    <a 
-                      href={product.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-[#F2D900] text-black px-4 py-2 rounded flex-1 text-sm flex items-center justify-center font-medium hover:shadow-[0_0_12px_rgba(242,217,0,0.65)] transition-all duration-300 hover:scale-[1.02]"
-                    >
-                      <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-6 h-6 mr-1" /> Comprar
-                    </a>
+                    {product.inStock ? (
+                      <a
+                        href={product.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-[#F2D900] text-black px-4 py-2 rounded flex-1 text-sm flex items-center justify-center font-medium hover:shadow-[0_0_12px_rgba(242,217,0,0.65)] transition-all duration-300 hover:scale-[1.02]"
+                      >
+                        <img src="/images/icons/MercadoLibreIcon.png" alt="Mercado Libre" className="w-6 h-6 mr-1" /> Comprar
+                      </a>
+                    ) : (
+                      <button
+                        disabled
+                        className="bg-gray-200 text-gray-500 px-4 py-2 rounded flex-1 text-sm cursor-not-allowed"
+                      >
+                        <FaBan className="mr-2" /> Agotado
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import { useNavigate, Link } from 'react-router-dom'
-import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaDownload } from 'react-icons/fa'
+import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaDownload, FaBan } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
 import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS, isInStock } from '../../constants/productLinks'
@@ -296,8 +296,12 @@ const HomePage = () => {
                     Agotado
                   </div>
                 </div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white py-1 px-4 rounded-full font-bold text-sm rotate-[-15deg] shadow-lg">
-                  Agotado
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                  bg-red-500/90 text-white py-2 px-5 rounded-full font-bold text-sm rotate-[-15deg] 
+                  shadow-lg flex items-center gap-1.5 hover:scale-110 hover:rotate-[-18deg] transition-all duration-300 
+                  border-2 border-white">
+                  <FaBan className="text-white" />
+                  <span>Agotado</span>
                 </div>
               </div>
             )}
@@ -346,8 +350,12 @@ const HomePage = () => {
                     Agotado
                   </div>
                 </div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white py-1 px-4 rounded-full font-bold text-sm rotate-[-15deg] shadow-lg">
-                  Agotado
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                  bg-red-500/90 text-white py-2 px-5 rounded-full font-bold text-sm rotate-[-15deg] 
+                  shadow-lg flex items-center gap-1.5 hover:scale-110 hover:rotate-[-18deg] transition-all duration-300 
+                  border-2 border-white">
+                  <FaBan className="text-white" />
+                  <span>Agotado</span>
                 </div>
               </div>
             )}
@@ -396,8 +404,12 @@ const HomePage = () => {
                     Agotado
                   </div>
                 </div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white py-1 px-4 rounded-full font-bold text-sm rotate-[-15deg] shadow-lg">
-                  Agotado
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                  bg-red-500/90 text-white py-2 px-5 rounded-full font-bold text-sm rotate-[-15deg] 
+                  shadow-lg flex items-center gap-1.5 hover:scale-110 hover:rotate-[-18deg] transition-all duration-300 
+                  border-2 border-white">
+                  <FaBan className="text-white" />
+                  <span>Agotado</span>
                 </div>
               </div>
             )}
@@ -446,8 +458,12 @@ const HomePage = () => {
                     Agotado
                   </div>
                 </div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white py-1 px-4 rounded-full font-bold text-sm rotate-[-15deg] shadow-lg">
-                  Agotado
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                  bg-red-500/90 text-white py-2 px-5 rounded-full font-bold text-sm rotate-[-15deg] 
+                  shadow-lg flex items-center gap-1.5 hover:scale-110 hover:rotate-[-18deg] transition-all duration-300 
+                  border-2 border-white">
+                  <FaBan className="text-white" />
+                  <span>Agotado</span>
                 </div>
               </div>
             )}
