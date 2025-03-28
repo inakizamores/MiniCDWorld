@@ -9,7 +9,7 @@ import {
   FaPlus,
   FaArrowRight
 } from 'react-icons/fa';
-import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS, PRODUCT_INFO, isInStock } from '../../constants/productLinks';
+import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS, isInStock } from '../../constants/productLinks';
 import { Link } from 'react-router-dom';
 
 const PurchasePage: React.FC = () => {
