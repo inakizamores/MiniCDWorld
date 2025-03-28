@@ -19,7 +19,7 @@ export const PRODUCT_INFO = {
   
   // Pack 5 Llaveros NFC En Blanco
   PACK_5_LLAVEROS_NFC: {
-    url: "https://www.mercadolibre.com.mx/pack-5-llaveros-nfc-en-blanco--mini-cd-disco-album-musical/up/MLMU3045065414",
+    url: "https://articulo.mercadolibre.com.mx/MLM-3607288508-pack-5-llaveros-nfc-en-blanco-mini-cd-album-musical-disco-_JM",
     status: STOCK_STATUS.IN_STOCK
   },
   
