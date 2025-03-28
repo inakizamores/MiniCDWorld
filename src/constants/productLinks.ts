@@ -32,7 +32,7 @@ export const PRODUCT_INFO = {
   // Pack 50 Llaveros En Blanco
   PACK_50_LLAVEROS: {
     url: "https://articulo.mercadolibre.com.mx/MLM-2215776613-pack-50-llaveros-en-blanco-mini-cd-disco-album-musical-_JM",
-    status: STOCK_STATUS.IN_STOCK
+    status: STOCK_STATUS.OUT_OF_STOCK
   }
 };
 
