@@ -25,7 +25,7 @@ class PDFService {
 
   // Helper function to resize images to optimize PDF size
   private optimizeImage(imageDataUrl: string): Promise<string> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // Create an image to get dimensions
       const img = new Image();
       img.onload = () => {

@@ -9,6 +9,13 @@ import {
 import PDFService from '@services/pdfService'
 import { FaFilePdf, FaSpinner, FaArrowLeft, FaCheckCircle, FaRedo, FaDownload, FaPrint, FaInfoCircle, FaShoppingCart } from 'react-icons/fa'
 
+// Add declaration for IE-specific msSaveOrOpenBlob
+declare global {
+  interface Navigator {
+    msSaveOrOpenBlob?: (blob: Blob, defaultName?: string) => boolean;
+  }
+}
+
 const GeneratePdfPage: React.FC = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -97,10 +104,6 @@ const GeneratePdfPage: React.FC = () => {
   const handlePurchase = () => {
     window.open('https://mini-cd-world.vercel.app/purchase', '_blank')
   }
-  
-  const downloadFileName = templateData.albumTitle
-    ? `${templateData.albumTitle.replace(/[^a-zA-Z0-9]/gi, '_')}_MiniCDWorld_Plantilla.pdf`
-    : 'MiniCDWorld_Plantilla.pdf'
   
   // Check if required images are available
   const hasRequiredImages = 
