@@ -230,6 +230,7 @@ const GeneratePdfPage: React.FC = () => {
   const [downloadAttempts, setDownloadAttempts] = useState(0)
   const [progress, setProgress] = useState(0)
   const [generationStage, setGenerationStage] = useState<PDFGenerationStage>(PDFGenerationStage.INITIALIZING)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [stageDetail, setStageDetail] = useState<string>('')
   
   // Clean up object URL when component unmounts

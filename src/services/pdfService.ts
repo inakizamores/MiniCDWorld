@@ -402,10 +402,12 @@ class PDFService {
             
             ctx.drawImage(img, 0, 0, newWidth, newHeight);
             
+            // Define format and quality outside the try block to ensure they're in scope for catch
+            const format = this.getOptimalImageFormat();
+            const quality = this.getOptimalImageQuality();
+            
             try {
               // Get optimized image data - use WebP if supported
-              const format = this.getOptimalImageFormat();
-              const quality = this.getOptimalImageQuality();
               const optimizedImage = canvas.toDataURL(format, quality);
               resolve(optimizedImage);
             } catch (canvasError) {
