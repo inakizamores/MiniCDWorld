@@ -402,22 +402,22 @@ class PDFService {
             
             ctx.drawImage(img, 0, 0, newWidth, newHeight);
             
-            // Define format and quality outside the try block to ensure they're in scope for catch
-            const format = this.getOptimalImageFormat();
-            const quality = this.getOptimalImageQuality();
+            // Define these variables before the try block to ensure they're in scope
+            const imageFormat = this.getOptimalImageFormat();
+            const imageQuality = this.getOptimalImageQuality();
             
             try {
               // Get optimized image data - use WebP if supported
-              const optimizedImage = canvas.toDataURL(format, quality);
+              const optimizedImage = canvas.toDataURL(imageFormat, imageQuality);
               resolve(optimizedImage);
             } catch (canvasError) {
               // Handle security error (tainted canvas) from cross-origin images
               console.warn('Canvas security error, likely due to CORS:', canvasError);
               
               // Try JPEG if WebP failed
-              if (format !== 'image/jpeg') {
+              if (imageFormat !== 'image/jpeg') {
                 try {
-                  const jpegImage = canvas.toDataURL('image/jpeg', quality);
+                  const jpegImage = canvas.toDataURL('image/jpeg', imageQuality);
                   resolve(jpegImage);
                   return;
                 } catch (jpegError) {
