@@ -484,20 +484,28 @@ class PDFService {
         .reduce((size, img) => {
           // Handle different types of image objects in the template
           if (typeof img === 'object' && img !== null) {
-            if ('croppedImage' in img && img.croppedImage) {
+            // First check if it has croppedImage property
+            if (img && 'croppedImage' in img && typeof img.croppedImage === 'string') {
               // Handle direct ImageSection objects
               return size + (img.croppedImage.length * 0.75); // base64 is ~33% larger than binary
-            } else if ('main' in img || 'side' in img) {
-              // Handle nested structure for trailer sections
+            } 
+            // Then check if it has main or side properties (nested structure)
+            else if (img && ('main' in img || 'side' in img)) {
               let nestedSize = 0;
               
               // Check main property
-              if ('main' in img && img.main && 'croppedImage' in img.main && img.main.croppedImage) {
+              if ('main' in img && img.main && 
+                  typeof img.main === 'object' && img.main !== null && 
+                  'croppedImage' in img.main && 
+                  typeof img.main.croppedImage === 'string') {
                 nestedSize += img.main.croppedImage.length * 0.75;
               }
               
               // Check side property
-              if ('side' in img && img.side && 'croppedImage' in img.side && img.side.croppedImage) {
+              if ('side' in img && img.side && 
+                  typeof img.side === 'object' && img.side !== null &&
+                  'croppedImage' in img.side && 
+                  typeof img.side.croppedImage === 'string') {
                 nestedSize += img.side.croppedImage.length * 0.75;
               }
               
@@ -629,11 +637,9 @@ class PDFService {
           doc.setFontSize(12);
           
           let errorMessage = 'Ocurrió un error inesperado.';
-          let errorType = PDFErrorType.UNKNOWN_ERROR;
           
           if (error instanceof PDFError) {
             errorMessage = error.message;
-            errorType = error.type;
           } else if (error instanceof Error) {
             errorMessage = `Error: ${error.message}`;
           }
