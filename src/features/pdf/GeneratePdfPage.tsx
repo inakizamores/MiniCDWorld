@@ -6,8 +6,8 @@ import {
   prevStep,
   resetTemplate
 } from '@features/template/templateSlice'
-import PDFService from '@services/pdfService'
-import { FaFilePdf, FaSpinner, FaArrowLeft, FaCheckCircle, FaRedo, FaDownload, FaPrint, FaInfoCircle, FaShoppingCart } from 'react-icons/fa'
+import PDFService, { PDFError, PDFErrorType } from '@services/pdfService'
+import { FaFilePdf, FaSpinner, FaArrowLeft, FaCheckCircle, FaRedo, FaDownload, FaPrint, FaInfoCircle, FaShoppingCart, FaExclamationTriangle } from 'react-icons/fa'
 
 // Add declaration for IE-specific msSaveOrOpenBlob
 declare global {
@@ -16,6 +16,89 @@ declare global {
   }
 }
 
+// Component to display detailed error messages based on error type
+interface ErrorMessageProps {
+  error: Error | null;
+  onRetry: () => void;
+}
+
+const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => {
+  // Default error message
+  let title = 'Error al Generar PDF';
+  let message = 'Hubo un error al generar tu PDF. Por favor, intenta de nuevo.';
+  let helpText = '';
+  let isWarning = false;
+
+  // Determine specific error messages based on error type
+  if (error instanceof PDFError) {
+    switch (error.type) {
+      case PDFErrorType.IMAGE_LOAD_ERROR:
+        title = 'Error al Cargar Imágenes';
+        message = 'No se pudieron cargar una o más imágenes para el PDF.';
+        helpText = 'Verifica que tus imágenes estén en un formato compatible (JPG, PNG) y no sean demasiado grandes.';
+        break;
+      
+      case PDFErrorType.IMAGE_PROCESS_ERROR:
+        title = 'Error al Procesar Imágenes';
+        message = 'Hubo un problema al procesar una o más imágenes para el PDF.';
+        helpText = 'Intenta con imágenes de menor resolución o en un formato diferente.';
+        break;
+      
+      case PDFErrorType.CANVAS_SECURITY_ERROR:
+        title = 'Error de Seguridad';
+        message = 'No se pudieron procesar imágenes de otros sitios web por restricciones de seguridad.';
+        helpText = 'Usa imágenes almacenadas localmente en tu dispositivo en lugar de URLs externas.';
+        break;
+      
+      case PDFErrorType.PDF_SIZE_LIMIT_ERROR:
+        title = 'PDF Demasiado Grande';
+        message = 'El PDF generado excede el tamaño máximo recomendado.';
+        helpText = 'Usa imágenes más pequeñas o reduce la cantidad de CDs por página.';
+        isWarning = true;
+        break;
+      
+      case PDFErrorType.PDF_GENERATION_ERROR:
+        title = 'Error al Generar PDF';
+        message = 'No se pudo inicializar el generador de PDF.';
+        helpText = 'Intenta recargar la página o usar un navegador diferente.';
+        break;
+      
+      case PDFErrorType.MEMORY_ERROR:
+        title = 'Memoria Insuficiente';
+        message = 'Tu dispositivo no tiene suficiente memoria para generar el PDF.';
+        helpText = 'Intenta cerrar otras aplicaciones o pestañas, usar imágenes más pequeñas, o reducir la cantidad de CDs por página.';
+        break;
+      
+      default:
+        // Use the specific error message if available
+        message = error.message || message;
+    }
+  } else if (error) {
+    // Use the generic error message if it's not a PDFError
+    message = error.message || message;
+  }
+
+  return (
+    <div className={`${isWarning ? 'bg-yellow-50 border-yellow-200 text-yellow-800' : 'bg-red-50 border-red-200 text-red-600'} p-4 rounded-lg mb-6 flex items-start`}>
+      {isWarning ? 
+        <FaExclamationTriangle className="text-yellow-500 mr-3 mt-1 flex-shrink-0" /> : 
+        <FaInfoCircle className="text-red-500 mr-3 mt-1 flex-shrink-0" />
+      }
+      <div className="flex-1">
+        <p className="font-medium">{title}</p>
+        <p className="text-sm mt-1">{message}</p>
+        {helpText && <p className="text-sm mt-2 font-medium">{helpText}</p>}
+        <button
+          className={`mt-3 px-3 py-1 text-sm rounded-md ${isWarning ? 'bg-yellow-100 hover:bg-yellow-200 text-yellow-800' : 'bg-red-100 hover:bg-red-200 text-red-700'}`}
+          onClick={onRetry}
+        >
+          Intentar Nuevamente
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const GeneratePdfPage: React.FC = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -23,8 +106,9 @@ const GeneratePdfPage: React.FC = () => {
   
   const [isGenerating, setIsGenerating] = useState(false)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<Error | null>(null)
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null)
+  const [downloadAttempts, setDownloadAttempts] = useState(0)
   
   // Clean up object URL when component unmounts
   useEffect(() => {
@@ -44,6 +128,8 @@ const GeneratePdfPage: React.FC = () => {
     try {
       setIsGenerating(true)
       setError(null)
+      setPdfUrl(null)
+      setPdfBlob(null)
       
       // Generate the PDF
       const blob = await PDFService.generatePDF(templateData)
@@ -54,7 +140,7 @@ const GeneratePdfPage: React.FC = () => {
       setPdfUrl(url)
     } catch (err) {
       console.error('Error generating PDF:', err)
-      setError('Hubo un error al generar tu PDF. Por favor, intenta de nuevo.')
+      setError(err instanceof Error ? err : new Error('Error desconocido al generar el PDF'))
     } finally {
       setIsGenerating(false)
     }
@@ -63,37 +149,61 @@ const GeneratePdfPage: React.FC = () => {
   const handleDownloadPdf = () => {
     if (!pdfUrl || !pdfBlob) return
     
+    // Increment download attempt counter to track potential issues
+    setDownloadAttempts(prev => prev + 1)
+    
     const downloadFileName = templateData.albumTitle
       ? `${templateData.albumTitle.replace(/[^a-zA-Z0-9]/gi, '_')}_MiniCDWorld_Plantilla.pdf`
       : 'MiniCDWorld_Plantilla.pdf'
     
-    // Special handling for IE11
-    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-      window.navigator.msSaveOrOpenBlob(pdfBlob, downloadFileName)
-      return
+    try {
+      // Special handling for IE11
+      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(pdfBlob, downloadFileName)
+        return
+      }
+      
+      // For iOS Safari and other mobile browsers that have issues with direct download
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+      
+      if (isMobile) {
+        // Safari on iOS has limited support for blob URLs and downloads
+        // Opening in a new tab is more reliable for viewing
+        window.open(pdfUrl, '_blank')
+        return
+      }
+      
+      // Standard download for modern browsers
+      const link = document.createElement('a')
+      link.href = pdfUrl
+      link.download = downloadFileName
+      link.target = '_blank'
+      document.body.appendChild(link)
+      link.click()
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(link)
+      }, 100)
+    } catch (downloadErr) {
+      console.error('Error during download:', downloadErr)
+      
+      // If download fails, provide fallback options
+      if (downloadAttempts >= 3) {
+        setError(new PDFError(
+          'No se pudo descargar el PDF después de varios intentos. Intente abrir el PDF en una nueva pestaña y guardarlo manualmente.',
+          PDFErrorType.UNKNOWN_ERROR
+        ))
+        
+        // Provide a button to open in new tab as fallback
+        window.open(pdfUrl, '_blank')
+      } else {
+        setError(new PDFError(
+          'Error al descargar el PDF. Por favor, intente nuevamente.',
+          PDFErrorType.UNKNOWN_ERROR
+        ))
+      }
     }
-    
-    // For iOS Safari and other mobile browsers that have issues with direct download
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-    
-    if (isMobile) {
-      // Open PDF in new tab for mobile devices
-      window.open(pdfUrl, '_blank')
-      return
-    }
-    
-    // Standard download for modern browsers
-    const link = document.createElement('a')
-    link.href = pdfUrl
-    link.download = downloadFileName
-    link.target = '_blank'
-    document.body.appendChild(link)
-    link.click()
-    
-    // Clean up
-    setTimeout(() => {
-      document.body.removeChild(link)
-    }, 100)
   }
   
   const handleStartOver = () => {
@@ -178,22 +288,26 @@ const GeneratePdfPage: React.FC = () => {
           )}
         </div>
         
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg mb-6 flex items-start">
-            <FaInfoCircle className="text-red-500 mr-3 mt-1 flex-shrink-0" />
-            <div>
-              <p className="font-medium">{error}</p>
-              <p className="text-sm mt-1">Por favor, intenta de nuevo o verifica tus imágenes.</p>
-            </div>
-          </div>
-        )}
+        {error && <ErrorMessage error={error} onRetry={handleGeneratePdf} />}
         
-        {pdfUrl && (
+        {pdfUrl && !error && (
           <div className="bg-green-50 border border-green-200 p-4 rounded-lg flex items-center mb-8 animate-fade-in">
             <FaCheckCircle className="text-green-500 mr-3 text-xl flex-shrink-0" />
             <div>
               <p className="text-green-800 font-medium">¡PDF generado exitosamente!</p>
               <p className="text-green-700 text-sm mt-1">Tu PDF está listo para descargar e imprimir.</p>
+              {downloadAttempts > 0 && (
+                <p className="text-green-700 text-sm mt-2">
+                  Si tienes problemas para descargar, puedes también{' '}
+                  <button 
+                    className="text-green-800 font-medium underline"
+                    onClick={() => window.open(pdfUrl, '_blank')}
+                  >
+                    abrir el PDF en una nueva pestaña
+                  </button>
+                  {' '}y guardarlo manualmente.
+                </p>
+              )}
             </div>
           </div>
         )}

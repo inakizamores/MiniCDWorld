@@ -11,69 +11,139 @@ declare module 'jspdf' {
 
 // Maximum image size in pixels (width or height) for optimizing file size
 const MAX_IMAGE_DIMENSION = 1200;
+// Maximum PDF size in bytes (50MB) to prevent browser issues
+const MAX_PDF_SIZE = 50 * 1024 * 1024;
+
+// Specific error types to provide better user feedback
+export enum PDFErrorType {
+  IMAGE_LOAD_ERROR = 'IMAGE_LOAD_ERROR',
+  IMAGE_PROCESS_ERROR = 'IMAGE_PROCESS_ERROR',
+  CANVAS_SECURITY_ERROR = 'CANVAS_SECURITY_ERROR',
+  PDF_SIZE_LIMIT_ERROR = 'PDF_SIZE_LIMIT_ERROR',
+  PDF_GENERATION_ERROR = 'PDF_GENERATION_ERROR',
+  MEMORY_ERROR = 'MEMORY_ERROR',
+  UNKNOWN_ERROR = 'UNKNOWN_ERROR'
+}
+
+export class PDFError extends Error {
+  type: PDFErrorType;
+  
+  constructor(message: string, type: PDFErrorType = PDFErrorType.UNKNOWN_ERROR) {
+    super(message);
+    this.type = type;
+    this.name = 'PDFError';
+  }
+}
 
 class PDFService {
   private createNewPDF() {
-    // Create a new PDF with US Letter dimensions
-    return new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'letter',
-      compress: true // Enable compression for smaller file size
-    })
+    try {
+      // Create a new PDF with US Letter dimensions
+      return new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'letter',
+        compress: true // Enable compression for smaller file size
+      })
+    } catch (error) {
+      console.error('Error creating PDF object:', error);
+      throw new PDFError(
+        'No se pudo inicializar el generador de PDF. Por favor, intente de nuevo.',
+        PDFErrorType.PDF_GENERATION_ERROR
+      );
+    }
   }
 
   // Helper function to resize images to optimize PDF size
   private optimizeImage(imageDataUrl: string): Promise<string> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       // Create an image to get dimensions
       const img = new Image();
+      
+      // Set timeout to handle stalled image loading
+      const timeout = setTimeout(() => {
+        reject(new PDFError(
+          'Tiempo de espera agotado al cargar la imagen. La imagen puede ser demasiado grande o haber problemas de conexión.',
+          PDFErrorType.IMAGE_LOAD_ERROR
+        ));
+      }, 15000); // 15 seconds timeout
+      
       img.onload = () => {
-        // If image is small enough, return original
-        if (img.width <= MAX_IMAGE_DIMENSION && img.height <= MAX_IMAGE_DIMENSION) {
-          resolve(imageDataUrl);
-          return;
-        }
+        clearTimeout(timeout);
+        try {
+          // If image is small enough, return original
+          if (img.width <= MAX_IMAGE_DIMENSION && img.height <= MAX_IMAGE_DIMENSION) {
+            resolve(imageDataUrl);
+            return;
+          }
 
-        // Calculate new dimensions while maintaining aspect ratio
-        let newWidth = img.width;
-        let newHeight = img.height;
-        
-        if (img.width > img.height && img.width > MAX_IMAGE_DIMENSION) {
-          newWidth = MAX_IMAGE_DIMENSION;
-          newHeight = (img.height * MAX_IMAGE_DIMENSION) / img.width;
-        } else if (img.height > MAX_IMAGE_DIMENSION) {
-          newHeight = MAX_IMAGE_DIMENSION;
-          newWidth = (img.width * MAX_IMAGE_DIMENSION) / img.height;
-        }
+          // Calculate new dimensions while maintaining aspect ratio
+          let newWidth = img.width;
+          let newHeight = img.height;
+          
+          if (img.width > img.height && img.width > MAX_IMAGE_DIMENSION) {
+            newWidth = MAX_IMAGE_DIMENSION;
+            newHeight = (img.height * MAX_IMAGE_DIMENSION) / img.width;
+          } else if (img.height > MAX_IMAGE_DIMENSION) {
+            newHeight = MAX_IMAGE_DIMENSION;
+            newWidth = (img.width * MAX_IMAGE_DIMENSION) / img.height;
+          }
 
-        // Create canvas for resizing
-        const canvas = document.createElement('canvas');
-        canvas.width = newWidth;
-        canvas.height = newHeight;
-        
-        // Draw and resize image on canvas
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          resolve(imageDataUrl); // Fallback to original if canvas context fails
-          return;
+          // Create canvas for resizing
+          const canvas = document.createElement('canvas');
+          canvas.width = newWidth;
+          canvas.height = newHeight;
+          
+          // Draw and resize image on canvas
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(imageDataUrl); // Fallback to original if canvas context fails
+            return;
+          }
+          
+          ctx.drawImage(img, 0, 0, newWidth, newHeight);
+          
+          try {
+            // Get optimized image data
+            // Use lower quality for JPEG compression (0.8 = 80% quality)
+            const optimizedImage = canvas.toDataURL('image/jpeg', 0.8);
+            resolve(optimizedImage);
+          } catch (err) {
+            // Handle security error (tainted canvas) from cross-origin images
+            console.warn('Canvas security error, likely due to CORS:', err);
+            reject(new PDFError(
+              'Error de seguridad al procesar la imagen. La imagen puede provenir de otro dominio sin permisos CORS.',
+              PDFErrorType.CANVAS_SECURITY_ERROR
+            ));
+          }
+        } catch (error) {
+          console.error('Error optimizing image:', error);
+          reject(new PDFError(
+            'Error al procesar la imagen. Intente con una imagen más pequeña o en otro formato.',
+            PDFErrorType.IMAGE_PROCESS_ERROR
+          ));
         }
-        
-        ctx.drawImage(img, 0, 0, newWidth, newHeight);
-        
-        // Get optimized image data
-        // Use lower quality for JPEG compression (0.8 = 80% quality)
-        const optimizedImage = canvas.toDataURL('image/jpeg', 0.8);
-        resolve(optimizedImage);
       };
       
-      img.onerror = () => {
-        // If optimization fails, resolve with original image
-        console.warn('Image optimization failed, using original image');
-        resolve(imageDataUrl);
+      img.onerror = (err) => {
+        clearTimeout(timeout);
+        // If optimization fails, reject with error
+        console.warn('Image load failed:', err);
+        reject(new PDFError(
+          'No se pudo cargar la imagen. Verifique que la imagen esté en un formato válido.',
+          PDFErrorType.IMAGE_LOAD_ERROR
+        ));
       };
       
-      img.src = imageDataUrl;
+      try {
+        img.src = imageDataUrl;
+      } catch (error) {
+        clearTimeout(timeout);
+        reject(new PDFError(
+          'Error al procesar la imagen. El formato puede no ser compatible.',
+          PDFErrorType.IMAGE_LOAD_ERROR
+        ));
+      }
     });
   }
 
@@ -96,9 +166,31 @@ class PDFService {
       doc.addImage(base64Data, 'JPEG', x, y, width, height)
     } catch (error) {
       console.error('Error adding image to PDF:', error);
-      // Fallback to original method if optimization fails
-      const base64Data = imageDataUrl.split(',')[1]
-      doc.addImage(base64Data, 'JPEG', x, y, width, height)
+      
+      // Try with original image as fallback
+      if (!(error instanceof PDFError && error.type === PDFErrorType.CANVAS_SECURITY_ERROR)) {
+        try {
+          // Fallback to original method if optimization fails
+          const base64Data = imageDataUrl.split(',')[1]
+          doc.addImage(base64Data, 'JPEG', x, y, width, height)
+        } catch (fallbackError) {
+          console.error('Fallback image addition also failed:', fallbackError);
+          // Create a placeholder with error message instead of failing completely
+          doc.setFillColor(240, 240, 240);
+          doc.rect(x, y, width, height, 'F');
+          doc.setTextColor(200, 0, 0);
+          doc.setFontSize(8);
+          doc.text('Error: Imagen no disponible', x + width/2, y + height/2, {align: 'center'});
+        }
+      } else {
+        // For security errors, we need to show a placeholder
+        doc.setFillColor(240, 240, 240);
+        doc.rect(x, y, width, height, 'F');
+        doc.setTextColor(200, 0, 0);
+        doc.setFontSize(8);
+        doc.text('Error CORS: Imagen restringida', x + width/2, y + height/2, {align: 'center'});
+        throw error; // Re-throw to handle at higher level
+      }
     }
   }
 
@@ -384,65 +476,115 @@ class PDFService {
   }
 
   public async generatePDF(templateData: TemplateState): Promise<Blob> {
+    let doc: jsPDF | null = null;
+    
     try {
-      const doc = this.createNewPDF()
-      const { cdsPerPage: rawCdsPerPage, albumTitle, artistName } = templateData
+      // Check if we have enough memory (rough estimate)
+      const roughImageSizeEstimate = Object.values(templateData.images)
+        .reduce((size, img) => {
+          // Handle different types of image objects in the template
+          if (typeof img === 'object' && img !== null) {
+            if ('croppedImage' in img && img.croppedImage) {
+              // Handle direct ImageSection objects
+              return size + (img.croppedImage.length * 0.75); // base64 is ~33% larger than binary
+            } else if ('main' in img || 'side' in img) {
+              // Handle nested structure for trailer sections
+              let nestedSize = 0;
+              
+              // Check main property
+              if ('main' in img && img.main && 'croppedImage' in img.main && img.main.croppedImage) {
+                nestedSize += img.main.croppedImage.length * 0.75;
+              }
+              
+              // Check side property
+              if ('side' in img && img.side && 'croppedImage' in img.side && img.side.croppedImage) {
+                nestedSize += img.side.croppedImage.length * 0.75;
+              }
+              
+              return size + nestedSize;
+            }
+          }
+          return size;
+        }, 0);
+      
+      // If rough estimate exceeds threshold, warn about potential issues
+      if (roughImageSizeEstimate > MAX_PDF_SIZE) {
+        console.warn('Warning: PDF may exceed size limits, could cause performance issues');
+      }
+      
+      doc = this.createNewPDF();
+      const { cdsPerPage: rawCdsPerPage, albumTitle, artistName } = templateData;
       
       // Ensure cdsPerPage is only 1 or 2
-      const cdsPerPage = rawCdsPerPage > 2 ? 2 : rawCdsPerPage
+      const cdsPerPage = rawCdsPerPage > 2 ? 2 : rawCdsPerPage;
       
       // Get page dimensions and calculate margins
-      const pageWidth = DIMENSIONS.US_LETTER.width
-      const pageHeight = DIMENSIONS.US_LETTER.height
-      const margin = DIMENSIONS.PAGE_MARGIN
+      const pageWidth = DIMENSIONS.US_LETTER.width;
+      const pageHeight = DIMENSIONS.US_LETTER.height;
+      const margin = DIMENSIONS.PAGE_MARGIN;
       
       // Calculate available area
-      const availWidth = pageWidth - 2 * margin
-      const availHeight = pageHeight - 2 * margin
+      const availWidth = pageWidth - 2 * margin;
+      const availHeight = pageHeight - 2 * margin;
       
       // HEADER
-      const headerHeight = this.drawHeader(doc, margin, margin, availWidth, albumTitle, artistName)
+      const headerHeight = this.drawHeader(doc, margin, margin, availWidth, albumTitle, artistName);
       
       // FOOTER
-      const footerHeight = this.drawFooter(doc, margin, pageHeight - margin - 8, availWidth)
+      const footerHeight = this.drawFooter(doc, margin, pageHeight - margin - 8, availWidth);
       
       // Calculate available area for CD blocks
-      const blocksAreaHeight = availHeight - headerHeight - footerHeight
+      const blocksAreaHeight = availHeight - headerHeight - footerHeight;
       
       // Calculate block dimensions
-      const blockHeight = blocksAreaHeight / (cdsPerPage === 1 ? 1 : 2)
-      const blockPadding = 10 // padding between blocks
+      const blockHeight = blocksAreaHeight / (cdsPerPage === 1 ? 1 : 2);
+      const blockPadding = 10; // padding between blocks
       
-      if (cdsPerPage === 1) {
-        // Draw single CD block centered
-        await this.drawCDBlock(
-          doc,
-          templateData,
-          margin,
-          margin + headerHeight + blockPadding,
-          availWidth,
-          blockHeight - blockPadding * 2
-        )
-      } else {
-        // Draw first CD block
-        await this.drawCDBlock(
-          doc, 
-          templateData,
-          margin, 
-          margin + headerHeight + blockPadding / 2,
-          availWidth,
-          blockHeight - blockPadding
-        )
+      try {
+        if (cdsPerPage === 1) {
+          // Draw single CD block centered
+          await this.drawCDBlock(
+            doc,
+            templateData,
+            margin,
+            margin + headerHeight + blockPadding,
+            availWidth,
+            blockHeight - blockPadding * 2
+          );
+        } else {
+          // Draw first CD block
+          await this.drawCDBlock(
+            doc, 
+            templateData,
+            margin, 
+            margin + headerHeight + blockPadding / 2,
+            availWidth,
+            blockHeight - blockPadding
+          );
+          
+          // Draw second CD block (identical to first)
+          await this.drawCDBlock(
+            doc,
+            templateData,
+            margin,
+            margin + headerHeight + blockHeight,
+            availWidth,
+            blockHeight - blockPadding
+          );
+        }
+      } catch (blockError) {
+        console.error('Error drawing CD blocks:', blockError);
         
-        // Draw second CD block (identical to first)
-        await this.drawCDBlock(
-          doc,
-          templateData,
-          margin,
-          margin + headerHeight + blockHeight,
-          availWidth,
-          blockHeight - blockPadding
-        )
+        // Add error explanation to PDF instead of failing completely
+        doc.setTextColor(200, 0, 0);
+        doc.setFontSize(12);
+        doc.text('Hubo un problema al generar algunas partes del PDF.', margin + availWidth/2, margin + headerHeight + 40, {align: 'center'});
+        doc.setFontSize(10);
+        doc.text('Por favor, verifica tus imágenes e intenta nuevamente.', margin + availWidth/2, margin + headerHeight + 50, {align: 'center'});
+        
+        if (blockError instanceof PDFError) {
+          doc.text(`Error específico: ${blockError.message}`, margin + availWidth/2, margin + headerHeight + 60, {align: 'center'});
+        }
       }
       
       // Set PDF metadata for better identification
@@ -454,11 +596,79 @@ class PDFService {
         creator: 'Mini CD World Generator'
       });
       
-      // Return the generated PDF as a blob
-      return doc.output('blob')
+      try {
+        // Return the generated PDF as a blob
+        const pdfBlob = doc.output('blob');
+        
+        // Check blob size limits
+        if (pdfBlob.size > MAX_PDF_SIZE) {
+          console.warn(`PDF size (${pdfBlob.size} bytes) exceeds recommended limit of ${MAX_PDF_SIZE} bytes`);
+          // We still return it but log warning for potential issues
+        }
+        
+        return pdfBlob;
+      } catch (outputError) {
+        console.error('Error creating PDF blob:', outputError);
+        throw new PDFError(
+          'Error al generar el archivo PDF. El archivo puede ser demasiado grande.',
+          PDFErrorType.PDF_SIZE_LIMIT_ERROR
+        );
+      }
     } catch (error) {
       console.error('Error in PDF generation:', error);
-      throw new Error('Failed to generate PDF. Please try again.');
+      
+      // Create a minimal error PDF if possible
+      if (doc) {
+        try {
+          // Try to generate a simple error PDF
+          doc.deletePage(1);
+          doc.addPage();
+          doc.setTextColor(200, 0, 0);
+          doc.setFontSize(16);
+          doc.text('Error al generar el PDF', 105, 50, {align: 'center'});
+          doc.setFontSize(12);
+          
+          let errorMessage = 'Ocurrió un error inesperado.';
+          let errorType = PDFErrorType.UNKNOWN_ERROR;
+          
+          if (error instanceof PDFError) {
+            errorMessage = error.message;
+            errorType = error.type;
+          } else if (error instanceof Error) {
+            errorMessage = `Error: ${error.message}`;
+          }
+          
+          doc.text(errorMessage, 105, 70, {align: 'center'});
+          doc.setFontSize(10);
+          doc.text('Por favor, intente nuevamente o contacte a soporte.', 105, 85, {align: 'center'});
+          
+          return doc.output('blob');
+        } catch (fallbackError) {
+          console.error('Error creating fallback error PDF:', fallbackError);
+        }
+      }
+      
+      // If everything fails, propagate the error
+      if (error instanceof PDFError) {
+        throw error;
+      } else if (error instanceof Error) {
+        // Memory error detection based on error message patterns
+        if (error.message.includes('out of memory') || 
+            error.message.includes('allocation failed') ||
+            error.message.includes('heap') ||
+            error.message.toLowerCase().includes('memory')) {
+          throw new PDFError(
+            'No hay suficiente memoria para generar el PDF. Intente con menos imágenes o imágenes más pequeñas.',
+            PDFErrorType.MEMORY_ERROR
+          );
+        }
+        throw new PDFError(error.message, PDFErrorType.UNKNOWN_ERROR);
+      }
+      
+      throw new PDFError(
+        'Error desconocido al generar el PDF. Por favor, intente de nuevo.',
+        PDFErrorType.UNKNOWN_ERROR
+      );
     }
   }
 }
