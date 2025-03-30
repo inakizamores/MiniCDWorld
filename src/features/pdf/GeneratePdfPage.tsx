@@ -6,13 +6,29 @@ import {
   prevStep,
   resetTemplate
 } from '@features/template/templateSlice'
-import PDFService, { PDFError, PDFErrorType } from '@services/pdfService'
-import { FaFilePdf, FaSpinner, FaArrowLeft, FaCheckCircle, FaRedo, FaDownload, FaPrint, FaInfoCircle, FaShoppingCart, FaExclamationTriangle } from 'react-icons/fa'
+import PDFService, { PDFError, PDFErrorType, PDFGenerationStage, ProgressCallback } from '@services/pdfService'
+import { 
+  FaFilePdf, 
+  FaSpinner, 
+  FaArrowLeft, 
+  FaCheckCircle, 
+  FaRedo, 
+  FaDownload, 
+  FaPrint, 
+  FaInfoCircle, 
+  FaShoppingCart, 
+  FaExclamationTriangle, 
+  FaCog,
+  FaSync,
+  FaImage,
+  FaMemory
+} from 'react-icons/fa'
 
 // Add declaration for IE-specific msSaveOrOpenBlob
 declare global {
   interface Navigator {
     msSaveOrOpenBlob?: (blob: Blob, defaultName?: string) => boolean;
+    deviceMemory?: number;
   }
 }
 
@@ -28,6 +44,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => {
   let message = 'Hubo un error al generar tu PDF. Por favor, intenta de nuevo.';
   let helpText = '';
   let isWarning = false;
+  let icon = <FaInfoCircle className="text-red-500 mr-3 mt-1 flex-shrink-0 text-xl" />;
 
   // Determine specific error messages based on error type
   if (error instanceof PDFError) {
@@ -36,12 +53,14 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => {
         title = 'Error al Cargar Imágenes';
         message = 'No se pudieron cargar una o más imágenes para el PDF.';
         helpText = 'Verifica que tus imágenes estén en un formato compatible (JPG, PNG) y no sean demasiado grandes.';
+        icon = <FaImage className="text-red-500 mr-3 mt-1 flex-shrink-0 text-xl" />;
         break;
       
       case PDFErrorType.IMAGE_PROCESS_ERROR:
         title = 'Error al Procesar Imágenes';
         message = 'Hubo un problema al procesar una o más imágenes para el PDF.';
         helpText = 'Intenta con imágenes de menor resolución o en un formato diferente.';
+        icon = <FaImage className="text-red-500 mr-3 mt-1 flex-shrink-0 text-xl" />;
         break;
       
       case PDFErrorType.CANVAS_SECURITY_ERROR:
@@ -61,12 +80,33 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => {
         title = 'Error al Generar PDF';
         message = 'No se pudo inicializar el generador de PDF.';
         helpText = 'Intenta recargar la página o usar un navegador diferente.';
+        icon = <FaCog className="text-red-500 mr-3 mt-1 flex-shrink-0 text-xl" />;
         break;
       
       case PDFErrorType.MEMORY_ERROR:
         title = 'Memoria Insuficiente';
         message = 'Tu dispositivo no tiene suficiente memoria para generar el PDF.';
         helpText = 'Intenta cerrar otras aplicaciones o pestañas, usar imágenes más pequeñas, o reducir la cantidad de CDs por página.';
+        icon = <FaMemory className="text-red-500 mr-3 mt-1 flex-shrink-0 text-xl" />;
+        break;
+        
+      case PDFErrorType.NETWORK_ERROR:
+        title = 'Error de Conexión';
+        message = 'No hay conexión a internet.';
+        helpText = 'Verifica tu conexión a internet e intenta nuevamente.';
+        break;
+        
+      case PDFErrorType.DEVICE_CAPABILITY_ERROR:
+        title = 'Dispositivo No Compatible';
+        message = 'Tu dispositivo o navegador puede no ser compatible con la generación de PDF.';
+        helpText = 'Intenta usar un navegador más reciente o un dispositivo diferente.';
+        break;
+        
+      case PDFErrorType.WORKER_ERROR:
+        title = 'Error en Procesamiento';
+        message = 'Hubo un problema con el procesamiento en segundo plano.';
+        helpText = 'Intenta recargar la página o usar un navegador diferente.';
+        icon = <FaSync className="text-red-500 mr-3 mt-1 flex-shrink-0 text-xl" />;
         break;
       
       default:
@@ -79,10 +119,10 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => {
   }
 
   return (
-    <div className={`${isWarning ? 'bg-yellow-50 border-yellow-200 text-yellow-800' : 'bg-red-50 border-red-200 text-red-600'} p-4 rounded-lg mb-6 flex items-start`}>
+    <div className={`${isWarning ? 'bg-yellow-50 border-yellow-200 text-yellow-800' : 'bg-red-50 border-red-200 text-red-600'} p-4 rounded-lg mb-6 flex items-start border`}>
       {isWarning ? 
-        <FaExclamationTriangle className="text-yellow-500 mr-3 mt-1 flex-shrink-0" /> : 
-        <FaInfoCircle className="text-red-500 mr-3 mt-1 flex-shrink-0" />
+        <FaExclamationTriangle className="text-yellow-500 mr-3 mt-1 flex-shrink-0 text-xl" /> : 
+        icon
       }
       <div className="flex-1">
         <p className="font-medium">{title}</p>
@@ -99,6 +139,85 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error, onRetry }) => {
   );
 };
 
+// Progress bar component
+interface ProgressBarProps {
+  progress: number;
+  stage: PDFGenerationStage;
+  isComplete: boolean;
+}
+
+const ProgressBar: React.FC<ProgressBarProps> = ({ progress, stage, isComplete }) => {
+  // Get human-readable stage name
+  const getStageName = (stage: PDFGenerationStage): string => {
+    switch (stage) {
+      case PDFGenerationStage.INITIALIZING:
+        return 'Inicializando';
+      case PDFGenerationStage.ANALYZING_IMAGES:
+        return 'Analizando imágenes';
+      case PDFGenerationStage.OPTIMIZING_IMAGES:
+        return 'Optimizando imágenes';
+      case PDFGenerationStage.CREATING_PDF:
+        return 'Creando PDF';
+      case PDFGenerationStage.DRAWING_HEADER:
+        return 'Dibujando encabezado';
+      case PDFGenerationStage.DRAWING_FRONT_COVERS:
+        return 'Procesando portadas';
+      case PDFGenerationStage.DRAWING_DISC:
+        return 'Procesando disco';
+      case PDFGenerationStage.DRAWING_BACK_COVERS:
+        return 'Procesando contraportadas';
+      case PDFGenerationStage.DRAWING_FOOTER:
+        return 'Finalizando PDF';
+      case PDFGenerationStage.FINALIZING:
+        return 'Finalizando';
+      case PDFGenerationStage.COMPLETE:
+        return 'Completado';
+      case PDFGenerationStage.ERROR:
+        return 'Error';
+      default:
+        return 'Procesando';
+    }
+  };
+  
+  // Get progress bar color based on stage
+  const getStageColor = (stage: PDFGenerationStage): string => {
+    if (stage === PDFGenerationStage.ERROR) {
+      return 'bg-red-500';
+    }
+    if (stage === PDFGenerationStage.COMPLETE) {
+      return 'bg-green-500';
+    }
+    return 'bg-primary-500';
+  };
+  
+  // Get spinner or check icon
+  const getIcon = () => {
+    if (isComplete) {
+      return <FaCheckCircle className="text-green-500 mr-2" />;
+    }
+    if (stage === PDFGenerationStage.ERROR) {
+      return <FaExclamationTriangle className="text-red-500 mr-2" />;
+    }
+    return <FaSpinner className="animate-spin mr-2 text-primary-500" />;
+  };
+  
+  return (
+    <div className="mt-4 mb-6">
+      <div className="flex items-center mb-1">
+        {getIcon()}
+        <span className="text-sm font-medium">{getStageName(stage)}</span>
+        <span className="ml-auto text-xs text-gray-500">{Math.round(progress * 100)}%</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+        <div 
+          className={`h-2.5 rounded-full ${getStageColor(stage)} transition-all duration-300 ease-in-out`} 
+          style={{ width: `${Math.max(2, Math.round(progress * 100))}%` }}
+        ></div>
+      </div>
+    </div>
+  );
+};
+
 const GeneratePdfPage: React.FC = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -109,6 +228,9 @@ const GeneratePdfPage: React.FC = () => {
   const [error, setError] = useState<Error | null>(null)
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null)
   const [downloadAttempts, setDownloadAttempts] = useState(0)
+  const [progress, setProgress] = useState(0)
+  const [generationStage, setGenerationStage] = useState<PDFGenerationStage>(PDFGenerationStage.INITIALIZING)
+  const [stageDetail, setStageDetail] = useState<string>('')
   
   // Clean up object URL when component unmounts
   useEffect(() => {
@@ -119,10 +241,29 @@ const GeneratePdfPage: React.FC = () => {
     }
   }, [pdfUrl])
   
+  // Register service worker when component mounts
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/pdf-sw.js').catch(error => {
+          console.error('Service Worker registration failed:', error);
+        });
+      });
+    }
+  }, []);
+  
   const handleBack = () => {
     dispatch(prevStep())
     navigate('/preview')
   }
+  
+  const progressCallback: ProgressCallback = (progressValue, stage, detail) => {
+    setProgress(progressValue);
+    setGenerationStage(stage);
+    if (detail) {
+      setStageDetail(detail);
+    }
+  };
   
   const handleGeneratePdf = async () => {
     try {
@@ -130,17 +271,32 @@ const GeneratePdfPage: React.FC = () => {
       setError(null)
       setPdfUrl(null)
       setPdfBlob(null)
+      setProgress(0)
+      setGenerationStage(PDFGenerationStage.INITIALIZING)
+      setStageDetail('')
       
-      // Generate the PDF
-      const blob = await PDFService.generatePDF(templateData)
+      // Generate the PDF with progress tracking
+      const blob = await PDFService.generatePDF(templateData, progressCallback)
       setPdfBlob(blob)
       
       // Create a URL for the blob
       const url = URL.createObjectURL(blob)
       setPdfUrl(url)
+      
+      // Automatically trigger download on mobile devices
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+      if (isMobile && url) {
+        setTimeout(() => {
+          window.open(url, '_blank');
+        }, 1000);
+      }
     } catch (err) {
       console.error('Error generating PDF:', err)
       setError(err instanceof Error ? err : new Error('Error desconocido al generar el PDF'))
+      
+      // Update progress to error state
+      setProgress(1)
+      setGenerationStage(PDFGenerationStage.ERROR)
     } finally {
       setIsGenerating(false)
     }
@@ -287,6 +443,14 @@ const GeneratePdfPage: React.FC = () => {
             </button>
           )}
         </div>
+        
+        {isGenerating && (
+          <ProgressBar 
+            progress={progress} 
+            stage={generationStage} 
+            isComplete={pdfUrl !== null}
+          />
+        )}
         
         {error && <ErrorMessage error={error} onRetry={handleGeneratePdf} />}
         
