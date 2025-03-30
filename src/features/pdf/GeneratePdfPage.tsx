@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { 
@@ -17,6 +17,16 @@ const GeneratePdfPage: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [pdfBlob, setPdfBlob] = useState<Blob | null>(null)
+  
+  // Clean up object URL when component unmounts
+  useEffect(() => {
+    return () => {
+      if (pdfUrl) {
+        URL.revokeObjectURL(pdfUrl)
+      }
+    }
+  }, [pdfUrl])
   
   const handleBack = () => {
     dispatch(prevStep())
@@ -29,10 +39,11 @@ const GeneratePdfPage: React.FC = () => {
       setError(null)
       
       // Generate the PDF
-      const pdfBlob = await PDFService.generatePDF(templateData)
+      const blob = await PDFService.generatePDF(templateData)
+      setPdfBlob(blob)
       
       // Create a URL for the blob
-      const url = URL.createObjectURL(pdfBlob)
+      const url = URL.createObjectURL(blob)
       setPdfUrl(url)
     } catch (err) {
       console.error('Error generating PDF:', err)
@@ -40,6 +51,42 @@ const GeneratePdfPage: React.FC = () => {
     } finally {
       setIsGenerating(false)
     }
+  }
+  
+  const handleDownloadPdf = () => {
+    if (!pdfUrl || !pdfBlob) return
+    
+    const downloadFileName = templateData.albumTitle
+      ? `${templateData.albumTitle.replace(/[^a-zA-Z0-9]/gi, '_')}_MiniCDWorld_Plantilla.pdf`
+      : 'MiniCDWorld_Plantilla.pdf'
+    
+    // Special handling for IE11
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+      window.navigator.msSaveOrOpenBlob(pdfBlob, downloadFileName)
+      return
+    }
+    
+    // For iOS Safari and other mobile browsers that have issues with direct download
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    
+    if (isMobile) {
+      // Open PDF in new tab for mobile devices
+      window.open(pdfUrl, '_blank')
+      return
+    }
+    
+    // Standard download for modern browsers
+    const link = document.createElement('a')
+    link.href = pdfUrl
+    link.download = downloadFileName
+    link.target = '_blank'
+    document.body.appendChild(link)
+    link.click()
+    
+    // Clean up
+    setTimeout(() => {
+      document.body.removeChild(link)
+    }, 100)
   }
   
   const handleStartOver = () => {
@@ -119,13 +166,12 @@ const GeneratePdfPage: React.FC = () => {
               )}
             </button>
           ) : (
-            <a
-              href={pdfUrl}
-              download={downloadFileName}
+            <button
+              onClick={handleDownloadPdf}
               className="btn btn-primary flex items-center mt-4 md:mt-0 px-6 py-3 bg-green-600 hover:bg-green-700"
             >
               <FaDownload className="mr-2" /> Descargar PDF
-            </a>
+            </button>
           )}
         </div>
         

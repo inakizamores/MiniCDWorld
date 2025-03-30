@@ -9,6 +9,9 @@ declare module 'jspdf' {
   }
 }
 
+// Maximum image size in pixels (width or height) for optimizing file size
+const MAX_IMAGE_DIMENSION = 1200;
+
 class PDFService {
   private createNewPDF() {
     // Create a new PDF with US Letter dimensions
@@ -16,10 +19,65 @@ class PDFService {
       orientation: 'portrait',
       unit: 'mm',
       format: 'letter',
+      compress: true // Enable compression for smaller file size
     })
   }
 
-  private drawImage(
+  // Helper function to resize images to optimize PDF size
+  private optimizeImage(imageDataUrl: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      // Create an image to get dimensions
+      const img = new Image();
+      img.onload = () => {
+        // If image is small enough, return original
+        if (img.width <= MAX_IMAGE_DIMENSION && img.height <= MAX_IMAGE_DIMENSION) {
+          resolve(imageDataUrl);
+          return;
+        }
+
+        // Calculate new dimensions while maintaining aspect ratio
+        let newWidth = img.width;
+        let newHeight = img.height;
+        
+        if (img.width > img.height && img.width > MAX_IMAGE_DIMENSION) {
+          newWidth = MAX_IMAGE_DIMENSION;
+          newHeight = (img.height * MAX_IMAGE_DIMENSION) / img.width;
+        } else if (img.height > MAX_IMAGE_DIMENSION) {
+          newHeight = MAX_IMAGE_DIMENSION;
+          newWidth = (img.width * MAX_IMAGE_DIMENSION) / img.height;
+        }
+
+        // Create canvas for resizing
+        const canvas = document.createElement('canvas');
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+        
+        // Draw and resize image on canvas
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(imageDataUrl); // Fallback to original if canvas context fails
+          return;
+        }
+        
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+        
+        // Get optimized image data
+        // Use lower quality for JPEG compression (0.8 = 80% quality)
+        const optimizedImage = canvas.toDataURL('image/jpeg', 0.8);
+        resolve(optimizedImage);
+      };
+      
+      img.onerror = () => {
+        // If optimization fails, resolve with original image
+        console.warn('Image optimization failed, using original image');
+        resolve(imageDataUrl);
+      };
+      
+      img.src = imageDataUrl;
+    });
+  }
+
+  private async drawImage(
     doc: jsPDF,
     imageDataUrl: string,
     x: number,
@@ -29,9 +87,19 @@ class PDFService {
   ) {
     if (!imageDataUrl) return
 
-    // jsPDF expects base64 data without the data URL prefix
-    const base64Data = imageDataUrl.split(',')[1]
-    doc.addImage(base64Data, 'JPEG', x, y, width, height)
+    try {
+      // Optimize image before adding to PDF
+      const optimizedImage = await this.optimizeImage(imageDataUrl);
+      
+      // jsPDF expects base64 data without the data URL prefix
+      const base64Data = optimizedImage.split(',')[1]
+      doc.addImage(base64Data, 'JPEG', x, y, width, height)
+    } catch (error) {
+      console.error('Error adding image to PDF:', error);
+      // Fallback to original method if optimization fails
+      const base64Data = imageDataUrl.split(',')[1]
+      doc.addImage(base64Data, 'JPEG', x, y, width, height)
+    }
   }
 
   private drawCircle(
@@ -51,7 +119,7 @@ class PDFService {
     }
   }
 
-  private drawCircularImage(
+  private async drawCircularImage(
     doc: jsPDF,
     imageDataUrl: string,
     centerX: number,
@@ -62,7 +130,7 @@ class PDFService {
     if (!imageDataUrl) return
     
     // First add the circular image
-    this.drawImage(
+    await this.drawImage(
       doc, 
       imageDataUrl, 
       centerX - diameter / 2, 
@@ -168,7 +236,7 @@ class PDFService {
     return footerHeight
   }
   
-  private drawCDBlock(
+  private async drawCDBlock(
     doc: jsPDF,
     templateData: TemplateState,
     x: number,
@@ -206,7 +274,7 @@ class PDFService {
     // Draw crop outlines for front covers
     if (images.frenteAfuera?.croppedImage) {
       this.drawRect(doc, frontCoverX, currentY, DIMENSIONS.FRENTE_AFUERA.width, DIMENSIONS.FRENTE_AFUERA.height, true)
-      this.drawImage(
+      await this.drawImage(
         doc,
         images.frenteAfuera.croppedImage,
         frontCoverX,
@@ -218,7 +286,7 @@ class PDFService {
     
     if (images.frenteDentro?.croppedImage) {
       this.drawRect(doc, frontCoverX + DIMENSIONS.FRENTE_AFUERA.width, currentY, DIMENSIONS.FRENTE_DENTRO.width, DIMENSIONS.FRENTE_DENTRO.height, true)
-      this.drawImage(
+      await this.drawImage(
         doc,
         images.frenteDentro.croppedImage,
         frontCoverX + DIMENSIONS.FRENTE_AFUERA.width,
@@ -239,7 +307,7 @@ class PDFService {
       const discCenterX = discSectionX + discSectionWidth / 2
       const discCenterY = currentY + DIMENSIONS.DISCO.diameter / 2 + 4
       
-      this.drawCircularImage(
+      await this.drawCircularImage(
         doc,
         images.disco.croppedImage,
         discCenterX,
@@ -265,7 +333,7 @@ class PDFService {
     // Back Outside (Main + Side) with crop outlines
     if (images.traseraAfuera.main?.croppedImage) {
       this.drawRect(doc, backCoverX, currentY, DIMENSIONS.TRASERA_AFUERA.main.width, DIMENSIONS.TRASERA_AFUERA.main.height, true)
-      this.drawImage(
+      await this.drawImage(
         doc,
         images.traseraAfuera.main.croppedImage,
         backCoverX,
@@ -277,7 +345,7 @@ class PDFService {
     
     if (images.traseraAfuera.side?.croppedImage) {
       this.drawRect(doc, backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width, currentY, DIMENSIONS.TRASERA_AFUERA.side.width, DIMENSIONS.TRASERA_AFUERA.side.height, true)
-      this.drawImage(
+      await this.drawImage(
         doc,
         images.traseraAfuera.side.croppedImage,
         backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width,
@@ -291,7 +359,7 @@ class PDFService {
     if (images.traseraDentro.side?.croppedImage) {
       this.drawRect(doc, backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width, currentY, 
         DIMENSIONS.TRASERA_DENTRO.side.width, DIMENSIONS.TRASERA_DENTRO.side.height, true)
-      this.drawImage(
+      await this.drawImage(
         doc,
         images.traseraDentro.side.croppedImage,
         backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width,
@@ -304,7 +372,7 @@ class PDFService {
     if (images.traseraDentro.main?.croppedImage) {
       this.drawRect(doc, backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width + DIMENSIONS.TRASERA_DENTRO.side.width, 
         currentY, DIMENSIONS.TRASERA_DENTRO.main.width, DIMENSIONS.TRASERA_DENTRO.main.height, true)
-      this.drawImage(
+      await this.drawImage(
         doc,
         images.traseraDentro.main.croppedImage,
         backCoverX + DIMENSIONS.TRASERA_AFUERA.main.width + DIMENSIONS.TRASERA_AFUERA.side.width + DIMENSIONS.TRASERA_DENTRO.side.width,
@@ -316,68 +384,82 @@ class PDFService {
   }
 
   public async generatePDF(templateData: TemplateState): Promise<Blob> {
-    const doc = this.createNewPDF()
-    const { cdsPerPage: rawCdsPerPage, albumTitle, artistName } = templateData
-    
-    // Ensure cdsPerPage is only 1 or 2
-    const cdsPerPage = rawCdsPerPage > 2 ? 2 : rawCdsPerPage
-    
-    // Get page dimensions and calculate margins
-    const pageWidth = DIMENSIONS.US_LETTER.width
-    const pageHeight = DIMENSIONS.US_LETTER.height
-    const margin = DIMENSIONS.PAGE_MARGIN
-    
-    // Calculate available area
-    const availWidth = pageWidth - 2 * margin
-    const availHeight = pageHeight - 2 * margin
-    
-    // HEADER
-    const headerHeight = this.drawHeader(doc, margin, margin, availWidth, albumTitle, artistName)
-    
-    // FOOTER
-    const footerHeight = this.drawFooter(doc, margin, pageHeight - margin - 8, availWidth)
-    
-    // Calculate available area for CD blocks
-    const blocksAreaHeight = availHeight - headerHeight - footerHeight
-    
-    // Calculate block dimensions
-    const blockHeight = blocksAreaHeight / (cdsPerPage === 1 ? 1 : 2)
-    const blockPadding = 10 // padding between blocks
-    
-    if (cdsPerPage === 1) {
-      // Draw single CD block centered
-      this.drawCDBlock(
-        doc,
-        templateData,
-        margin,
-        margin + headerHeight + blockPadding,
-        availWidth,
-        blockHeight - blockPadding * 2
-      )
-    } else {
-      // Draw first CD block
-      this.drawCDBlock(
-        doc, 
-        templateData,
-        margin, 
-        margin + headerHeight + blockPadding / 2,
-        availWidth,
-        blockHeight - blockPadding
-      )
+    try {
+      const doc = this.createNewPDF()
+      const { cdsPerPage: rawCdsPerPage, albumTitle, artistName } = templateData
       
-      // Draw second CD block (identical to first)
-      this.drawCDBlock(
-        doc,
-        templateData,
-        margin,
-        margin + headerHeight + blockHeight,
-        availWidth,
-        blockHeight - blockPadding
-      )
+      // Ensure cdsPerPage is only 1 or 2
+      const cdsPerPage = rawCdsPerPage > 2 ? 2 : rawCdsPerPage
+      
+      // Get page dimensions and calculate margins
+      const pageWidth = DIMENSIONS.US_LETTER.width
+      const pageHeight = DIMENSIONS.US_LETTER.height
+      const margin = DIMENSIONS.PAGE_MARGIN
+      
+      // Calculate available area
+      const availWidth = pageWidth - 2 * margin
+      const availHeight = pageHeight - 2 * margin
+      
+      // HEADER
+      const headerHeight = this.drawHeader(doc, margin, margin, availWidth, albumTitle, artistName)
+      
+      // FOOTER
+      const footerHeight = this.drawFooter(doc, margin, pageHeight - margin - 8, availWidth)
+      
+      // Calculate available area for CD blocks
+      const blocksAreaHeight = availHeight - headerHeight - footerHeight
+      
+      // Calculate block dimensions
+      const blockHeight = blocksAreaHeight / (cdsPerPage === 1 ? 1 : 2)
+      const blockPadding = 10 // padding between blocks
+      
+      if (cdsPerPage === 1) {
+        // Draw single CD block centered
+        await this.drawCDBlock(
+          doc,
+          templateData,
+          margin,
+          margin + headerHeight + blockPadding,
+          availWidth,
+          blockHeight - blockPadding * 2
+        )
+      } else {
+        // Draw first CD block
+        await this.drawCDBlock(
+          doc, 
+          templateData,
+          margin, 
+          margin + headerHeight + blockPadding / 2,
+          availWidth,
+          blockHeight - blockPadding
+        )
+        
+        // Draw second CD block (identical to first)
+        await this.drawCDBlock(
+          doc,
+          templateData,
+          margin,
+          margin + headerHeight + blockHeight,
+          availWidth,
+          blockHeight - blockPadding
+        )
+      }
+      
+      // Set PDF metadata for better identification
+      doc.setProperties({
+        title: `${albumTitle || 'Mini CD World'} - Plantilla`,
+        subject: 'Mini CD World Template',
+        author: 'Mini CD World',
+        keywords: 'mini, cd, template, plantilla',
+        creator: 'Mini CD World Generator'
+      });
+      
+      // Return the generated PDF as a blob
+      return doc.output('blob')
+    } catch (error) {
+      console.error('Error in PDF generation:', error);
+      throw new Error('Failed to generate PDF. Please try again.');
     }
-    
-    // Return the generated PDF as a blob
-    return doc.output('blob')
   }
 }
 
