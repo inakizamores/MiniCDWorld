@@ -2,7 +2,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaDownload, FaBan } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
-import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS, isInStock } from '../../constants/productLinks'
+import { PACK_5_LLAVEROS_NFC, PACK_5_LLAVEROS_NFC_ENVIO_FULL, PACK_25_LLAVEROS_NFC, PACK_50_LLAVEROS_NFC, isInStock } from '../../constants/productLinks'
 import { useState, useEffect } from 'react'
 
 const HomePage = () => {
@@ -311,7 +311,7 @@ const HomePage = () => {
               <Link 
                 to={PACK_5_LLAVEROS_NFC}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener noreferrer" 
                 className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
               >
                 <div className="bg-primary-600 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
@@ -322,7 +322,7 @@ const HomePage = () => {
                   <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <FaShoppingCart className="text-2xl text-primary-500" />
                   </div>
-                  <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros NFC En Blanco</h3>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros NFC En Blanco Envío Full</h3>
                   <p className="text-secondary-600 text-center mb-4 flex-grow">
                     Llaveros Mini CD con tecnología NFC. Vincula digitalmente a tu música.
                   </p>
@@ -344,7 +344,7 @@ const HomePage = () => {
                   </div>
                   <h3 className="text-lg font-bold text-center mb-2">Pack 5 Llaveros NFC En Blanco</h3>
                   <p className="text-secondary-600 text-center mb-4 flex-grow">
-                    Llaveros Mini CD con tecnología NFC. Vincula digitalmente a tu música.
+                    Llaveros Mini CD en formato en blanco. Perfectos para personalización.
                   </p>
                   <div className="bg-gray-200 text-gray-600 px-4 py-2 rounded flex items-center justify-center mt-auto font-medium">
                     Agotado
@@ -360,10 +360,10 @@ const HomePage = () => {
               </div>
             )}
             
-            {/* Product 3: Pack 25 Llaveros En Blanco */}
-            {isInStock('PACK_25_LLAVEROS') ? (
+            {/* Product 3: Pack 25 Llaveros NFC En Blanco */}
+            {isInStock('PACK_25_LLAVEROS_NFC') ? (
               <Link 
-                to={PACK_25_LLAVEROS}
+                to={PACK_25_LLAVEROS_NFC}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
@@ -376,7 +376,7 @@ const HomePage = () => {
                   <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <FaShoppingCart className="text-2xl text-primary-500" />
                   </div>
-                  <h3 className="text-lg font-bold text-center mb-2">Pack 25 Llaveros En Blanco</h3>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 25 Llaveros NFC En Blanco</h3>
                   <p className="text-secondary-600 text-center mb-4 flex-grow">
                     Pack de 25 llaveros Mini CD en blanco con NFC. Ideal para eventos y promociones.
                   </p>
@@ -414,10 +414,10 @@ const HomePage = () => {
               </div>
             )}
             
-            {/* Product 4: Pack 50 Llaveros En Blanco */}
-            {isInStock('PACK_50_LLAVEROS') ? (
+            {/* Product 4: Pack 50 Llaveros NFC En Blanco */}
+            {isInStock('PACK_50_LLAVEROS_NFC') ? (
               <Link 
-                to={PACK_50_LLAVEROS}
+                to={PACK_50_LLAVEROS_NFC}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
@@ -430,7 +430,7 @@ const HomePage = () => {
                   <div className="bg-primary-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <FaShoppingCart className="text-2xl text-primary-500" />
                   </div>
-                  <h3 className="text-lg font-bold text-center mb-2">Pack 50 Llaveros En Blanco</h3>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 50 Llaveros NFC En Blanco</h3>
                   <p className="text-secondary-600 text-center mb-4 flex-grow">
                     Pack mayorista de 50 llaveros Mini CD en blanco con NFC. El mejor valor para pedidos grandes.
                   </p>
@@ -450,7 +450,7 @@ const HomePage = () => {
                   <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <FaShoppingCart className="text-2xl text-gray-500" />
                   </div>
-                  <h3 className="text-lg font-bold text-center mb-2">Pack 50 Llaveros En Blanco</h3>
+                  <h3 className="text-lg font-bold text-center mb-2">Pack 50 Llaveros NFC En Blanco</h3>
                   <p className="text-secondary-600 text-center mb-4 flex-grow">
                     Pack mayorista de 50 llaveros Mini CD en blanco con NFC. El mejor valor para pedidos grandes.
                   </p>
