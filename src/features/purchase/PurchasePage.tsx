@@ -10,7 +10,7 @@ import {
   FaArrowRight,
   FaBan
 } from 'react-icons/fa';
-import { PACK_5_LLAVEROS_NFC, PACK_5_LLAVEROS_NFC_ENVIO_FULL, PACK_25_LLAVEROS_NFC, PACK_50_LLAVEROS_NFC, isInStock } from '../../constants/productLinks';
+import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS, isInStock } from '../../constants/productLinks';
 import { Link } from 'react-router-dom';
 
 const PurchasePage: React.FC = () => {
@@ -43,7 +43,7 @@ const PurchasePage: React.FC = () => {
   const products = [
     {
       id: 1,
-      title: "Pack 5 Llaveros NFC En Blanco",
+      title: "Pack 5 Llaveros En Blanco",
       description: "Llaveros Mini CD en formato en blanco. Perfectos para personalización.",
       detailedDescription: "Este pack incluye 5 llaveros Mini CD en blanco, listos para ser personalizados con nuestro generador de plantillas. Fabricados con materiales duraderos de alta calidad, estos llaveros tienen el tamaño perfecto para llevar tus diseños favoritos a donde quieras.",
       features: [
@@ -54,15 +54,15 @@ const PurchasePage: React.FC = () => {
         "Compatible con nuestras plantillas"
       ],
       price: "$199 MXN",
-      url: PACK_5_LLAVEROS_NFC,
+      url: PACK_5_LLAVEROS,
       badge: "5 Unidades",
       shipping: "Envío gratis por Mercado Envíos",
-      inStock: isInStock('PACK_5_LLAVEROS_NFC'),
+      inStock: isInStock('PACK_5_LLAVEROS'),
       imageSrc: "/images/products/pack-5-llaveros.jpg"
     },
     {
       id: 2,
-      title: "Pack 5 Llaveros NFC En Blanco Envío Full",
+      title: "Pack 5 Llaveros NFC En Blanco",
       description: "Llaveros Mini CD con tecnología NFC. Vincula digitalmente a tu música.",
       detailedDescription: "Combina lo físico con lo digital con nuestros llaveros Mini CD con chip NFC integrado. Programa fácilmente cada llavero para abrir enlaces web, playlists, perfiles de artistas o cualquier contenido digital cuando los escanean con un smartphone.",
       features: [
@@ -73,10 +73,10 @@ const PurchasePage: React.FC = () => {
         "Incluye guía de programación"
       ],
       price: "$349 MXN",
-      url: PACK_5_LLAVEROS_NFC_ENVIO_FULL,
+      url: PACK_5_LLAVEROS_NFC,
       badge: "5 Unidades + NFC",
       shipping: "Envío gratis por Mercado Envíos",
-      inStock: isInStock('PACK_5_LLAVEROS_NFC_ENVIO_FULL'),
+      inStock: isInStock('PACK_5_LLAVEROS_NFC'),
       imageSrc: "/images/products/pack-5-llaveros-nfc.jpg"
     },
     {
@@ -93,10 +93,10 @@ const PurchasePage: React.FC = () => {
         "Ideal para merchandising interactivo"
       ],
       price: "$799 MXN",
-      url: PACK_25_LLAVEROS_NFC,
+      url: PACK_25_LLAVEROS,
       badge: "25 Unidades + NFC",
       shipping: "Envío gratis por Mercado Envíos",
-      inStock: isInStock('PACK_25_LLAVEROS_NFC'),
+      inStock: isInStock('PACK_25_LLAVEROS'),
       imageSrc: "/images/products/pack-25-llaveros.jpg"
     },
     {
@@ -113,10 +113,10 @@ const PurchasePage: React.FC = () => {
         "Ideal para producciones a gran escala"
       ],
       price: "$1,499 MXN",
-      url: PACK_50_LLAVEROS_NFC,
+      url: PACK_50_LLAVEROS,
       badge: "50 Unidades + NFC",
       shipping: "Envío gratis por Mercado Envíos",
-      inStock: isInStock('PACK_50_LLAVEROS_NFC'),
+      inStock: isInStock('PACK_50_LLAVEROS'),
       imageSrc: "/images/products/pack-50-llaveros.jpg"
     }
   ];
