@@ -4,6 +4,7 @@ import Footer from './Footer'
 import { useSelector } from 'react-redux'
 import { selectTemplateState } from '@features/template/templateSlice'
 import ProgressStepper from '@components/ui/ProgressStepper'
+import MobileAlert from '@components/ui/MobileAlert'
 
 const Layout = () => {
   const { step } = useSelector(selectTemplateState)
@@ -30,6 +31,9 @@ const Layout = () => {
       </main>
       
       <Footer />
+      
+      {/* Alerta móvil */}
+      <MobileAlert />
     </div>
   )
 }
