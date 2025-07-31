@@ -10,7 +10,7 @@ import {
   FaArrowRight,
   FaBan
 } from 'react-icons/fa';
-import { PACK_5_LLAVEROS, PACK_5_LLAVEROS_NFC, PACK_25_LLAVEROS, PACK_50_LLAVEROS, isInStock } from '../../constants/productLinks';
+import { PACK_5_LLAVEROS_NFC, PACK_10_LLAVEROS_NFC, PACK_20_LLAVEROS_NFC, PACK_30_LLAVEROS_NFC, PACK_40_LLAVEROS_NFC, PACK_5_LLAVEROS_NFC_FULL, isInStock } from '../../constants/productLinks';
 import { Link } from 'react-router-dom';
 
 const PurchasePage: React.FC = () => {
@@ -43,26 +43,7 @@ const PurchasePage: React.FC = () => {
   const products = [
     {
       id: 1,
-      title: "Pack 5 Llaveros En Blanco",
-      description: "Llaveros Mini CD en formato en blanco. Perfectos para personalización.",
-      detailedDescription: "Este pack incluye 5 llaveros Mini CD en blanco, listos para ser personalizados con nuestro generador de plantillas. Fabricados con materiales duraderos de alta calidad, estos llaveros tienen el tamaño perfecto para llevar tus diseños favoritos a donde quieras.",
-      features: [
-        "5 unidades en blanco",
-        "Material: Acrílico de alta calidad",
-        "Tamaño exacto de Mini CD",
-        "Incluye anillos metálicos",
-        "Compatible con nuestras plantillas"
-      ],
-      price: "$199 MXN",
-      url: PACK_5_LLAVEROS,
-      badge: "5 Unidades",
-      shipping: "Envío gratis por Mercado Envíos",
-      inStock: isInStock('PACK_5_LLAVEROS'),
-      imageSrc: "/images/products/pack-5-llaveros.jpg"
-    },
-    {
-      id: 2,
-      title: "Pack 5 Llaveros NFC En Blanco",
+      title: "Pack 5 Llaveros En Blanco con NFC",
       description: "Llaveros Mini CD con tecnología NFC. Vincula digitalmente a tu música.",
       detailedDescription: "Combina lo físico con lo digital con nuestros llaveros Mini CD con chip NFC integrado. Programa fácilmente cada llavero para abrir enlaces web, playlists, perfiles de artistas o cualquier contenido digital cuando los escanean con un smartphone.",
       features: [
@@ -75,49 +56,109 @@ const PurchasePage: React.FC = () => {
       price: "$349 MXN",
       url: PACK_5_LLAVEROS_NFC,
       badge: "5 Unidades + NFC",
-      shipping: "Envío gratis por Mercado Envíos",
+      shipping: "Envío gratis por Mercado Envíos FULL",
       inStock: isInStock('PACK_5_LLAVEROS_NFC'),
-      imageSrc: "/images/products/pack-5-llaveros-nfc.jpg"
+      imageSrc: "/images/products/5PZ-NFC.jpg"
+    },
+    {
+      id: 2,
+      title: "Pack 10 Llaveros En Blanco con NFC",
+      description: "Pack de 10 llaveros Mini CD con tecnología NFC. Ideal para proyectos medianos.",
+      detailedDescription: "Perfecto para proyectos medianos, este pack de 10 llaveros Mini CD con NFC te ofrece una cantidad ideal para grupos pequeños o eventos. Cada llavero incluye chip NFC para vincular contenido digital, creando recuerdos únicos o artículos promocionales interactivos.",
+      features: [
+        "10 unidades con chip NFC",
+        "Material: Acrílico de alta calidad",
+        "Tamaño exacto de Mini CD",
+        "Chips NFC reprogramables",
+        "Compatible con la mayoría de smartphones",
+        "Ideal para grupos pequeños"
+      ],
+      price: "$599 MXN",
+      url: PACK_10_LLAVEROS_NFC,
+      badge: "10 Unidades + NFC",
+      shipping: "Envío gratis por Mercado Envíos FULL",
+      inStock: isInStock('PACK_10_LLAVEROS_NFC'),
+      imageSrc: "/images/products/10PZ-NFC.jpg"
     },
     {
       id: 3,
-      title: "Pack 25 Llaveros NFC En Blanco",
-      description: "Pack de 25 llaveros Mini CD en blanco con tecnología NFC. Ideal para eventos y promociones.",
-      detailedDescription: "Perfecto para eventos, promociones o tiendas, este pack de 25 llaveros Mini CD con NFC te ofrece la cantidad ideal para proyectos más grandes. Cada llavero incluye chip NFC para vincular contenido digital, creando recuerdos únicos o artículos promocionales interactivos.",
+      title: "Pack 20 Llaveros En Blanco con NFC",
+      description: "Pack de 20 llaveros Mini CD con tecnología NFC. Ideal para eventos y promociones.",
+      detailedDescription: "Perfecto para eventos, promociones o tiendas, este pack de 20 llaveros Mini CD con NFC te ofrece la cantidad ideal para proyectos más grandes. Cada llavero incluye chip NFC para vincular contenido digital, creando recuerdos únicos o artículos promocionales interactivos.",
       features: [
-        "25 unidades con chip NFC",
+        "20 unidades con chip NFC",
         "Material: Acrílico de alta calidad",
         "Tamaño exacto de Mini CD",
         "Chips NFC reprogramables",
         "Compatible con la mayoría de smartphones",
         "Ideal para merchandising interactivo"
       ],
-      price: "$799 MXN",
-      url: PACK_25_LLAVEROS,
-      badge: "25 Unidades + NFC",
-      shipping: "Envío gratis por Mercado Envíos",
-      inStock: isInStock('PACK_25_LLAVEROS'),
-      imageSrc: "/images/products/pack-25-llaveros.jpg"
+      price: "$999 MXN",
+      url: PACK_20_LLAVEROS_NFC,
+      badge: "20 Unidades + NFC",
+      shipping: "Envío gratis por Mercado Envíos FULL",
+      inStock: isInStock('PACK_20_LLAVEROS_NFC'),
+      imageSrc: "/images/products/20PZ-NFC.jpg"
     },
     {
       id: 4,
-      title: "Pack 50 Llaveros NFC En Blanco",
-      description: "Gran pack de 50 llaveros Mini CD en blanco con NFC. Precio especial por volumen.",
-      detailedDescription: "Nuestra opción más económica por unidad. Este pack de 50 llaveros con tecnología NFC es perfecto para proyectos grandes, festivales, lanzamientos musicales o tiendas. Cada llavero mantiene la misma calidad premium e incluye chip NFC para vincular contenido digital, todo con un increíble precio por volumen.",
+      title: "Pack 30 Llaveros En Blanco con NFC",
+      description: "Pack de 30 llaveros Mini CD con tecnología NFC. Excelente para eventos grandes.",
+      detailedDescription: "Ideal para eventos grandes, festivales o lanzamientos musicales. Este pack de 30 llaveros con tecnología NFC es perfecto para proyectos de gran escala. Cada llavero mantiene la misma calidad premium e incluye chip NFC para vincular contenido digital.",
       features: [
-        "50 unidades con chip NFC",
+        "30 unidades con chip NFC",
+        "Material: Acrílico de alta calidad",
+        "Excelente precio por unidad",
+        "Chips NFC reprogramables",
+        "Compatible con la mayoría de smartphones",
+        "Ideal para eventos grandes"
+      ],
+      price: "$1,399 MXN",
+      url: PACK_30_LLAVEROS_NFC,
+      badge: "30 Unidades + NFC",
+      shipping: "Envío gratis por Mercado Envíos FULL",
+      inStock: isInStock('PACK_30_LLAVEROS_NFC'),
+      imageSrc: "/images/products/30PZ-NFC.jpg"
+    },
+    {
+      id: 5,
+      title: "Pack 40 Llaveros En Blanco con NFC",
+      description: "Gran pack de 40 llaveros Mini CD con NFC. Mejor precio por unidad.",
+      detailedDescription: "Nuestra opción más económica por unidad. Este pack de 40 llaveros con tecnología NFC es perfecto para proyectos grandes, festivales, lanzamientos musicales o tiendas. Cada llavero mantiene la misma calidad premium e incluye chip NFC para vincular contenido digital, todo con un increíble precio por volumen.",
+      features: [
+        "40 unidades con chip NFC",
         "Material: Acrílico de alta calidad",
         "Mejor precio por unidad",
         "Chips NFC reprogramables",
         "Compatible con la mayoría de smartphones",
         "Ideal para producciones a gran escala"
       ],
-      price: "$1,499 MXN",
-      url: PACK_50_LLAVEROS,
-      badge: "50 Unidades + NFC",
-      shipping: "Envío gratis por Mercado Envíos",
-      inStock: isInStock('PACK_50_LLAVEROS'),
-      imageSrc: "/images/products/pack-50-llaveros.jpg"
+      price: "$1,799 MXN",
+      url: PACK_40_LLAVEROS_NFC,
+      badge: "40 Unidades + NFC",
+      shipping: "Envío gratis por Mercado Envíos FULL",
+      inStock: isInStock('PACK_40_LLAVEROS_NFC'),
+      imageSrc: "/images/products/40PZ-NFC.jpg"
+    },
+    {
+      id: 6,
+      title: "Pack 5 Llaveros En Blanco con NFC - Envío FULL",
+      description: "Llaveros Mini CD con tecnología NFC y envío FULL de Mercado Libre.",
+      detailedDescription: "Combina lo físico con lo digital con nuestros llaveros Mini CD con chip NFC integrado y envío FULL de Mercado Libre. Programa fácilmente cada llavero para abrir enlaces web, playlists, perfiles de artistas o cualquier contenido digital cuando los escanean con un smartphone.",
+      features: [
+        "5 unidades con chip NFC",
+        "Material: Acrílico de alta calidad",
+        "Chip NFC reprogramable",
+        "Compatible con la mayoría de smartphones",
+        "Incluye guía de programación",
+        "Envío FULL de Mercado Libre"
+      ],
+      price: "$349 MXN",
+      url: PACK_5_LLAVEROS_NFC_FULL,
+      badge: "5 Unidades + NFC + FULL",
+      shipping: "Envío gratis por Mercado Envíos FULL",
+      inStock: isInStock('PACK_5_LLAVEROS_NFC_FULL'),
+      imageSrc: "/images/products/5PZ-NFC-FULL.jpg"
     }
   ];
   
@@ -337,8 +378,8 @@ const PurchasePage: React.FC = () => {
           <h2 className="text-3xl font-bold">Nuestros Productos <span className="text-xl font-normal text-secondary-600 ml-2">| Compra segura por Mercado Libre</span></h2>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.filter(product => product.inStock).map(product => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.map(product => (
             <div 
               key={product.id} 
               className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col"
@@ -480,4 +521,4 @@ const PurchasePage: React.FC = () => {
   );
 };
 
-export default PurchasePage; 
+export default PurchasePage;
