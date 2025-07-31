@@ -3,12 +3,20 @@ import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaDow
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
 import { PACK_5_LLAVEROS_NFC, PACK_10_LLAVEROS_NFC, PACK_20_LLAVEROS_NFC, PACK_30_LLAVEROS_NFC, PACK_40_LLAVEROS_NFC } from '../../constants/productLinks'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const HomePage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [blankTemplateModalOpen, setBlankTemplateModalOpen] = useState(false)
+  
+  // Refs for scroll animations
+  const heroRef = useRef<HTMLElement>(null)
+  const howItWorksRef = useRef<HTMLElement>(null)
+  const productsRef = useRef<HTMLElement>(null)
+  const ctaRef = useRef<HTMLElement>(null)
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([])
+  const productRefs = useRef<(HTMLAnchorElement | HTMLDivElement | null)[]>([])
   
   // Effect to add/remove class to body when modal is open/closed
   useEffect(() => {
@@ -25,6 +33,53 @@ const HomePage = () => {
       document.body.classList.remove('modal-open');
     };
   }, [blankTemplateModalOpen]);
+  
+  // Scroll animations effect
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in')
+        }
+      })
+    }, observerOptions)
+    
+    // Observe main sections
+    const sections = [heroRef.current, howItWorksRef.current, productsRef.current, ctaRef.current]
+    sections.forEach(section => {
+      if (section) {
+        section.classList.add('animate-on-scroll')
+        observer.observe(section)
+      }
+    })
+    
+    // Observe step cards with stagger
+    stepRefs.current.forEach((step, index) => {
+      if (step) {
+        step.classList.add('animate-on-scroll-stagger')
+        step.style.animationDelay = `${index * 0.2}s`
+        observer.observe(step)
+      }
+    })
+    
+    // Observe product cards with stagger
+    productRefs.current.forEach((product, index) => {
+      if (product) {
+        product.classList.add('animate-on-scroll-stagger')
+        product.style.animationDelay = `${index * 0.1}s`
+        observer.observe(product)
+      }
+    })
+    
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
   
   // Handler to reset template state and navigate to upload page
   const handleCreateTemplate = () => {
@@ -149,10 +204,10 @@ const HomePage = () => {
   return (
     <div className="space-y-24">
       {/* Hero Section with gradient and animation */}
-      <section className="pt-8 md:pt-12 pb-16 md:pb-24 text-center relative overflow-hidden">
+      <section ref={heroRef} className="pt-8 md:pt-12 pb-16 md:pb-24 text-center relative overflow-hidden">
         {/* Background circles */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary-100 rounded-full opacity-30 blur-3xl -z-10"></div>
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary-200 rounded-full opacity-30 blur-3xl -z-10"></div>
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary-100 rounded-full opacity-30 blur-3xl -z-10 animate-float"></div>
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary-200 rounded-full opacity-30 blur-3xl -z-10 animate-float" style={{animationDelay: '3s'}}></div>
         
         <div className="relative">
           <div className="animate-fade-in-up">
@@ -192,7 +247,7 @@ const HomePage = () => {
       </section>
       
       {/* How It Works with hover effects */}
-      <section id="how-it-works" className="py-16 bg-gradient-to-b from-white to-primary-50 rounded-none md:rounded-xl">
+      <section ref={howItWorksRef} id="how-it-works" className="py-16 bg-gradient-to-b from-white to-primary-50 rounded-none md:rounded-xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">¿Cómo Funciona?</h2>
           <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
@@ -202,7 +257,7 @@ const HomePage = () => {
         
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="card text-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg rounded-lg">
+            <div ref={el => stepRefs.current[0] = el} className="card text-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg rounded-lg">
               <div className="bg-primary-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
                 <FaUpload className="text-3xl text-primary-600" />
               </div>
@@ -212,7 +267,7 @@ const HomePage = () => {
               </p>
             </div>
             
-            <div className="card text-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg rounded-lg">
+            <div ref={el => stepRefs.current[1] = el} className="card text-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg rounded-lg">
               <div className="bg-primary-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
                 <FaCrop className="text-3xl text-primary-600" />
               </div>
@@ -222,7 +277,7 @@ const HomePage = () => {
               </p>
             </div>
             
-            <div className="card text-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg rounded-lg">
+            <div ref={el => stepRefs.current[2] = el} className="card text-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg rounded-lg">
               <div className="bg-primary-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
                 <FaFilePdf className="text-3xl text-primary-600" />
               </div>
@@ -236,7 +291,7 @@ const HomePage = () => {
       </section>
       
       {/* Mercado Libre E-commerce Section */}
-      <section id="shop-products" className="py-16 bg-secondary-50 mx-0 md:mx-4 px-4 rounded-none md:rounded-xl">
+      <section ref={productsRef} id="shop-products" className="py-16 bg-secondary-50 mx-0 md:mx-4 px-4 rounded-none md:rounded-xl">
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Compra Productos Mini CD World</h2>
@@ -254,6 +309,7 @@ const HomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Product 1: Pack 5 Llaveros NFC En Blanco */}
             <Link 
+              ref={el => productRefs.current[0] = el}
               to={PACK_5_LLAVEROS_NFC}
               target="_blank"
               rel="noopener noreferrer" 
@@ -280,6 +336,7 @@ const HomePage = () => {
             
             {/* Product 2: Pack 10 Llaveros NFC En Blanco */}
             <Link 
+              ref={el => productRefs.current[1] = el}
               to={PACK_10_LLAVEROS_NFC}
               target="_blank"
               rel="noopener noreferrer"
@@ -306,6 +363,7 @@ const HomePage = () => {
             
             {/* Product 3: Pack 20 Llaveros NFC En Blanco */}
             <Link 
+              ref={el => productRefs.current[2] = el}
               to={PACK_20_LLAVEROS_NFC}
               target="_blank"
               rel="noopener noreferrer"
@@ -332,6 +390,7 @@ const HomePage = () => {
             
             {/* Product 4: Pack 30 Llaveros NFC En Blanco */}
             <Link 
+              ref={el => productRefs.current[3] = el}
               to={PACK_30_LLAVEROS_NFC}
               target="_blank"
               rel="noopener noreferrer"
@@ -358,6 +417,7 @@ const HomePage = () => {
             
             {/* Product 5: Pack 40 Llaveros NFC En Blanco */}
             <Link 
+              ref={el => productRefs.current[4] = el}
               to={PACK_40_LLAVEROS_NFC}
               target="_blank"
               rel="noopener noreferrer"
@@ -383,7 +443,7 @@ const HomePage = () => {
             </Link>
             
             {/* Product 6: Pack 5 Llaveros NFC En Blanco - Envío FULL (Out of Stock) */}
-            <div className="group bg-white rounded-lg overflow-hidden shadow-md opacity-75 flex flex-col h-full">
+            <div ref={el => productRefs.current[5] = el} className="group bg-white rounded-lg overflow-hidden shadow-md opacity-75 flex flex-col h-full">
               <div className="bg-gray-500 text-white px-4 py-2 text-sm font-semibold flex justify-between items-center">
                 <span>5 Unidades + NFC + FULL</span>
                 <FaBan />
@@ -407,7 +467,7 @@ const HomePage = () => {
       </section>
       
       {/* CTA Section with gradient background */}
-      <section className="py-16 text-center bg-gradient-to-r from-primary-600 to-primary-700 text-white mx-0 md:mx-4 px-4 shadow-lg rounded-none md:rounded-xl">
+      <section ref={ctaRef} className="py-16 text-center bg-gradient-to-r from-primary-600 to-primary-700 text-white mx-0 md:mx-4 px-4 shadow-lg rounded-none md:rounded-xl">
         <div className="container mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">¿Listo para Crear tu Plantilla de CD?</h2>
           <p className="text-xl text-primary-100 max-w-2xl mx-auto mb-10 leading-relaxed">
