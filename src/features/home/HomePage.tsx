@@ -2,7 +2,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { FaUpload, FaCrop, FaFilePdf, FaArrowRight, FaShoppingCart, FaTag, FaDownload, FaBan } from 'react-icons/fa'
 import { useDispatch } from 'react-redux'
 import { resetTemplate } from '@features/template/templateSlice'
-import { PACK_5_LLAVEROS_NFC, PACK_10_LLAVEROS_NFC, PACK_20_LLAVEROS_NFC, PACK_30_LLAVEROS_NFC, PACK_40_LLAVEROS_NFC, PACK_5_LLAVEROS_NFC_FULL, isInStock } from '../../constants/productLinks'
+import { PACK_5_LLAVEROS_NFC, PACK_10_LLAVEROS_NFC, PACK_20_LLAVEROS_NFC, PACK_30_LLAVEROS_NFC, PACK_40_LLAVEROS_NFC } from '../../constants/productLinks'
 import { useState, useEffect } from 'react'
 
 const HomePage = () => {
