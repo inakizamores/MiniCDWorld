@@ -8,7 +8,10 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
-            <h3 className="text-xl font-bold text-white mb-3">MiniCDWorld</h3>
+            <h3 className="text-xl font-bold text-white mb-3 flex items-center">
+              <img src="/cd-icon.svg" alt="CD Icon" className="w-6 h-6 mr-2" />
+              MiniCDWorld
+            </h3>
             <p className="text-secondary-300 max-w-md">
               Crea plantillas de CD impresionantes y listas para imprimir con medidas precisas.
               Sube tu arte, personaliza tu diseño y descarga un PDF profesional.
@@ -30,4 +33,4 @@ const Footer = () => {
   )
 }
 
-export default Footer 
+export default Footer
