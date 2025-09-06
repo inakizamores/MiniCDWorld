@@ -425,7 +425,7 @@ const PurchasePage: React.FC = () => {
                     ) : (
                       <button
                         disabled
-                        className="bg-gray-200 text-gray-500 px-4 py-2 rounded flex-1 text-sm cursor-not-allowed"
+                        className="bg-gray-200 text-gray-500 px-4 py-2 rounded flex-1 text-sm cursor-not-allowed flex items-center justify-center"
                       >
                         <FaBan className="mr-2" /> Agotado
                       </button>
