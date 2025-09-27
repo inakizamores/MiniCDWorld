@@ -32,13 +32,13 @@ export const PRODUCT_INFO = {
   // Pack 30 Llaveros En Blanco con NFC
   PACK_30_LLAVEROS_NFC: {
     url: "https://articulo.mercadolibre.com.mx/MLM-2291529641-pack-30-llaveros-en-blanco-mini-cd-caja-disco-album-musical-_JM",
-    status: STOCK_STATUS.IN_STOCK
+    status: STOCK_STATUS.OUT_OF_STOCK
   },
   
   // Pack 40 Llaveros En Blanco con NFC
   PACK_40_LLAVEROS_NFC: {
     url: "https://articulo.mercadolibre.com.mx/MLM-3701144176-pack-40-llaveros-en-blanco-mini-cd-caja-disco-album-musical-_JM",
-    status: STOCK_STATUS.OUT_OF_STOCK
+    status: STOCK_STATUS.IN_STOCK
   },
   
   // Pack 5 Llaveros En Blanco con NFC - Envío FULL
